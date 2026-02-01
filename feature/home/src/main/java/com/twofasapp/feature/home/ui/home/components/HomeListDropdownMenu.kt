@@ -22,8 +22,9 @@ import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 internal fun HomeListDropdownMenu(
+    editVisible: Boolean = true,
     selectedTag: Tag? = null,
-    onEditListClick: () -> Unit,
+    onEditListClick: () -> Unit = {},
     onSortClick: () -> Unit,
     onFilterClick: () -> Unit,
     onClearFiltersClick: () -> Unit,
@@ -55,14 +56,16 @@ internal fun HomeListDropdownMenu(
             }
         },
         content = {
-            DropdownMenuItem(
-                text = strings.homeListMenuEdit,
-                icon = MdtIcons.Edit,
-                onClick = {
-                    showDropdown = false
-                    onEditListClick()
-                },
-            )
+            if (editVisible) {
+                DropdownMenuItem(
+                    text = strings.homeListMenuEdit,
+                    icon = MdtIcons.Edit,
+                    onClick = {
+                        showDropdown = false
+                        onEditListClick()
+                    },
+                )
+            }
 
             DropdownMenuItem(
                 text = strings.homeListMenuSort,

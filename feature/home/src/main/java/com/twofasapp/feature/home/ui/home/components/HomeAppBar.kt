@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.uniform
 import com.twofasapp.core.design.MdtIcons
@@ -73,13 +74,13 @@ internal fun HomeAppBar(
         targetState = uiState.editMode,
         transitionSpec = {
             (
-                slideInVertically(
-                    animationSpec = tween(300),
-                    initialOffsetY = { _ -> -50 },
-                ) + fadeIn(
-                    animationSpec = tween(100),
-                )
-                )
+                    slideInVertically(
+                        animationSpec = tween(300),
+                        initialOffsetY = { _ -> -50 },
+                    ) + fadeIn(
+                        animationSpec = tween(100),
+                    )
+                    )
                 .togetherWith(
                     slideOutVertically(
                         animationSpec = tween(300),
@@ -152,6 +153,15 @@ internal fun HomeAppBar(
                                 showTagsPicker = true
                             },
                         )
+
+                        DropdownMenu(
+                            editVisible = false,
+                            selectedTag = uiState.selectedTag,
+                            onEditListClick = {},
+                            onSortClick = onSortClick,
+                            onFilterClick = onFilterClick,
+                            onClearFiltersClick = onClearFiltersClick,
+                        )
                     }
                 },
             )
@@ -182,24 +192,16 @@ internal fun HomeAppBar(
                         }
 
                         if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
-                            HomeListDropdownMenu(
+                            DropdownMenu(
+                                editVisible = true,
                                 selectedTag = uiState.selectedTag,
                                 onEditListClick = {
                                     focusManager.clearFocus()
                                     onChangeEditMode(true)
                                 },
-                                onSortClick = {
-                                    focusManager.clearFocus()
-                                    onSortClick()
-                                },
-                                onFilterClick = {
-                                    focusManager.clearFocus()
-                                    onFilterClick()
-                                },
-                                onClearFiltersClick = {
-                                    focusManager.clearFocus()
-                                    onClearFiltersClick()
-                                },
+                                onSortClick = onSortClick,
+                                onFilterClick = onFilterClick,
+                                onClearFiltersClick = onClearFiltersClick,
                             )
                         }
                     }
@@ -252,6 +254,35 @@ internal fun HomeAppBar(
             onTagsChanged = onChangeTags,
         )
     }
+}
+
+@Composable
+private fun DropdownMenu(
+    selectedTag: Tag?,
+    editVisible: Boolean,
+    onEditListClick: () -> Unit,
+    onSortClick: () -> Unit,
+    onFilterClick: () -> Unit,
+    onClearFiltersClick: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    HomeListDropdownMenu(
+        editVisible = editVisible,
+        selectedTag = selectedTag,
+        onEditListClick = onEditListClick,
+        onSortClick = {
+            focusManager.clearFocus()
+            onSortClick()
+        },
+        onFilterClick = {
+            focusManager.clearFocus()
+            onFilterClick()
+        },
+        onClearFiltersClick = {
+            focusManager.clearFocus()
+            onClearFiltersClick()
+        },
+    )
 }
 
 @Preview
