@@ -78,7 +78,7 @@ internal fun SecureNoteContent(
 
         if (content.additionalInfo.isNullOrEmpty().not()) {
             ItemDetailsEntry(
-                title = MdtLocale.strings.loginNotes,
+                title = MdtLocale.strings.secureNoteAdditionalInfoLabel,
                 subtitle = content.additionalInfo.orEmpty(),
                 isCompact = true,
                 actions = {

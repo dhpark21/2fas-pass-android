@@ -68,7 +68,7 @@ internal class NordPassImportSpec(
                 RowType.Document,
                 RowType.Identity,
                 is RowType.Unknown,
-                -> {
+                    -> {
                     unknownItems++
                     parsedItems.add(parseSecureNote(row, vaultId))
                 }
@@ -195,51 +195,48 @@ internal class NordPassImportSpec(
         )
     }
 
-    private fun createNote(row: CsvRow, excludeColumns: Set<Column>): String? {
+    private fun createNote(row: CsvRow, excludeColumns: Set<Column>): String {
         val allExcludedColumns = buildSet {
             addAll(excludeColumns)
             add(Column.Type)
             add(Column.Folder)
         }
-        return buildString {
-            row.map
-                .mapKeys { (key, _) -> Column.fromValue(key) }
-                .filterKeys { key -> allExcludedColumns.contains(key).not() }
-                .mapValues { (_, value) -> value.trim() }
-                .filterValues { value -> value.isNotBlank() }
-                .map { (key, value) ->
-                    when (key) {
-                        Column.CustomFields -> parseCustomField(value).forEach { customFieldValue ->
-                            appendLine(customFieldValue)
-                        }
 
-                        Column.AdditionalUrls,
-                        Column.Address1,
-                        Column.Address2,
-                        Column.CardNumber,
-                        Column.CardholderName,
-                        Column.City,
-                        Column.Country,
-                        Column.Cvc,
-                        Column.Email,
-                        Column.ExpiryDate,
-                        Column.Folder,
-                        Column.FullName,
-                        Column.Name,
-                        Column.Note,
-                        Column.Password,
-                        Column.PhoneNumber,
-                        Column.Pin,
-                        Column.State,
-                        Column.Type,
-                        is Column.Unknown,
-                        Column.Url,
-                        Column.Username,
-                        Column.Zipcode,
-                        -> appendLine("${key.value}: $value")
-                    }
+        return row.map
+            .mapKeys { (key, _) -> Column.fromValue(key) }
+            .filterKeys { key -> allExcludedColumns.contains(key).not() }
+            .mapValues { (_, value) -> value.trim() }
+            .filterValues { value -> value.isNotBlank() }
+            .flatMap { (key, value) ->
+                when (key) {
+                    Column.CustomFields -> parseCustomField(value)
+
+                    Column.AdditionalUrls,
+                    Column.Address1,
+                    Column.Address2,
+                    Column.CardNumber,
+                    Column.CardholderName,
+                    Column.City,
+                    Column.Country,
+                    Column.Cvc,
+                    Column.Email,
+                    Column.ExpiryDate,
+                    Column.Folder,
+                    Column.FullName,
+                    Column.Name,
+                    Column.Note,
+                    Column.Password,
+                    Column.PhoneNumber,
+                    Column.Pin,
+                    Column.State,
+                    Column.Type,
+                    is Column.Unknown,
+                    Column.Url,
+                    Column.Username,
+                    Column.Zipcode -> listOf("${key.value}: $value")
                 }
-        }
+            }
+            .joinToString(separator = System.lineSeparator())
     }
 
     private fun parseCustomField(value: String): List<String> {
@@ -272,7 +269,7 @@ internal class NordPassImportSpec(
                 CustomFieldType.Hidden,
                 CustomFieldType.Text,
                 is CustomFieldType.Unknown,
-                -> "$label: $value"
+                    -> "$label: $value"
             }
         }
     }
