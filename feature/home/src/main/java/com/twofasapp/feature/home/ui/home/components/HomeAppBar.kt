@@ -74,13 +74,13 @@ internal fun HomeAppBar(
         targetState = uiState.editMode,
         transitionSpec = {
             (
-                    slideInVertically(
-                        animationSpec = tween(300),
-                        initialOffsetY = { _ -> -50 },
-                    ) + fadeIn(
-                        animationSpec = tween(100),
-                    )
-                    )
+                slideInVertically(
+                    animationSpec = tween(300),
+                    initialOffsetY = { _ -> -50 },
+                ) + fadeIn(
+                    animationSpec = tween(100),
+                )
+                )
                 .togetherWith(
                     slideOutVertically(
                         animationSpec = tween(300),
