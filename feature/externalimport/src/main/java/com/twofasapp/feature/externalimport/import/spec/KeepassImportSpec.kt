@@ -26,9 +26,7 @@ import com.twofasapp.feature.externalimport.import.CsvParser
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
 import com.twofasapp.feature.externalimport.import.XmlParser
-import com.twofasapp.feature.externalimport.import.parseWithContext
-import com.twofasapp.feature.externalimport.import.textOrEmpty
-import org.xmlpull.v1.XmlPullParser
+import com.twofasapp.feature.externalimport.import.XmlParserEventType
 import timber.log.Timber
 
 internal class KeepassImportSpec(
@@ -118,31 +116,30 @@ internal class KeepassImportSpec(
         var loginContent = prepareLoginContent()
 
         XmlParser.parse(inputStream) { parsingContext ->
-            when (eventType) {
-                XmlPullParser.START_TAG -> when {
+            when (parsingContext.eventType()) {
+                XmlParserEventType.StartTag -> when {
                     parsingContext.currentTag() == XML_TAG_STRING && parsingContext.tagFromLast(1) == XML_TAG_ENTRY && parsingContext.tagFromLast(
                         2
                     ) != XML_TAG_HISTORY -> {
                         var key: String? = null
                         var value: String? = null
-                        var parsed = false
-                        parseWithContext({ parsed.not() }) { entryParsingContext ->
-                            when (eventType) {
-                                XmlPullParser.END_TAG -> {
-                                    parsed = entryParsingContext.currentTag() == XML_TAG_STRING
-                                }
-
-                                XmlPullParser.TEXT -> {
+                        parsingContext.withTagScope(XML_TAG_STRING) { entryParsingContext ->
+                            when (entryParsingContext.eventType()) {
+                                XmlParserEventType.Text -> {
                                     when {
                                         entryParsingContext.currentTag() == XML_TAG_KEY && entryParsingContext.tagFromLast(
                                             1
-                                        ) == XML_TAG_STRING -> key = textOrEmpty()
+                                        ) == XML_TAG_STRING -> key =
+                                            entryParsingContext.textOrEmpty()
 
                                         entryParsingContext.currentTag() == XML_TAG_VALUE && entryParsingContext.tagFromLast(
                                             1
-                                        ) == XML_TAG_STRING -> value = textOrEmpty()
+                                        ) == XML_TAG_STRING -> value =
+                                            entryParsingContext.textOrEmpty()
                                     }
                                 }
+
+                                else -> {}
                             }
                         }
                         loginContent = modifyLoginContent(
@@ -154,7 +151,7 @@ internal class KeepassImportSpec(
                     }
                 }
 
-                XmlPullParser.END_TAG -> when {
+                XmlParserEventType.EndTag -> when {
                     parsingContext.currentTag() == XML_TAG_GROUP -> currentTags.removeLastOrNull()
                     parsingContext.currentTag() == XML_TAG_ENTRY && parsingContext.tagFromLast(1) != XML_TAG_HISTORY -> {
                         items.add(createLoginItem(vaultId, tags, currentTags, loginContent, notes))
@@ -163,16 +160,18 @@ internal class KeepassImportSpec(
                     }
                 }
 
-                XmlPullParser.TEXT -> when {
+                XmlParserEventType.Text -> when {
                     parsingContext.currentTag() == XML_TAG_NAME && parsingContext.tagFromLast(1) == XML_TAG_GROUP -> {
-                        tags.add(createTag(vaultId, textOrEmpty()))
-                        currentTags.add(textOrEmpty())
+                        tags.add(createTag(vaultId, parsingContext.textOrEmpty()))
+                        currentTags.add(parsingContext.textOrEmpty())
                     }
 
                     parsingContext.tagFromLast(1) == XML_TAG_ENTRY && parsingContext.tagFromLast(2) != XML_TAG_HISTORY -> {
-                        notes.add(parsingContext.currentTagOrEmpty() to textOrEmpty())
+                        notes.add(parsingContext.currentTagOrEmpty() to parsingContext.textOrEmpty())
                     }
                 }
+
+                else -> {}
             }
         }
 

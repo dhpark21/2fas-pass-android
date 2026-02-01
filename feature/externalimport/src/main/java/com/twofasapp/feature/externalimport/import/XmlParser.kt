@@ -7,29 +7,25 @@ import java.io.InputStream
 object XmlParser {
     fun parse(
         inputStream: InputStream,
-        config: XmlPullParser.() -> Unit = {
-            setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-        },
-        block: XmlPullParser.(ParsingContext) -> Unit
+        block: (ParsingContext) -> Unit
     ) {
         val parser = Xml.newPullParser()
         inputStream.use { input ->
             parser.setInput(input, null)
-            config(parser)
 
             while (parser.eventType != XmlPullParser.START_TAG && parser.eventType != XmlPullParser.END_DOCUMENT) {
                 parser.next()
             }
             parser.require(XmlPullParser.START_TAG, null, null)
 
-            val parsingContext = ParsingContext()
+            val parsingContext = ParsingContext(parser)
             while (parser.eventType != XmlPullParser.END_DOCUMENT) {
                 when (parser.eventType) {
                     XmlPullParser.START_TAG -> {
-                        parsingContext.addTag(parser.nameOrEmpty())
+                        parsingContext.addTag(parser.name ?: "")
                     }
                 }
-                block(parser, parsingContext)
+                block(parsingContext)
                 when (parser.eventType) {
                     XmlPullParser.END_TAG -> {
                         parsingContext.removeTag()
@@ -41,7 +37,7 @@ object XmlParser {
     }
 }
 
-class ParsingContext {
+class ParsingContext(private val parser: XmlPullParser) {
 
     private val currentTags = mutableListOf<String>()
 
@@ -61,42 +57,76 @@ class ParsingContext {
         return currentTags.lastOrNull() ?: ""
     }
 
+    fun text(): String? {
+        return parser.text
+    }
+
+    fun textOrEmpty(): String {
+        return text() ?: ""
+    }
+
     fun tagFromLast(offset: Int): String? {
         if (offset < 0) return null
         val index = currentTags.lastIndex - offset
         return currentTags.getOrNull(index)
     }
-}
 
-fun XmlPullParser.nameOrEmpty(): String {
-    return name ?: ""
-}
+    fun tagFromLastOrEmpty(offset: Int): String {
+        return tagFromLast(offset) ?: ""
+    }
 
-fun XmlPullParser.textOrEmpty(): String {
-    return text ?: ""
-}
-
-fun XmlPullParser.parseWithContext(
-    predicate: XmlPullParser.(ParsingContext) -> Boolean,
-    block: XmlPullParser.(ParsingContext) -> Unit
-) {
-    val parsingContext = ParsingContext()
-    while (predicate(this, parsingContext)) {
-        when (eventType) {
-            XmlPullParser.START_TAG -> {
-                parsingContext.addTag(nameOrEmpty())
-            }
-        }
-        block(this, parsingContext)
-        when (eventType) {
-            XmlPullParser.END_TAG -> {
-                parsingContext.removeTag()
-            }
-        }
-        if (predicate(this, parsingContext)) {
-            next()
-        } else {
-            break
+    fun eventType(): XmlParserEventType? {
+        return when (parser.eventType) {
+            XmlPullParser.START_DOCUMENT -> XmlParserEventType.StartDocument
+            XmlPullParser.END_DOCUMENT -> XmlParserEventType.EndDocument
+            XmlPullParser.START_TAG -> XmlParserEventType.StartTag
+            XmlPullParser.END_TAG -> XmlParserEventType.EndTag
+            XmlPullParser.TEXT -> XmlParserEventType.Text
+            XmlPullParser.CDSECT -> XmlParserEventType.Cdsect
+            XmlPullParser.ENTITY_REF -> XmlParserEventType.EntityRef
+            XmlPullParser.IGNORABLE_WHITESPACE -> XmlParserEventType.IgnorableWhitespace
+            XmlPullParser.PROCESSING_INSTRUCTION -> XmlParserEventType.ProcessingInstruction
+            XmlPullParser.COMMENT -> XmlParserEventType.Comment
+            XmlPullParser.DOCDECL -> XmlParserEventType.Docdecl
+            else -> null
         }
     }
+
+    fun withTagScope(
+        tag: String,
+        block: (ParsingContext) -> Unit
+    ) {
+        val parsingContext = ParsingContext(parser)
+        while (parser.eventType != XmlPullParser.END_DOCUMENT) {
+            when (parser.eventType) {
+                XmlPullParser.START_TAG -> {
+                    parsingContext.addTag(parser.name ?: "")
+                }
+            }
+            block(parsingContext)
+            when (parser.eventType) {
+                XmlPullParser.END_TAG -> {
+                    parsingContext.removeTag()
+                    if (parser.name == tag) {
+                        break
+                    }
+                }
+            }
+            parser.next()
+        }
+    }
+}
+
+enum class XmlParserEventType {
+    StartDocument,
+    EndDocument,
+    StartTag,
+    EndTag,
+    Text,
+    Cdsect,
+    EntityRef,
+    IgnorableWhitespace,
+    ProcessingInstruction,
+    Comment,
+    Docdecl
 }
