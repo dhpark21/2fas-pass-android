@@ -34,5 +34,17 @@ val SecureNoteItemContentPreview: ItemContent.SecureNote = ItemContent.SecureNot
     additionalInfo = null,
 )
 
+val PaymentCardItemContentPreview: ItemContent.PaymentCard = ItemContent.PaymentCard(
+    name = "Payment Card Name",
+    cardHolder = "John Doe",
+    cardNumber = SecretField.ClearText("4532123456789012"),
+    cardNumberMask = "9012",
+    expirationDate = SecretField.ClearText("12/25"),
+    securityCode = SecretField.ClearText("123"),
+    cardIssuer = ItemContent.PaymentCard.Issuer.Visa,
+    notes = "Personal card for online purchases",
+)
+
 val LoginItemPreview = itemPreview(LoginItemContentPreview)
 val SecureNoteItemPreview = itemPreview(SecureNoteItemContentPreview)
+val PaymentCardItemPreview = itemPreview(PaymentCardItemContentPreview)

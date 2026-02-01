@@ -307,7 +307,7 @@ internal class DeveloperViewModel(
                         contentType = ItemContentType.PaymentCard,
                         vaultId = vault.id,
                         content = ItemContent.PaymentCard(
-                            name = "$cardType - $cardholderName",
+                            name = "$cardholderName Card",
                             cardHolder = cardholderName,
                             cardNumber = SecretField.ClearText(cardNumber),
                             expirationDate = SecretField.ClearText(expiration),

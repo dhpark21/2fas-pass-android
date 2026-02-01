@@ -51,6 +51,7 @@ internal fun ItemDetailsPills(item: Item, tags: ImmutableList<Tag>) {
                 icon = item.securityType.asIcon(),
                 color = securityItemPillColor,
             )
+
             tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
                 Pill(text = tag.name, icon = MdtIcons.TagFilled, color = tag.iconTint())
             }
