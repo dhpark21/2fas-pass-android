@@ -91,7 +91,7 @@ internal class KeepassImportSpec(
                             name = row.get(CSV_ROW_ACCOUNT),
                             username = row.get(CSV_ROW_LOGIN_NAME),
                             password = row.get(CSV_ROW_PASSWORD),
-                            url = row.get(CSV_ROW_PASSWORD),
+                            url = row.get(CSV_ROW_WEB_SITE),
                             notes = row.get(CSV_ROW_COMMENTS),
                         ),
                     ),
