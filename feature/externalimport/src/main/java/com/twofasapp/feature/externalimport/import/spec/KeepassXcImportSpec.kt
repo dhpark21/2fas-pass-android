@@ -118,24 +118,30 @@ internal class KeepassXcImportSpec(
         XmlParser.parse(inputStream) { parsingContext ->
             when (parsingContext.eventType()) {
                 XmlParserEventType.StartTag -> when {
-                    parsingContext.currentTag() == XML_TAG_STRING && parsingContext.tagFromLast(1) == XML_TAG_ENTRY && parsingContext.tagFromLast(
-                        2
-                    ) != XML_TAG_HISTORY -> {
+                    parsingContext.currentTag() == XML_TAG_STRING &&
+                        parsingContext.tagFromLast(1) == XML_TAG_ENTRY &&
+                        parsingContext.tagFromLast(
+                            2,
+                        ) != XML_TAG_HISTORY -> {
                         var key: String? = null
                         var value: String? = null
                         parsingContext.withTagScope(XML_TAG_STRING) { entryParsingContext ->
                             when (entryParsingContext.eventType()) {
                                 XmlParserEventType.Text -> {
                                     when {
-                                        entryParsingContext.currentTag() == XML_TAG_KEY && entryParsingContext.tagFromLast(
-                                            1
-                                        ) == XML_TAG_STRING -> key =
-                                            entryParsingContext.textOrEmpty()
+                                        entryParsingContext.currentTag() == XML_TAG_KEY &&
+                                            entryParsingContext.tagFromLast(
+                                                1,
+                                            ) == XML_TAG_STRING ->
+                                            key =
+                                                entryParsingContext.textOrEmpty()
 
-                                        entryParsingContext.currentTag() == XML_TAG_VALUE && entryParsingContext.tagFromLast(
-                                            1
-                                        ) == XML_TAG_STRING -> value =
-                                            entryParsingContext.textOrEmpty()
+                                        entryParsingContext.currentTag() == XML_TAG_VALUE &&
+                                            entryParsingContext.tagFromLast(
+                                                1,
+                                            ) == XML_TAG_STRING ->
+                                            value =
+                                                entryParsingContext.textOrEmpty()
                                     }
                                 }
 
@@ -146,7 +152,7 @@ internal class KeepassXcImportSpec(
                             key = key,
                             value = value,
                             loginContent = loginContent,
-                            notesBlock = { notes.add(it) }
+                            notesBlock = { notes.add(it) },
                         )
                     }
                 }
@@ -191,7 +197,7 @@ internal class KeepassXcImportSpec(
         tags: List<Tag>,
         itemTags: List<String>,
         content: ItemContent.Login,
-        notes: List<Pair<String, String>>
+        notes: List<Pair<String, String>>,
     ): Item {
         return Item.create(
             vaultId = vaultId,
@@ -200,8 +206,9 @@ internal class KeepassXcImportSpec(
                 iconUriIndex = if (content.uris.isEmpty()) null else 0,
                 notes = notes
                     .filter { (key, value) -> key.isNotBlank() && value.isNotBlank() }
-                    .joinToString(System.lineSeparator()) { (key, value) -> "${key.trim()}: ${value.trim()}" }),
-            tagIds = tags.filter { tag -> itemTags.contains(tag.name) }.map { it.id }
+                    .joinToString(System.lineSeparator()) { (key, value) -> "${key.trim()}: ${value.trim()}" },
+            ),
+            tagIds = tags.filter { tag -> itemTags.contains(tag.name) }.map { it.id },
         )
     }
 
@@ -209,7 +216,7 @@ internal class KeepassXcImportSpec(
         key: String?,
         value: String?,
         loginContent: ItemContent.Login,
-        notesBlock: (Pair<String, String>) -> Unit
+        notesBlock: (Pair<String, String>) -> Unit,
     ): ItemContent.Login {
         if (value.isNullOrBlank()) {
             return loginContent
@@ -221,8 +228,8 @@ internal class KeepassXcImportSpec(
         return when (key) {
             XML_TAG_PASSWORD -> loginContent.copy(
                 password = ClearText(
-                    value.trim()
-                )
+                    value.trim(),
+                ),
             )
 
             XML_TAG_TITLE -> loginContent.copy(name = value.trim())
@@ -239,7 +246,7 @@ internal class KeepassXcImportSpec(
         return Tag.create(
             vaultId = vaultId,
             id = Uuid.generate(),
-            name = name
+            name = name,
         )
     }
 }

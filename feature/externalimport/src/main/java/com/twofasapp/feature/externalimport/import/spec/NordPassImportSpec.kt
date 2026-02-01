@@ -67,7 +67,8 @@ internal class NordPassImportSpec(
                 RowType.Note -> parsedItems.add(parseSecureNote(row, vaultId))
                 RowType.Document,
                 RowType.Identity,
-                is RowType.Unknown -> {
+                is RowType.Unknown,
+                -> {
                     unknownItems++
                     parsedItems.add(parseSecureNote(row, vaultId))
                 }
@@ -104,19 +105,19 @@ internal class NordPassImportSpec(
                             Column.CardholderName,
                             Column.CardNumber,
                             Column.ExpiryDate,
-                            Column.Cvc
-                        )
+                            Column.Cvc,
+                        ),
                     ),
-                )
+                ),
             ),
-            tagName = row.getTagName()
+            tagName = row.getTagName(),
         )
     }
 
     private fun parseLogin(row: CsvRow, vaultId: String): ParsedItem {
         val uris = detectUris(
             row.getColumn(Column.Url),
-            row.getColumn(Column.AdditionalUrls)
+            row.getColumn(Column.AdditionalUrls),
         )
         return ParsedItem(
             item = Item.create(
@@ -140,12 +141,12 @@ internal class NordPassImportSpec(
                             Column.Username,
                             Column.Password,
                             Column.Url,
-                            Column.AdditionalUrls
-                        )
+                            Column.AdditionalUrls,
+                        ),
                     ),
-                )
+                ),
             ),
-            tagName = row.getTagName()
+            tagName = row.getTagName(),
         )
     }
 
@@ -156,7 +157,7 @@ internal class NordPassImportSpec(
                 try {
                     addAll(json.decodeFromString<List<String>>(urls))
                 } catch (t: Throwable) {
-                    //ignore urls
+                    // ignore urls
                 }
             }
         }.filterNotNull()
@@ -178,11 +179,11 @@ internal class NordPassImportSpec(
                         excludeColumns = setOf(
                             Column.Name,
                             Column.Note,
-                        )
+                        ),
                     ),
-                )
+                ),
             ),
-            tagName = row.getTagName()
+            tagName = row.getTagName(),
         )
     }
 
@@ -190,7 +191,7 @@ internal class NordPassImportSpec(
         return Tag.create(
             vaultId = vaultId,
             id = Uuid.generate(),
-            name = row.getColumn(Column.Name)
+            name = row.getColumn(Column.Name),
         )
     }
 
@@ -234,7 +235,8 @@ internal class NordPassImportSpec(
                         is Column.Unknown,
                         Column.Url,
                         Column.Username,
-                        Column.Zipcode -> appendLine("${key.value}: $value")
+                        Column.Zipcode,
+                        -> appendLine("${key.value}: $value")
                     }
                 }
         }
@@ -260,16 +262,17 @@ internal class NordPassImportSpec(
                 CustomFieldType.Date -> {
                     val asLong = value.toLongOrNull()
                     if (asLong == null) {
-                        "${label}: $value"
+                        "$label: $value"
                     } else {
                         val date = Instant.ofEpochSecond(asLong).formatDate()
-                        "${label}: $date"
+                        "$label: $date"
                     }
                 }
 
                 CustomFieldType.Hidden,
                 CustomFieldType.Text,
-                is CustomFieldType.Unknown -> "${label}: $value"
+                is CustomFieldType.Unknown,
+                -> "$label: $value"
             }
         }
     }
@@ -288,11 +291,11 @@ internal class NordPassImportSpec(
 
     private data class ParsedItem(
         val item: Item,
-        val tagName: String?
+        val tagName: String?,
     ) {
         fun resolve(tags: List<Tag>): Item {
             return item.copy(
-                tagIds = tags.filter { tag -> tagName == tag.name }.map { it.id }
+                tagIds = tags.filter { tag -> tagName == tag.name }.map { it.id },
             )
         }
     }
@@ -329,7 +332,7 @@ internal class NordPassImportSpec(
                 return listOf(
                     Text,
                     Date,
-                    Hidden
+                    Hidden,
                 )
             }
 
@@ -376,7 +379,7 @@ internal class NordPassImportSpec(
                     Note,
                     CreditCard,
                     Identity,
-                    Document
+                    Document,
                 )
             }
 
@@ -509,7 +512,7 @@ internal class NordPassImportSpec(
                     Country,
                     State,
                     Type,
-                    CustomFields
+                    CustomFields,
                 )
             }
 

@@ -7,7 +7,7 @@ import java.io.InputStream
 object XmlParser {
     fun parse(
         inputStream: InputStream,
-        block: (ParsingContext) -> Unit
+        block: (ParsingContext) -> Unit,
     ) {
         val parser = Xml.newPullParser()
         inputStream.use { input ->
@@ -94,7 +94,7 @@ class ParsingContext(private val parser: XmlPullParser) {
 
     fun withTagScope(
         tag: String,
-        block: (ParsingContext) -> Unit
+        block: (ParsingContext) -> Unit,
     ) {
         val parsingContext = ParsingContext(parser)
         while (parser.eventType != XmlPullParser.END_DOCUMENT) {
@@ -128,5 +128,5 @@ enum class XmlParserEventType {
     IgnorableWhitespace,
     ProcessingInstruction,
     Comment,
-    Docdecl
+    Docdecl,
 }

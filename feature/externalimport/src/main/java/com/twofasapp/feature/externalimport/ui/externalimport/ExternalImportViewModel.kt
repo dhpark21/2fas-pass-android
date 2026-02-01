@@ -60,7 +60,7 @@ internal class ExternalImportViewModel(
     private val keepassImportSpec: KeepassImportSpec,
     private val keepassXcImportSpec: KeepassXcImportSpec,
     private val keeperImportSpec: KeeperImportSpec,
-    private val nordPassImportSpec: NordPassImportSpec
+    private val nordPassImportSpec: NordPassImportSpec,
 ) : ViewModel() {
     val uiState = MutableStateFlow(ExternalImportUiState())
     private val importType = savedStateHandle.toRoute<Screen.ExternalImport>().importType
