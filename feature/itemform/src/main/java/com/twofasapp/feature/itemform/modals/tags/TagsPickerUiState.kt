@@ -17,7 +17,7 @@ data class TagsPickerUiState(
     val tags: List<Tag> = emptyList(),
     val initialSelection: Map<Item, Set<String>> = emptyMap(),
     val selection: Map<Item, Set<String>> = emptyMap(),
-    val suggestedTagColor: TagColor = TagColor.default
+    val suggestedTagColor: TagColor = TagColor.default,
 ) {
     val selectedTagIds: List<String>
         get() = selection.values.flatten().distinct()

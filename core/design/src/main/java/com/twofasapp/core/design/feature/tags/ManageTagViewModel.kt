@@ -31,13 +31,13 @@ internal class ManageTagViewModel(
             buttonEnabled = validateName(
                 name = tag.name,
 
-                ),
+            ),
             mode = if (tag.id.isEmpty()) {
                 ManageTagModalMode.Add
             } else {
                 ManageTagModalMode.Edit
-            }
-        )
+            },
+        ),
     )
 
     fun onNameChanged(name: String) {
@@ -45,7 +45,7 @@ internal class ManageTagViewModel(
         uiState.update { oldState ->
             oldState.copy(
                 tag = oldState.tag.copy(name = trimmedName),
-                buttonEnabled = validateName(name = trimmedName)
+                buttonEnabled = validateName(name = trimmedName),
             )
         }
     }

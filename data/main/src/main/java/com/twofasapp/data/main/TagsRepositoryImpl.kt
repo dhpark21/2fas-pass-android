@@ -68,15 +68,17 @@ internal class TagsRepositoryImpl(
     private suspend fun fetchTags(
         vaultId: String,
         tagEntities: List<TagEntity>,
-        items: List<ItemEntity>
+        items: List<ItemEntity>,
     ): List<Tag> {
         val tags = vaultCryptoScope.withVaultCipher(vaultId) {
             tagEntities.map { tagEntity ->
                 tagMapper
                     .mapToDomain(entity = tagEntity, vaultCipher = this)
-                    .copy(assignedItemsCount = items.count {
-                        it.tagIds.orEmpty().contains(tagEntity.id)
-                    })
+                    .copy(
+                        assignedItemsCount = items.count {
+                            it.tagIds.orEmpty().contains(tagEntity.id)
+                        },
+                    )
             }
         }
 
@@ -86,7 +88,7 @@ internal class TagsRepositoryImpl(
             return tags
         }
 
-        //temporary solution, assign colors to tags without color and update existing tags in db
+        // temporary solution, assign colors to tags without color and update existing tags in db
         val colors = getColorsSortedByUsage(tags)
         var tagColorIterator = colors.iterator()
         val tagsWithColor =

@@ -60,7 +60,7 @@ internal class HomeViewModel(
     private val cloudRepository: CloudRepository,
     private val purchasesRepository: PurchasesRepository,
     private val itemEncryptionMapper: ItemEncryptionMapper,
-    private val securityItemRepository: SecurityItemRepository
+    private val securityItemRepository: SecurityItemRepository,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(HomeUiState())
@@ -209,7 +209,7 @@ internal class HomeViewModel(
         launchScoped {
             securityItemRepository.toggleSelectedSecurityItem(
                 uiState.value.vault.id,
-                securityItem
+                securityItem,
             )
         }
     }
@@ -283,8 +283,10 @@ internal class HomeViewModel(
     fun selectAllItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = state.selectedItemIds.plus(state.itemsFiltered.map { it.id }
-                    .toSet()).toPersistentSet(),
+                selectedItemIds = state.selectedItemIds.plus(
+                    state.itemsFiltered.map { it.id }
+                        .toSet(),
+                ).toPersistentSet(),
             )
         }
     }
@@ -292,8 +294,10 @@ internal class HomeViewModel(
     fun deselectItems() {
         uiState.update { state ->
             state.copy(
-                selectedItemIds = state.selectedItemIds.minus(state.itemsFiltered.map { it.id }
-                    .toSet()).toPersistentSet(),
+                selectedItemIds = state.selectedItemIds.minus(
+                    state.itemsFiltered.map { it.id }
+                        .toSet(),
+                ).toPersistentSet(),
             )
         }
     }
@@ -327,7 +331,7 @@ internal class HomeViewModel(
                             content = itemEncryptionMapper.decryptSecretFields(
                                 this,
                                 item.securityType,
-                                item.content
+                                item.content,
                             ),
                         )
                     }

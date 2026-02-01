@@ -69,7 +69,7 @@ internal fun FilterModal(
             selectedTag = selectedTag,
             onToggleTag = { dismissAction { onToggleTag(it) } },
             onManageTagsClick = { dismissAction { onManageTagsClick() } },
-            onToggleSecurityItem = { dismissAction { onToggleSecurityItem(it) } }
+            onToggleSecurityItem = { dismissAction { onToggleSecurityItem(it) } },
         )
     }
 }
@@ -91,7 +91,7 @@ private fun Content(
         securityItems(
             securityTypes = securityItems,
             selectedSecurityItem = selectedSecurityItem,
-            onClick = onToggleSecurityItem
+            onClick = onToggleSecurityItem,
         )
         divider()
         if (tags.isEmpty()) {
@@ -141,12 +141,12 @@ private fun Content(
 private fun LazyListScope.securityItems(
     securityTypes: ImmutableList<SecurityItem>,
     selectedSecurityItem: SecurityItem?,
-    onClick: (SecurityItem) -> Unit
+    onClick: (SecurityItem) -> Unit,
 ) {
     items(
         items = securityTypes,
         key = { securityType -> "SecurityType:${securityType.type.ordinal}" },
-        contentType = { "SecurityType" }
+        contentType = { "SecurityType" },
     ) { securityType ->
         OptionEntry(
             iconTint = if (LocalDarkMode.current) Color(0xFF0048DE) else Color(0xFF214CE8),
@@ -179,7 +179,7 @@ private fun Preview() {
             securityItems = SecurityType.entries.map { securityType ->
                 SecurityItem(
                     securityType,
-                    0
+                    0,
                 )
             }.toPersistentList(),
             tags = List(3) { Tag.Empty.copy(id = "Tag $it", name = "Tag $it") }.toPersistentList(),
@@ -196,7 +196,7 @@ private fun PreviewEmpty() {
             securityItems = SecurityType.entries.map { securityType ->
                 SecurityItem(
                     securityType,
-                    0
+                    0,
                 )
             }.toPersistentList(),
             tags = persistentListOf(),

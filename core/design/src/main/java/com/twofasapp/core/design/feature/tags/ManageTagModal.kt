@@ -66,7 +66,7 @@ fun ManageTagModal(
             tag = tag,
             suggestedTagColor = suggestedTagColor,
             onSave = onSave,
-            onDismissRequest = onDismissRequest
+            onDismissRequest = onDismissRequest,
         )
     }
 }
@@ -86,7 +86,7 @@ private fun ManageTagModalInternal(
         onSaveClick = { onSave(uiState.tag) },
         onDismissRequest = onDismissRequest,
         onNameChane = viewModel::onNameChanged,
-        onColorClick = viewModel::onColorSelected
+        onColorClick = viewModel::onColorSelected,
     )
 }
 
@@ -120,7 +120,7 @@ private fun ManageTagModal(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = MdtLocale.strings.tagEditorDescription
+            text = MdtLocale.strings.tagEditorDescription,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -143,7 +143,7 @@ private fun ManageTagModal(
                     tint = uiState.tag.color?.iconTint() ?: MdtTheme.color.outlineVariant,
                     modifier = Modifier.size(20.dp),
                 )
-            }
+            },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -151,12 +151,12 @@ private fun ManageTagModal(
         LazyRow(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp)
+            contentPadding = PaddingValues(horizontal = 16.dp),
         ) {
             colors(
                 colors = uiState.colors,
                 selectedColor = uiState.tag.color,
-                onClick = onColorClick
+                onClick = onColorClick,
             )
         }
 
@@ -168,7 +168,7 @@ private fun ManageTagModal(
                 .padding(horizontal = 16.dp),
             enabled = uiState.buttonEnabled,
             text = MdtLocale.strings.commonContinue,
-            onClick = { dismissAction { onSaveClick() } }
+            onClick = { dismissAction { onSaveClick() } },
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -178,7 +178,7 @@ private fun ManageTagModal(
 private fun LazyListScope.colors(
     colors: ImmutableList<TagColor>,
     selectedColor: TagColor?,
-    onClick: (TagColor) -> Unit
+    onClick: (TagColor) -> Unit,
 ) {
     items(items = colors, key = { it.value }) { item ->
         Box(
@@ -192,7 +192,7 @@ private fun LazyListScope.colors(
                 .background(MdtTheme.color.surfaceContainerLow)
                 .padding(2.dp)
                 .clip(CircleShape)
-                .background(item.iconTint())
+                .background(item.iconTint()),
         )
     }
 }
@@ -211,7 +211,7 @@ private fun Preview() {
             onNameChane = {},
             onSaveClick = {},
             onDismissRequest = {},
-            onColorClick = {}
+            onColorClick = {},
         )
     }
 }

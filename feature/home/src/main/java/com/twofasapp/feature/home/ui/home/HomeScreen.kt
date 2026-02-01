@@ -206,7 +206,7 @@ private fun Content(
                 onChangeEditMode = { onChangeEditMode(it) },
                 onSortClick = { showSortModal = true },
                 onFilterClick = { showFilterModal = true },
-                onClearFiltersClick =  onClearFiltersClick,
+                onClearFiltersClick = onClearFiltersClick,
                 onSelectAllClick = { onSelectAllClick() },
                 onDeselectClick = { onDeselectClick() },
                 onDeleteItemsConfirmed = { onDeleteSelectedItemsClick() },
@@ -264,7 +264,7 @@ private fun Content(
                             onSearchFocusChange = onSearchFocusChange,
                             onSelectedItemTypeChange = onSelectedItemTypeChange,
                             onClearTagFilter = onClearTagFilterClick,
-                            onClearSecurityItemFilter = onClearSecurityItemFilterClick
+                            onClearSecurityItemFilter = onClearSecurityItemFilterClick,
                         )
                     }
 
@@ -283,7 +283,8 @@ private fun Content(
                             listItem(
                                 HomeListItem.HomeItemsRow(
                                     index = index,
-                                    ids = items.map { it.id })
+                                    ids = items.map { it.id },
+                                ),
                             ) {
                                 Row(
                                     modifier = Modifier.animateItem(),
@@ -301,7 +302,7 @@ private fun Content(
                                                 onEditItemClick(
                                                     itemId,
                                                     vaultId,
-                                                    item.contentType
+                                                    item.contentType,
                                                 )
                                             },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
@@ -328,7 +329,7 @@ private fun Content(
                                         onEditItemClick(
                                             itemId,
                                             vaultId,
-                                            item.contentType
+                                            item.contentType,
                                         )
                                     },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
@@ -384,7 +385,7 @@ private fun Content(
             onToggleTag = { onToggleTag(it) },
             onToggleSecurityItem = { onToggleSecurityItem(it) },
             onManageTagsClick = onManageTagsClick,
-            securityItems = uiState.securityItems
+            securityItems = uiState.securityItems,
         )
     }
 

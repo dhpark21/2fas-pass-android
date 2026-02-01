@@ -6,5 +6,5 @@ import com.twofasapp.core.common.domain.TagColor
 internal data class ManageTagsUiState(
     val vaultId: String = "",
     val tags: List<Tag> = emptyList(),
-    val suggestedTagColor: TagColor = TagColor.default
+    val suggestedTagColor: TagColor = TagColor.default,
 )

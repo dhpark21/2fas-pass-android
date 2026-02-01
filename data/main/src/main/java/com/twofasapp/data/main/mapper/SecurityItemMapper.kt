@@ -15,12 +15,13 @@ import com.twofasapp.data.main.local.model.ItemEntity
 internal class SecurityItemMapper {
 
     fun mapToDomain(
-        items: List<ItemEntity>
+        items: List<ItemEntity>,
     ): List<SecurityItem> {
         return SecurityType.entries.map { securityType ->
             SecurityItem(
                 type = securityType,
-                assignedItemsCount = items.count { item -> item.securityType == securityType.ordinal })
+                assignedItemsCount = items.count { item -> item.securityType == securityType.ordinal },
+            )
         }
     }
 }

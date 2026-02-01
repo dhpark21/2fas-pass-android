@@ -6,7 +6,6 @@
  * See LICENSE file for full terms
  */
 
-
 package com.twofasapp.core.common.domain
 
 data class Tag(

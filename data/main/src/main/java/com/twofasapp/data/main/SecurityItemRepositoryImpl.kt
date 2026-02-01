@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 
 internal class SecurityItemRepositoryImpl(
     private val itemsLocalSource: ItemsLocalSource,
-    private val securityItemMapper: SecurityItemMapper
+    private val securityItemMapper: SecurityItemMapper,
 ) : SecurityItemRepository {
 
     private val selectedSecurityItems = MutableStateFlow<Map<String, SecurityItem?>>(emptyMap())
@@ -40,7 +40,7 @@ internal class SecurityItemRepositoryImpl(
 
     override suspend fun toggleSelectedSecurityItem(
         vaultId: String,
-        securityItem: SecurityItem
+        securityItem: SecurityItem,
     ) {
         selectedSecurityItems.update {
             if (it[vaultId]?.type == securityItem.type) {

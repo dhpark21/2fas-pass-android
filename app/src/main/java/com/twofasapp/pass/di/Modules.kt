@@ -65,7 +65,7 @@ object Modules {
         ItemFormModule(),
         PurchasesModule(),
         QuickSetupModule(),
-        ManageTagModule()
+        ManageTagModule(),
     )
 
     fun provide(): List<Module> =

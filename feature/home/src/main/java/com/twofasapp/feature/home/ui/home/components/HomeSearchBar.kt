@@ -170,17 +170,17 @@ internal fun HomeSearchBar(
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 12.dp)
+            contentPadding = PaddingValues(horizontal = 12.dp),
         ) {
             securityItemFilter(
                 securityItem = selectedSecurityItem,
                 count = filteredItemsCount,
-                onClearClick = onClearSecurityItemFilter
+                onClearClick = onClearSecurityItemFilter,
             )
             tagItemFilter(
                 tag = selectedTag,
                 count = filteredItemsCount,
-                onClearClick = onClearTagFilter
+                onClearClick = onClearTagFilter,
             )
         }
 
@@ -193,7 +193,7 @@ internal fun HomeSearchBar(
 private fun LazyListScope.securityItemFilter(
     securityItem: SecurityItem?,
     count: Int,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
 ) {
     securityItem?.let { securityItem ->
         item {
@@ -202,7 +202,7 @@ private fun LazyListScope.securityItemFilter(
                 icon = securityItem.type.asIcon(),
                 name = securityItem.type.asTitle(),
                 count = count,
-                onClearClick = onClearClick
+                onClearClick = onClearClick,
             )
         }
     }
@@ -211,7 +211,7 @@ private fun LazyListScope.securityItemFilter(
 private fun LazyListScope.tagItemFilter(
     tag: Tag?,
     count: Int,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
 ) {
     tag?.let { tag ->
         item {
@@ -220,7 +220,7 @@ private fun LazyListScope.tagItemFilter(
                 iconTint = tag.iconTint(),
                 name = tag.name,
                 count = count,
-                onClearClick = onClearClick
+                onClearClick = onClearClick,
             )
         }
     }
@@ -232,7 +232,7 @@ private fun FilterItem(
     icon: Painter,
     name: String,
     count: Int,
-    onClearClick: () -> Unit
+    onClearClick: () -> Unit,
 ) {
     val strings = MdtLocale.strings
     Row(
@@ -337,7 +337,7 @@ private fun Previews() {
         HomeSearchBar(
             searchFocused = false,
             selectedTag = Tag.Empty.copy(name = "Work"),
-            selectedSecurityItem = SecurityItem(SecurityType.Tier1, 1)
+            selectedSecurityItem = SecurityItem(SecurityType.Tier1, 1),
         )
     }
 }
