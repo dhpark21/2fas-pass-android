@@ -322,9 +322,15 @@ internal class DeveloperViewModel(
         }
     }
 
-    fun deleteAll() {
+    fun deleteAllItems() {
         launchScoped {
             itemsRepository.permanentlyDeleteAll()
+        }
+    }
+
+    fun deleteAllTags() {
+        launchScoped {
+            tagsRepository.permanentlyDeleteAll()
         }
     }
 

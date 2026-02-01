@@ -26,4 +26,5 @@ interface TagsRepository {
     suspend fun reencryptTags(vaultKeys: VaultKeys)
     suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Tag>)
     suspend fun observeSuggestedTagColor(vaultId: String): Flow<TagColor>
+    suspend fun permanentlyDeleteAll()
 }

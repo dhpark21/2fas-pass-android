@@ -291,6 +291,12 @@ internal class TagsRepositoryImpl(
             }
     }
 
+    override suspend fun permanentlyDeleteAll() {
+        withContext(dispatchers.io) {
+            tagsLocalSource.deleteAll()
+        }
+    }
+
     private fun Tag.hasMissingColor(): Boolean {
         val currentColor = color ?: return true
 

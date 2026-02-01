@@ -33,7 +33,8 @@ internal fun ItemsSection(
     onGenerateItems: (SecurityType) -> Unit = {},
     onGenerateMultipleItems: (Int) -> Unit = {},
     onGenerateTopDomainItems: () -> Unit = {},
-    onDeleteAll: () -> Unit = {},
+    onDeleteAllItems: () -> Unit = {},
+    onDeleteAllTags: () -> Unit = {},
     onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
@@ -116,11 +117,19 @@ internal fun ItemsSection(
         )
 
         OptionEntry(
+            title = "Delete all tags",
+            icon = MdtIcons.DeleteForever,
+            iconTint = MdtTheme.color.error,
+            titleColor = MdtTheme.color.error,
+            onClick = { onDeleteAllTags() },
+        )
+
+        OptionEntry(
             title = "Delete all items",
             icon = MdtIcons.DeleteForever,
             iconTint = MdtTheme.color.error,
             titleColor = MdtTheme.color.error,
-            onClick = { onDeleteAll() },
+            onClick = { onDeleteAllItems() },
         )
 
         OptionEntry(
