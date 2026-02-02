@@ -68,7 +68,7 @@ internal class NordPassImportSpec(
                 RowType.Document,
                 RowType.Identity,
                 is RowType.Unknown,
-                -> {
+                    -> {
                     unknownItems++
                     parsedItems.add(parseSecureNote(row, vaultId))
                 }
@@ -110,7 +110,7 @@ internal class NordPassImportSpec(
                     ),
                 ),
             ),
-            tagName = row.getTagName(),
+            tagNames = listOfNotNull(row.getTagName()),
         )
     }
 
@@ -146,7 +146,7 @@ internal class NordPassImportSpec(
                     ),
                 ),
             ),
-            tagName = row.getTagName(),
+            tagNames = listOfNotNull(row.getTagName()),
         )
     }
 
@@ -183,7 +183,7 @@ internal class NordPassImportSpec(
                     ),
                 ),
             ),
-            tagName = row.getTagName(),
+            tagNames = listOfNotNull(row.getTagName()),
         )
     }
 
@@ -234,7 +234,7 @@ internal class NordPassImportSpec(
                     Column.Url,
                     Column.Username,
                     Column.Zipcode,
-                    -> listOf("${key.value}: $value")
+                        -> listOf("${key.value}: $value")
                 }
             }
             .joinToString(separator = System.lineSeparator())
@@ -270,7 +270,7 @@ internal class NordPassImportSpec(
                 CustomFieldType.Hidden,
                 CustomFieldType.Text,
                 is CustomFieldType.Unknown,
-                -> "$label: $value"
+                    -> "$label: $value"
             }
         }
     }
@@ -285,17 +285,6 @@ internal class NordPassImportSpec(
 
     private fun CsvRow.getTagName(): String? {
         return getColumn(Column.Folder)
-    }
-
-    private data class ParsedItem(
-        val item: Item,
-        val tagName: String?,
-    ) {
-        fun resolve(tags: List<Tag>): Item {
-            return item.copy(
-                tagIds = tags.filter { tag -> tagName == tag.name }.map { it.id },
-            )
-        }
     }
 
     @Serializable

@@ -12,6 +12,7 @@ import android.net.Uri
 import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.R
 import com.twofasapp.core.design.foundation.preview.PreviewTextMedium
@@ -99,6 +100,17 @@ internal abstract class ImportSpec() {
             digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
             digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
             else -> null
+        }
+    }
+
+    protected data class ParsedItem(
+        val item: Item,
+        val tagNames: List<String>,
+    ) {
+        fun resolve(tags: List<Tag>): Item {
+            return item.copy(
+                tagIds = tags.filter { tag -> tagNames.contains(tag.name) }.map { it.id },
+            )
         }
     }
 }
