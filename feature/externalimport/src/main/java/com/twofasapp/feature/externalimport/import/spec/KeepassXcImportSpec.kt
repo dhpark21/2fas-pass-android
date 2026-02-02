@@ -22,7 +22,7 @@ import com.twofasapp.feature.externalimport.import.ImportContent
 
 internal class KeepassXcImportSpec(
     vaultsRepository: VaultsRepository,
-    private val context: Context
+    private val context: Context,
 ) : AbstractKeepassImportSpec(vaultsRepository, context) {
 
     companion object {

@@ -68,7 +68,7 @@ internal class NordPassImportSpec(
                 RowType.Document,
                 RowType.Identity,
                 is RowType.Unknown,
-                    -> {
+                -> {
                     unknownItems++
                     parsedItems.add(parseSecureNote(row, vaultId))
                 }
@@ -234,7 +234,7 @@ internal class NordPassImportSpec(
                     Column.Url,
                     Column.Username,
                     Column.Zipcode,
-                        -> listOf("${key.value}: $value")
+                    -> listOf("${key.value}: $value")
                 }
             }
             .joinToString(separator = System.lineSeparator())
@@ -270,7 +270,7 @@ internal class NordPassImportSpec(
                 CustomFieldType.Hidden,
                 CustomFieldType.Text,
                 is CustomFieldType.Unknown,
-                    -> "$label: $value"
+                -> "$label: $value"
             }
         }
     }
