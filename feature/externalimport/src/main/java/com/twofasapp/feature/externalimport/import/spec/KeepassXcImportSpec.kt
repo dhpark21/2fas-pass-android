@@ -31,6 +31,8 @@ internal class KeepassXcImportSpec(
         private const val CSV_ROW_PASSWORD = "Password"
         private const val CSV_ROW_URL = "Url"
         private const val CSV_ROW_NOTES = "Notes"
+        private const val CSV_ROW_LAST_MODIFIED = "Last Modified"
+        private const val CSV_ROW_CREATED = "Created"
     }
 
     override val type = ImportType.KeePassXC
@@ -63,7 +65,19 @@ internal class KeepassXcImportSpec(
                             url = row.get(CSV_ROW_URL),
                             notes = row.get(CSV_ROW_NOTES),
                         ),
-                    ),
+                    ).run {
+                        parseDate(row.get(CSV_ROW_CREATED) ?: "")?.let { createdAt ->
+                            copy(
+                                createdAt = createdAt
+                            )
+                        } ?: this
+                    }.run {
+                        parseDate(row.get(CSV_ROW_LAST_MODIFIED) ?: "")?.let { updatedAt ->
+                            copy(
+                                updatedAt = updatedAt
+                            )
+                        } ?: this
+                    },
                 )
             }
         }
@@ -73,5 +87,9 @@ internal class KeepassXcImportSpec(
             tags = emptyList(),
             unknownItems = 0,
         )
+    }
+
+    override fun parseXmlDate(date: String): Long? {
+        return parseNetDate(date)
     }
 }

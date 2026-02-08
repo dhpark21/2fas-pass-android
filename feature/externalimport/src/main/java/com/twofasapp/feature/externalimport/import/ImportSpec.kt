@@ -14,8 +14,11 @@ import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.design.R
 import com.twofasapp.core.design.foundation.preview.PreviewTextMedium
+import timber.log.Timber
+import java.time.Instant
 
 internal abstract class ImportSpec() {
     abstract val type: ImportType
@@ -100,6 +103,41 @@ internal abstract class ImportSpec() {
             digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
             digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
             else -> null
+        }
+    }
+
+    protected fun parseDate(date: String): Long? {
+        if (date.isBlank()) {
+            return null
+        }
+        return try {
+            Instant.parse(date).toEpochMilli()
+        } catch (t: Throwable) {
+            Timber.e(t)
+            null
+        }
+    }
+
+    protected fun parseNetDate(date: String): Long? {
+        if (date.isBlank()) {
+            return null
+        }
+        return try {
+            val bytes = date.decodeBase64()
+            val secondsFromYearOne = (bytes[0].toLong() and 0xFF) or
+                    ((bytes[1].toLong() and 0xFF) shl 8) or
+                    ((bytes[2].toLong() and 0xFF) shl 16) or
+                    ((bytes[3].toLong() and 0xFF) shl 24) or
+                    ((bytes[4].toLong() and 0xFF) shl 32) or
+                    ((bytes[5].toLong() and 0xFF) shl 40) or
+                    ((bytes[6].toLong() and 0xFF) shl 48) or
+                    ((bytes[7].toLong() and 0xFF) shl 56)
+            val secondsBetweenYearOneAnd1970 = 62135596800L
+            val secondsFromYear1970 = secondsFromYearOne - secondsBetweenYearOneAnd1970
+            Instant.ofEpochSecond(secondsFromYear1970).toEpochMilli()
+        } catch (t: Throwable) {
+            Timber.e(t)
+            null
         }
     }
 
