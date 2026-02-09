@@ -65,19 +65,9 @@ internal class KeepassXcImportSpec(
                             url = row.get(CSV_ROW_URL),
                             notes = row.get(CSV_ROW_NOTES),
                         ),
-                    ).run {
-                        parseDate(row.get(CSV_ROW_CREATED) ?: "")?.let { createdAt ->
-                            copy(
-                                createdAt = createdAt
-                            )
-                        } ?: this
-                    }.run {
-                        parseDate(row.get(CSV_ROW_LAST_MODIFIED) ?: "")?.let { updatedAt ->
-                            copy(
-                                updatedAt = updatedAt
-                            )
-                        } ?: this
-                    },
+                        createdAt = parseIsoDate(row.get(CSV_ROW_CREATED) ?: ""),
+                        updatedAt = parseIsoDate(row.get(CSV_ROW_LAST_MODIFIED) ?: "")
+                    )
                 )
             }
         }

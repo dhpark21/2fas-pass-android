@@ -76,6 +76,6 @@ internal class KeepassImportSpec(
     }
 
     override fun parseXmlDate(date: String): Long? {
-        return parseDate(date)
+        return parseIsoDate(date)
     }
 }

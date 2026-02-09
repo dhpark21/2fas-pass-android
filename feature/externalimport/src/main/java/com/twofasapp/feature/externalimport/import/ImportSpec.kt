@@ -106,7 +106,16 @@ internal abstract class ImportSpec() {
         }
     }
 
-    protected fun parseDate(date: String): Long? {
+    protected fun parseSecondsFrom1970(seconds: Long): Long? {
+        return try {
+            Instant.ofEpochSecond(seconds).toEpochMilli()
+        } catch (t: Throwable) {
+            Timber.e(t)
+            null
+        }
+    }
+
+    protected fun parseIsoDate(date: String): Long? {
         if (date.isBlank()) {
             return null
         }

@@ -148,6 +148,7 @@ internal class EnpassImportSpec(
         val folders: List<String>? = null,
         @SerialName("created_at") val createdAt: Long? = null,
         @SerialName("updated_at") val updatedAt: Long? = null,
+        @SerialName("field_updated_at") val fieldUpdatedAt: Long? = null,
     )
 
     @Serializable
@@ -231,6 +232,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.Login,
             vaultId = vaultId,
@@ -244,6 +249,8 @@ internal class EnpassImportSpec(
                 iconUriIndex = if (itemUri == null) null else 0,
                 uris = listOfNotNull(itemUri),
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 
@@ -324,7 +331,11 @@ internal class EnpassImportSpec(
 
         val expirationDateString = if (expirationMonth != null && expirationYear != null) {
             val monthPadded = expirationMonth.padStart(2, '0')
-            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
+            val yearSuffix =
+                if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(
+                    2,
+                    '0'
+                )
             "$monthPadded/$yearSuffix"
         } else {
             null
@@ -346,6 +357,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
@@ -360,6 +375,8 @@ internal class EnpassImportSpec(
                 securityCode = securityCode,
                 notes = mergedNotes,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 
@@ -381,6 +398,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )?.let { SecretField.ClearText(it) }
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.SecureNote,
             vaultId = vaultId,
@@ -390,6 +411,8 @@ internal class EnpassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 
@@ -418,6 +441,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )?.let { SecretField.ClearText(it) }
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.SecureNote,
             vaultId = vaultId,
@@ -427,6 +454,8 @@ internal class EnpassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt
         )
     }
 

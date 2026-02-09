@@ -53,12 +53,15 @@ internal class FirefoxImportSpec(
                         vaultId = vaultId,
                         contentType = ItemContentType.Login,
                         content = ItemContent.Login.create(
-                            name = row.get("url")?.removePrefix("http://")?.removePrefix("https://"),
+                            name = row.get("url")?.removePrefix("http://")
+                                ?.removePrefix("https://"),
                             username = row.get("username"),
                             password = row.get("password"),
                             url = row.get("url"),
                             notes = null,
                         ),
+                        createdAt = row.get("timeCreated")?.toLongOrNull(),
+                        updatedAt = row.get("timePasswordChanged")?.toLongOrNull()
                     ),
                 )
             }

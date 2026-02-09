@@ -187,12 +187,9 @@ internal abstract class AbstractKeepassImportSpec(
                 iconUriIndex = if (content.uris.isEmpty()) null else 0,
                 notes = createNotes(notes),
             ),
-        ).run {
-            parseXmlDate(creationTime)?.let { createdAt -> copy(createdAt = createdAt) } ?: this
-        }.run {
-            parseXmlDate(lastModificationTime)?.let { updatedAt -> copy(updatedAt = updatedAt) }
-                ?: this
-        }
+            createdAt = parseXmlDate(creationTime),
+            updatedAt = parseXmlDate(lastModificationTime)
+        )
 
         return ParsedItem(
             item = item,
