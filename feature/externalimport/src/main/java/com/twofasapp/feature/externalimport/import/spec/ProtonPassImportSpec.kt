@@ -130,7 +130,7 @@ internal class ProtonPassImportSpec(
 
     private fun ProtonPassItem.parseLoginFromJson(
         vaultId: String,
-        sourceVaultName: String?
+        sourceVaultName: String?,
     ): Item? {
         val itemData = data ?: return null
         val metadata = itemData.metadata ?: return null
@@ -197,7 +197,7 @@ internal class ProtonPassImportSpec(
 
     private fun ProtonPassItem.parseCreditCardFromJson(
         vaultId: String,
-        sourceVaultName: String?
+        sourceVaultName: String?,
     ): Item? {
         if (data == null) return null
 
@@ -244,7 +244,7 @@ internal class ProtonPassImportSpec(
             "verificationNumber",
             "expirationDate",
             "cardType",
-            "pin"
+            "pin",
         )
         val additionalData = content.entries
             .filter { !usedKeys.contains(it.key) }
@@ -287,7 +287,7 @@ internal class ProtonPassImportSpec(
 
     private fun ProtonPassItem.parseSecureNoteFromJson(
         vaultId: String,
-        sourceVaultName: String?
+        sourceVaultName: String?,
     ): Item? {
         val itemData = data ?: return null
         val metadata = itemData.metadata ?: return null
@@ -340,7 +340,7 @@ internal class ProtonPassImportSpec(
 
     private fun ProtonPassItem.parseAsSecureNoteFromJson(
         vaultId: String,
-        sourceVaultName: String?
+        sourceVaultName: String?,
     ): Item? {
         val itemData = data ?: return null
         val metadata = itemData.metadata ?: return null
@@ -544,7 +544,7 @@ internal class ProtonPassImportSpec(
                 notes = notes,
             ),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 
@@ -558,11 +558,12 @@ internal class ProtonPassImportSpec(
         }
 
         val fullText = when {
-            noteContent != null && additionalComponents.isNotEmpty() -> "$noteContent\n\n${
-                additionalComponents.joinToString(
-                    "\n\n"
-                )
-            }"
+            noteContent != null && additionalComponents.isNotEmpty() ->
+                "$noteContent\n\n${
+                    additionalComponents.joinToString(
+                        "\n\n",
+                    )
+                }"
 
             noteContent != null -> noteContent
             additionalComponents.isNotEmpty() -> additionalComponents.joinToString("\n\n")
@@ -587,7 +588,7 @@ internal class ProtonPassImportSpec(
                 additionalInfo = null,
             ),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 

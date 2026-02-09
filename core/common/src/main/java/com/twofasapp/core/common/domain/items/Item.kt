@@ -44,7 +44,7 @@ data class Item(
                 securityType = securityType,
                 tagIds = tagIds,
                 createdAt = createdAt ?: 0,
-                updatedAt = updatedAt ?: 0
+                updatedAt = updatedAt ?: 0,
             )
         }
     }

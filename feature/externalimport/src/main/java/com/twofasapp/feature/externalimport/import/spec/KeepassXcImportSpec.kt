@@ -66,8 +66,8 @@ internal class KeepassXcImportSpec(
                             notes = row.get(CSV_ROW_NOTES),
                         ),
                         createdAt = parseIsoDate(row.get(CSV_ROW_CREATED) ?: ""),
-                        updatedAt = parseIsoDate(row.get(CSV_ROW_LAST_MODIFIED) ?: "")
-                    )
+                        updatedAt = parseIsoDate(row.get(CSV_ROW_LAST_MODIFIED) ?: ""),
+                    ),
                 )
             }
         }

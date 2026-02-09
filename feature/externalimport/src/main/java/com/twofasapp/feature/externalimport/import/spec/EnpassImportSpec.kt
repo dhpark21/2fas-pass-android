@@ -250,7 +250,7 @@ internal class EnpassImportSpec(
                 uris = listOfNotNull(itemUri),
             ),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 
@@ -332,10 +332,14 @@ internal class EnpassImportSpec(
         val expirationDateString = if (expirationMonth != null && expirationYear != null) {
             val monthPadded = expirationMonth.padStart(2, '0')
             val yearSuffix =
-                if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(
-                    2,
-                    '0'
-                )
+                if (expirationYear.length > 2) {
+                    expirationYear.takeLast(2)
+                } else {
+                    expirationYear.padStart(
+                        2,
+                        '0',
+                    )
+                }
             "$monthPadded/$yearSuffix"
         } else {
             null
@@ -376,7 +380,7 @@ internal class EnpassImportSpec(
                 notes = mergedNotes,
             ),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 
@@ -412,7 +416,7 @@ internal class EnpassImportSpec(
                 additionalInfo = null,
             ),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 
@@ -455,7 +459,7 @@ internal class EnpassImportSpec(
                 additionalInfo = null,
             ),
             createdAt = createdAt,
-            updatedAt = updatedAt
+            updatedAt = updatedAt,
         )
     }
 

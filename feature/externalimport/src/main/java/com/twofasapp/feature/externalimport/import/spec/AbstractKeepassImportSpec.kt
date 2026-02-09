@@ -74,19 +74,19 @@ internal abstract class AbstractKeepassImportSpec(
             when (parsingContext.eventType()) {
                 XmlParserEventType.StartTag -> when {
                     parsingContext.currentTag() == XML_TAG_STRING &&
-                            parsingContext.tagFromLast(1) == XML_TAG_ENTRY &&
-                            parsingContext.tagFromLast(2) != XML_TAG_HISTORY -> {
+                        parsingContext.tagFromLast(1) == XML_TAG_ENTRY &&
+                        parsingContext.tagFromLast(2) != XML_TAG_HISTORY -> {
                         var key: String? = null
                         var value: String? = null
                         parsingContext.withTagScope(XML_TAG_STRING) { entryParsingContext ->
                             when (entryParsingContext.eventType()) {
                                 XmlParserEventType.Text -> when {
                                     entryParsingContext.currentTag() == XML_TAG_KEY &&
-                                            entryParsingContext.tagFromLast(1) == XML_TAG_STRING ->
+                                        entryParsingContext.tagFromLast(1) == XML_TAG_STRING ->
                                         key = entryParsingContext.textOrEmpty()
 
                                     entryParsingContext.currentTag() == XML_TAG_VALUE &&
-                                            entryParsingContext.tagFromLast(1) == XML_TAG_STRING ->
+                                        entryParsingContext.tagFromLast(1) == XML_TAG_STRING ->
                                         value = entryParsingContext.textOrEmpty()
                                 }
 
@@ -105,7 +105,7 @@ internal abstract class AbstractKeepassImportSpec(
                 XmlParserEventType.EndTag -> when {
                     parsingContext.currentTag() == XML_TAG_GROUP -> currentTags.removeLastOrNull()
                     parsingContext.currentTag() == XML_TAG_ENTRY &&
-                            parsingContext.tagFromLast(1) != XML_TAG_HISTORY -> {
+                        parsingContext.tagFromLast(1) != XML_TAG_HISTORY -> {
                         items.add(
                             createLoginItem(
                                 vaultId = vaultId,
@@ -113,7 +113,7 @@ internal abstract class AbstractKeepassImportSpec(
                                 content = loginContent,
                                 notes = notes,
                                 creationTime = contentCreationTime,
-                                lastModificationTime = contentLastModificationTime
+                                lastModificationTime = contentLastModificationTime,
                             ),
                         )
                         loginContent = prepareLoginContent()
@@ -126,27 +126,27 @@ internal abstract class AbstractKeepassImportSpec(
 
                 XmlParserEventType.Text -> when {
                     parsingContext.currentTag() == XML_TAG_NAME &&
-                            parsingContext.tagFromLast(1) == XML_TAG_GROUP -> {
+                        parsingContext.tagFromLast(1) == XML_TAG_GROUP -> {
                         currentTags.add(parsingContext.textOrEmpty())
                     }
 
                     parsingContext.currentTag() == XML_TAG_TAGS &&
-                            parsingContext.tagFromLast(1) == XML_TAG_ENTRY &&
-                            parsingContext.tagFromLast(2) != XML_TAG_HISTORY -> {
+                        parsingContext.tagFromLast(1) == XML_TAG_ENTRY &&
+                        parsingContext.tagFromLast(2) != XML_TAG_HISTORY -> {
                         val tagNames = parsingContext.textOrEmpty().split(xmlTagSeparator)
                         contentTags.addAll(tagNames)
                     }
 
                     parsingContext.currentTag() == XML_TAG_LAST_MODIFICATION_TIME &&
-                            parsingContext.tagFromLast(1) == XML_TAG_TIMES &&
-                            parsingContext.tagFromLast(2) == XML_TAG_ENTRY &&
-                            parsingContext.tagFromLast(3) != XML_TAG_HISTORY ->
+                        parsingContext.tagFromLast(1) == XML_TAG_TIMES &&
+                        parsingContext.tagFromLast(2) == XML_TAG_ENTRY &&
+                        parsingContext.tagFromLast(3) != XML_TAG_HISTORY ->
                         contentLastModificationTime = parsingContext.textOrEmpty()
 
                     parsingContext.currentTag() == XML_TAG_CREATION_TIME &&
-                            parsingContext.tagFromLast(1) == XML_TAG_TIMES &&
-                            parsingContext.tagFromLast(2) == XML_TAG_ENTRY &&
-                            parsingContext.tagFromLast(3) != XML_TAG_HISTORY ->
+                        parsingContext.tagFromLast(1) == XML_TAG_TIMES &&
+                        parsingContext.tagFromLast(2) == XML_TAG_ENTRY &&
+                        parsingContext.tagFromLast(3) != XML_TAG_HISTORY ->
                         contentCreationTime = parsingContext.textOrEmpty()
                 }
 
@@ -178,7 +178,7 @@ internal abstract class AbstractKeepassImportSpec(
         content: ItemContent.Login,
         notes: List<Pair<String, String>>,
         creationTime: String,
-        lastModificationTime: String
+        lastModificationTime: String,
     ): ParsedItem {
         val item = Item.create(
             vaultId = vaultId,
@@ -188,7 +188,7 @@ internal abstract class AbstractKeepassImportSpec(
                 notes = createNotes(notes),
             ),
             createdAt = parseXmlDate(creationTime),
-            updatedAt = parseXmlDate(lastModificationTime)
+            updatedAt = parseXmlDate(lastModificationTime),
         )
 
         return ParsedItem(

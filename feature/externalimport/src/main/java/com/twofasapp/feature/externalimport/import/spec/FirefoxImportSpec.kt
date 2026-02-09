@@ -61,7 +61,7 @@ internal class FirefoxImportSpec(
                             notes = null,
                         ),
                         createdAt = row.get("timeCreated")?.toLongOrNull(),
-                        updatedAt = row.get("timePasswordChanged")?.toLongOrNull()
+                        updatedAt = row.get("timePasswordChanged")?.toLongOrNull(),
                     ),
                 )
             }
