@@ -146,7 +146,7 @@ internal class EnpassImportSpec(
         val category: String? = null,
         @SerialName("category_name") val categoryName: String? = null,
         val folders: List<String>? = null,
-        @SerialName("created_at") val createdAt: Long? = null,
+        @SerialName("createdAt") val createdAt: Long? = null,
         @SerialName("updated_at") val updatedAt: Long? = null,
         @SerialName("field_updated_at") val fieldUpdatedAt: Long? = null,
     )
