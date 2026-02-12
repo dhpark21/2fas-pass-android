@@ -36,7 +36,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object DecryptionKitGenerator {
-    private const val templateFilename = "vault-decryption-kit-template.pdf"
 
     private val wordPaint = Paint().apply {
         color = Color.BLACK
@@ -47,7 +46,9 @@ object DecryptionKitGenerator {
     }
 
     fun generateFilename(): String {
-        return "2FAS_Pass_DecryptionKit_${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))}.pdf"
+        return "2FAS_Pass_DecryptionKit_${
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+        }.pdf"
     }
 
     suspend fun generate(
@@ -75,47 +76,48 @@ object DecryptionKitGenerator {
         includeMasterKey: Boolean,
     ) {
         withContext(Dispatchers.IO) {
-            context.assets.open(templateFilename).use { inputStream ->
-                PDDocument.load(inputStream).use { document ->
-                    val page = document.getPage(0)
+            context.resources.openRawResource(com.twofasapp.feature.decryptionkit.R.raw.vault_decryption_kit_template)
+                .use { inputStream ->
+                    PDDocument.load(inputStream).use { document ->
+                        val page = document.getPage(0)
 
-                    val contentStream = PDPageContentStream(
-                        document,
-                        page,
-                        PDPageContentStream.AppendMode.APPEND,
-                        true,
-                        true,
-                    )
+                        val contentStream = PDPageContentStream(
+                            document,
+                            page,
+                            PDPageContentStream.AppendMode.APPEND,
+                            true,
+                            true,
+                        )
 
-                    val fontStream = context.assets.open("fonts/Helvetica.ttf")
-                    val font = PDType0Font.load(document, fontStream)
+                        val fontStream = context.assets.open("fonts/Helvetica.ttf")
+                        val font = PDType0Font.load(document, fontStream)
 
-                    renderDate(
-                        contentStream = contentStream,
-                        font = font,
-                    )
+                        renderDate(
+                            contentStream = contentStream,
+                            font = font,
+                        )
 
-                    renderWords(
-                        document = document,
-                        contentStream = contentStream,
-                        words = kit.words,
-                    )
+                        renderWords(
+                            document = document,
+                            contentStream = contentStream,
+                            words = kit.words,
+                        )
 
-                    renderQrCode(
-                        document = document,
-                        context = context,
-                        contentStream = contentStream,
-                        font = font,
-                        content = kit.generateQrCodeContent(includeMasterKey),
-                    )
+                        renderQrCode(
+                            document = document,
+                            context = context,
+                            contentStream = contentStream,
+                            font = font,
+                            content = kit.generateQrCodeContent(includeMasterKey),
+                        )
 
-                    contentStream.close()
+                        contentStream.close()
 
-                    document.save(outputStream)
+                        document.save(outputStream)
 
-                    document.close()
+                        document.close()
+                    }
                 }
-            }
         }
     }
 
@@ -126,7 +128,9 @@ object DecryptionKitGenerator {
         val x = 580f
         val y = 1020f
 
-        val formattedDateTime = "Created on ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}"
+        val formattedDateTime = "Created on ${
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        }"
 
         contentStream.beginText()
         contentStream.setFont(font, 12f)
@@ -186,8 +190,12 @@ object DecryptionKitGenerator {
             }
         }
 
-        val logoBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.brand_logo_border)
-        val logoScaled = logoBitmap.scale(logoSize, ((logoSize * logoBitmap.height) / logoBitmap.width.toFloat()).toInt())
+        val logoBitmap =
+            BitmapFactory.decodeResource(context.resources, R.drawable.brand_logo_border)
+        val logoScaled = logoBitmap.scale(
+            logoSize,
+            ((logoSize * logoBitmap.height) / logoBitmap.width.toFloat()).toInt()
+        )
 
         val qrImage = LosslessFactory.createFromImage(document, qrBitmap)
         val logoImage = LosslessFactory.createFromImage(document, logoScaled)
