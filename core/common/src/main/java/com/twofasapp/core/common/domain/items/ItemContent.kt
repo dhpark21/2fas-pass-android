@@ -121,7 +121,8 @@ sealed interface ItemContent {
             get() {
                 if (cardNumberMask == null) return ""
 
-                val expectedLength = cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
+                val expectedLength =
+                    cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
                 val dotsCount = maxOf(0, expectedLength - 4)
                 val dots = "•".repeat(dotsCount)
                 val fullMasked = dots + cardNumberMask
@@ -166,4 +167,13 @@ sealed interface ItemContent {
             )
         }
     }
+
+    data class Wifi(
+        override val name: String,
+        val network: String?,
+        val password: SecretField?,
+        val type: String?,
+        val hiddenNetwork: Boolean,
+        val notes: String?,
+    ) : ItemContent
 }

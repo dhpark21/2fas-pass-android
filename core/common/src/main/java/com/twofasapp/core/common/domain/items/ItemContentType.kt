@@ -34,6 +34,12 @@ sealed interface ItemContentType {
         override val fillable: Boolean = false
     }
 
+    object Wifi : ItemContentType {
+        override val key: String = "wifi"
+        override val version: Int = 1
+        override val fillable: Boolean = false
+    }
+
     data class Unknown(
         override val key: String,
         override val version: Int = 1,
