@@ -160,7 +160,7 @@ internal class SecurityRepositoryImpl(
         return local.masterKeyBiometricsEncrypted.asFlow().map { it?.let { EncryptedBytes(it.decodeBase64()) } }
     }
 
-    private suspend fun tryDecryptEncryptionReference(key: MasterKey) {
+    override suspend fun tryDecryptEncryptionReference(key: MasterKey) {
         decrypt(
             key = key.hashHex.decodeHex(),
             data = local.encryptionReference.get()?.decodeBase64() ?: byteArrayOf(),

@@ -8,19 +8,18 @@
 
 package com.twofasapp.feature.lock.ui.composables
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +27,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.twofasapp.core.android.ktx.keyboardOffsetWithoutNavigationAsState
+import com.twofasapp.core.android.ktx.toDp
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
@@ -40,6 +44,7 @@ import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.headers.ScreenHeader
 import com.twofasapp.core.design.foundation.button.Button
+import com.twofasapp.core.design.foundation.button.ButtonStyle
 import com.twofasapp.core.design.foundation.other.Space
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.theme.ScreenPadding
@@ -55,7 +60,7 @@ fun AuthenticationForm(
     icon: Painter = MdtIcons.Encrypted,
     loading: Boolean = false,
     enabled: Boolean = true,
-    biometricsEnabled: Boolean = false,
+    biometricsEnabled: Boolean? = null,
     masterKeyEncryptedWithBiometrics: EncryptedBytes? = null,
     passwordError: String? = null,
     showBiometricsOnStart: Boolean = true,
@@ -63,6 +68,7 @@ fun AuthenticationForm(
     onUnlockClick: (String) -> Unit = {},
     onMasterKeyDecrypted: (ByteArray) -> Unit = {},
     onBiometricsInvalidated: () -> Unit = {},
+    onForgotPasswordClick: () -> Unit = {},
     appBuild: AppBuild = koinInject(),
 ) {
     val strings = MdtLocale.strings
@@ -77,6 +83,19 @@ fun AuthenticationForm(
     }
     var biometricsInvalidated by remember { mutableStateOf(false) }
     val ctaEnabled by remember { derivedStateOf { password.isNotEmpty() } }
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val ctaOffset by keyboardOffsetWithoutNavigationAsState()
+
+    if (biometricsEnabled == null) {
+        return
+    }
+
+    LaunchedEffect(Unit) {
+        if (biometricsEnabled.not() || showBiometricsOnStart.not()) {
+            focusRequester.requestFocus()
+        }
+    }
 
     Column(
         modifier = modifier
@@ -101,12 +120,17 @@ fun AuthenticationForm(
             Space(32.dp)
 
             MasterPasswordField(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
                 password = password,
                 error = passwordError,
                 enabled = loading.not() && enabled,
                 onPasswordChange = { password = it },
-                onDone = { onUnlockClick(password) },
+                onDone = {
+                    focusManager.clearFocus(true)
+                    onUnlockClick(password)
+                },
             )
 
             Space(16.dp)
@@ -139,24 +163,40 @@ fun AuthenticationForm(
             Space(1f)
         }
 
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(containerColor)
-                .imePadding()
-                .padding(top = 8.dp)
-                .animateContentSize(),
-            contentAlignment = Alignment.Center,
+                .offset(y = (-ctaOffset.toDp() + 16.dp + 40.dp).coerceAtMost(0.dp)),
         ) {
+            Space(8.dp)
+
             Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                modifier = Modifier.fillMaxWidth(),
                 text = cta,
                 enabled = ctaEnabled && enabled,
                 loading = loading,
-                onClick = { onUnlockClick(password) },
+                onClick = {
+                    focusManager.clearFocus(true)
+                    onUnlockClick(password)
+                },
             )
+
+            Space(16.dp)
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                style = ButtonStyle.Text,
+                text = strings.lockScreenForgotPasswordCta,
+                enabled = loading.not() && enabled,
+                loading = false,
+                onClick = {
+                    focusManager.clearFocus(true)
+                    onForgotPasswordClick()
+                },
+            )
+
+            Space(16.dp)
         }
     }
 }

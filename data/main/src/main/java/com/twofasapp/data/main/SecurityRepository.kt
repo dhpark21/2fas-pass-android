@@ -42,4 +42,5 @@ interface SecurityRepository {
     fun observeBiometricsEnabled(): Flow<Boolean>
     fun observeMasterKeyEncryptedWithBiometrics(): Flow<EncryptedBytes?>
     suspend fun resetData()
+    suspend fun tryDecryptEncryptionReference(key: MasterKey)
 }

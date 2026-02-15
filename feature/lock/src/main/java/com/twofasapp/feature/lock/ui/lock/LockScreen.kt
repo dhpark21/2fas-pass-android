@@ -34,6 +34,9 @@ import com.twofasapp.core.android.compose.biometricsState
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.currentActivity
 import com.twofasapp.core.android.ktx.restartApp
+import com.twofasapp.core.android.ktx.toastLong
+import com.twofasapp.core.android.ktx.toastShort
+import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.common.domain.SelectedTheme
 import com.twofasapp.core.design.AppTheme
 import com.twofasapp.core.design.LocalAppTheme
@@ -48,6 +51,7 @@ import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.lock.ui.composables.AuthenticationForm
 import com.twofasapp.feature.lock.ui.composables.BiometricsModal
+import com.twofasapp.feature.lock.ui.forgotpassword.ForgotPasswordModal
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -58,12 +62,14 @@ internal fun LockScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val biometricsState = biometricsState()
     var masterKey by remember { mutableStateOf(byteArrayOf()) }
+    var showForgotPasswordModal by remember { mutableStateOf(false) }
     var showBiometricsModal by remember { mutableStateOf(false) }
     var showBiometricsPromptDialog by remember { mutableStateOf(false) }
     var showBiometricsError by remember { mutableStateOf(false) }
     var biometricsHasBeenPrompted by remember { mutableStateOf(false) }
     var biometricsError by remember { mutableStateOf("") }
     val strings = MdtLocale.strings
+    val context = LocalContext.current
 
     BackHandler {
         activity.finish()
@@ -85,11 +91,14 @@ internal fun LockScreen(
                 Content(
                     uiState = uiState,
                     biometricsHasBeenPrompted = biometricsHasBeenPrompted,
-                    onMasterKeyDecrypted = { viewModel.unlockWithBiometrics(it) },
+                    onMasterKeyDecrypted = { viewModel.unlockWithMasterKey(it) },
                     onBiometricsInvalidated = { viewModel.biometricsInvalidated() },
                     onUnlockClick = {
                         viewModel.unlockWithPassword(it) { key ->
-                            if (uiState.biometricsEnabled.not() && uiState.biometricsPrompted.not() && biometricsState == BiometricsState.Available) {
+                            if ((uiState.biometricsEnabled ?: false).not() &&
+                                uiState.biometricsPrompted.not() &&
+                                biometricsState == BiometricsState.Available
+                            ) {
                                 masterKey = key
                                 biometricsHasBeenPrompted = true
                                 showBiometricsPromptDialog = true
@@ -99,6 +108,7 @@ internal fun LockScreen(
                             }
                         }
                     },
+                    onForgotPasswordClick = { showForgotPasswordModal = true },
                     onCloseClick = { activity.finish() },
                 )
 
@@ -184,6 +194,27 @@ internal fun LockScreen(
                 }
             }
         }
+
+        if (showForgotPasswordModal) {
+            ProvidesViewModelStoreOwner {
+                ForgotPasswordModal(
+                    onDismissRequest = { showForgotPasswordModal = false },
+                    onSuccess = { masterKey ->
+                        viewModel.unlockWithMasterKey(masterKey)
+                        showForgotPasswordModal = false
+                        context.toastShort(strings.forgotPasswordVerificationSuccessTitle)
+                    },
+                    onFailedAttempt = {
+                        viewModel.incrementFailedAttempt(
+                            onLocked = {
+                                showForgotPasswordModal = false
+                                context.toastLong(strings.forgotPasswordErrorAppLockedTitle)
+                            },
+                        )
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -194,6 +225,7 @@ private fun Content(
     onMasterKeyDecrypted: (ByteArray) -> Unit = {},
     onBiometricsInvalidated: () -> Unit = {},
     onUnlockClick: (String) -> Unit = {},
+    onForgotPasswordClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
     val strings = MdtLocale.strings
@@ -226,7 +258,7 @@ private fun Content(
             title = strings.lockScreenUnlockTitle,
             description = strings.lockScreenUnlockDescription,
             cta = strings.lockScreenUnlockCta,
-            biometricsEnabled = uiState.biometricsEnabled && biometricsHasBeenPrompted.not(),
+            biometricsEnabled = uiState.biometricsEnabled?.let { it && biometricsHasBeenPrompted.not() },
             masterKeyEncryptedWithBiometrics = uiState.masterKeyEncryptedWithBiometrics,
             passwordError = uiState.passwordError,
             loading = uiState.loading,
@@ -234,6 +266,7 @@ private fun Content(
             onUnlockClick = onUnlockClick,
             onMasterKeyDecrypted = onMasterKeyDecrypted,
             onBiometricsInvalidated = onBiometricsInvalidated,
+            onForgotPasswordClick = onForgotPasswordClick,
         )
     }
 }

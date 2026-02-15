@@ -25,6 +25,11 @@ dependencies {
 
     implementation(project(":data:settings"))
     implementation(project(":data:main"))
+    implementation(project(":data:security"))
+
+    implementation(project(":feature:importvault"))
+    implementation(project(":feature:permissions"))
+    implementation(project(":feature:qrscan"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

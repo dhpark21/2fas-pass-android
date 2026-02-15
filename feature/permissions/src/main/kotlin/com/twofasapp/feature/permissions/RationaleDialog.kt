@@ -32,6 +32,7 @@ fun RationaleDialog(
         body = text,
         positive = positiveText ?: MdtLocale.strings.settingsTitle,
         negative = negativeText ?: MdtLocale.strings.commonCancel,
+        shouldAutoHideOnLock = false,
         onPositiveClick = {
             if (onPositive != null) {
                 onPositive.invoke()

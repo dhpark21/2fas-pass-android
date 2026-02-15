@@ -8,7 +8,6 @@
 
 package com.twofasapp.feature.itemform.modals.tags
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.common.domain.Tag
@@ -77,7 +76,6 @@ internal class TagsPickerViewModel(
     }
 
     fun addTag(tag: Tag) {
-        Log.d("DUPA", " fun addTag(tag: Tag) {")
         launchScoped {
             tagsRepository.saveTags(tag)
 

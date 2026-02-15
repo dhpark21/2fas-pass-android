@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Tue, 27 Jan 2026 00:35:04 -0800
+ Exported at: Sun, 15 Feb 2026 09:34:00 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -79,8 +79,8 @@
     <string name="decryption_kit_settings_description">Plik zawiera kod QR, który umożliwia odzyskanie dostępu do sejfu 2FAS Pass.</string>
     <string name="decryption_kit_settings_qr_label">Twój kod QR składa się z:</string>
     <string name="decryption_kit_settings_secret_words">Tajnych słów (15-wyrazowej frazy)</string>
-    <string name="decryption_kit_settings_master_key">Hasha hasła głównego</string>
-    <string name="decryption_kit_settings_toggle_title">Dodaj hash hasła głównego,</string>
+    <string name="decryption_kit_settings_master_key">Skrót hasła głównego</string>
+    <string name="decryption_kit_settings_toggle_title">Dodaj skrót hasła głównego,</string>
     <string name="decryption_kit_settings_toggle_msg">aby uniknąć konieczności wprowadzania hasła głównego podczas przywracania mojego sejfu.</string>
     <string name="decryption_kit_settings_cta">Gotowe</string>
     <string name="restore_vault_source_title">Wybierz plik kopii zapasowej</string>
@@ -178,7 +178,7 @@
     <string name="settings_entry_google_drive">Google Drive</string>
     <string name="settings_entry_google_drive_sync">Synchronizacja Google Drive</string>
     <string name="settings_entry_google_drive_sync_description">Automatycznie twórz kopie zapasowe i synchronizuj dane między urządzeniami.</string>
-    <string name="settings_entry_google_drive_sync_explanation">Plik kopii zapasowej jest przechowywany w ukrytym folderze na dysku Google Drive. Dostęp do tego folderu ma wyłącznie aplikacja 2FAS Pass. Plik kopii zapasowej jest szyfrowany hasłem głównym.</string>
+    <string name="settings_entry_google_drive_sync_explanation">Plik kopii zapasowej jest przechowywany w ukrytym folderze na dysku Google Drive, do którego dostęp ma wyłącznie aplikacja 2FAS Pass.\nJest on zaszyfrowany tajnymi słowami i hasłem głównym.</string>
     <string name="settings_entry_sync_info">Status synchronizacji</string>
     <string name="settings_entry_sync_account">Konto</string>
     <string name="settings_entry_sync_last">Ostatnia synchronizacja</string>
@@ -402,7 +402,7 @@
     <string name="connect_setup_push_step_title">Powiadomienia push</string>
     <string name="connect_setup_push_warning_ios__0025_0040">Korzystanie z powiadomień push ułatwia komunikację z rozszerzeniem przeglądarki. Przejdź do **[Ustawień systemowych](%s)**.</string>
     <string name="connect_setup_steps_header">Konfiguracja rozszerzenia przeglądarki 2FAS Pass</string>
-    <string name="decryption_kit_settings_secret_words_ios">**Tajne słowa** (15-wyrazowa fraza),</string>
+    <string name="decryption_kit_settings_secret_words_ios">**Tajnych słów** (15-wyrazowa fraza)</string>
     <string name="known_browsers_header">Zaufane rozszerzenia przeglądarki</string>
     <string name="lock_screen_too_many_attempts_description">Dostęp do 2FAS Pass został tymczasowo zablokowany z powodu nieudanych prób wpisania hasła głównego</string>
     <string name="lock_screen_try_again__0025_0040">Spróbuj ponownie za: %s</string>
@@ -1043,4 +1043,27 @@
     <string name="home_multiselect_tags_title">Tagi</string>
     <string name="home_multiselect_tags_subtitle">Edytuj zaznaczone elementy</string>
     <string name="transfer_instructions_nordpass">Otwórz NordPass na komputerze.\n\nPrzejdź do **Ustawień** i przewiń w dół do sekcji **Import i Eksport**.\n\nWybierz **Eksportuj elementy**, wpisz swoje hasło główne i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
+    <string name="decryption_kit_file_date">Utworzono %s</string>
+    <string name="decryption_kit_file_qr_code_description">Zeskanuj ten kod QR zamiast wpisywać tajne słowa.</string>
+    <string name="decryption_kit_file_qr_code_master_key_description">Zeskanuj ten kod QR zamiast wpisywać tajne słowa i hasło główne.</string>
+    <string name="lock_screen_forgot_master_password_cta">Nie pamiętasz hasła głównego?</string>
+    <string name="forgot_master_password_title">Weryfikacja hasła głównego</string>
+    <string name="forgot_master_password_description">Aby zweryfikować hasło główne, potrzebujesz zestawu deszyfrującego, który zawiera skrót (hash) hasła głównego.</string>
+    <string name="camera_no_permissions_title">Brak dostępu do kamery</string>
+    <string name="camera_no_permissions_subtitle">Włącz dostęp do kamery w ustawieniach, aby zeskanować kod QR.</string>
+    <string name="camera_no_permissions_cta">Ustawienia</string>
+    <string name="forgot_master_password_no_master_key_title">Brakuje skrótu hasła głównego</string>
+    <string name="forgot_master_password_no_master_key_subtitle">Jest on wymagany do zweryfikowania zestawu deszyfrującego</string>
+    <string name="forgot_master_password_error_verification_title">Weryfikacja nieudana</string>
+    <string name="forgot_master_password_error_verification_subtitle">Spróbuj ponownie, używając innego zestawu deszyfrującego.</string>
+    <string name="forgot_master_password_verification_success_title">Weryfikacja udana</string>
+    <string name="camera_qr_code_unsupported_code">Nieznany kod QR</string>
+    <string name="forgot_master_password_error_app_locked_title">Weryfikacja zablokowana</string>
+    <string name="forgot_master_password_error_app_locked_subtitle">Dostęp został tymczasowo zablokowany z powodu nieudanych prób weryfikacji hasła głównego.</string>
+    <string name="security_tiers_help_local_first_section_figure_high">High</string>
+    <string name="security_tiers_help_local_first_section_figure_medium">Medium</string>
+    <string name="security_tiers_help_local_first_section_figure_low">Low</string>
+    <string name="security_tiers_help_local_first_section_figure_high_description">2FAS Pass with Security Tiers and Multi-layer Encryption</string>
+    <string name="security_tiers_help_local_first_section_figure_medium_description">Centralized Server Password Manager Solutions</string>
+    <string name="security_tiers_help_local_first_section_figure_low_description">Non-encrypted note applications</string>
 </resources>

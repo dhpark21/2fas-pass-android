@@ -922,6 +922,7 @@ class Strings(private val c: Context) {
     val lockScreenEnterMasterPassword = c.getString(R.string.lock_screen_enter_master_password)
     val lockScreenResetApp = c.getString(R.string.lock_screen_reset_app)
     val lockScreenResetAppTitle = c.getString(R.string.lock_screen_reset_app_title)
+    val lockScreenForgotPasswordCta = c.getString(R.string.lock_screen_forgot_master_password_cta)
     val lockScreenBiometricsPromptFaceidTitle =
         c.getString(R.string.lock_screen_biometrics_prompt_faceid_title)
     val lockScreenBiometricsPromptTouchidTitle =
@@ -932,6 +933,15 @@ class Strings(private val c: Context) {
         c.getString(R.string.lock_screen_biometrics_prompt_cancel)
     val biometryReason = c.getString(R.string.biometry_reason)
     val iosLockScreenUnlockTitle = c.getString(R.string.ios_lock_screen_unlock_title)
+
+    val forgotPasswordTitle = c.getString(R.string.forgot_master_password_title)
+    val forgotPasswordDescription = c.getString(R.string.forgot_master_password_description)
+    val forgotPasswordNoMasterKeyTitle = c.getString(R.string.forgot_master_password_no_master_key_title)
+    val forgotPasswordNoMasterKeySubtitle = c.getString(R.string.forgot_master_password_no_master_key_subtitle)
+    val forgotPasswordErrorVerificationTitle = c.getString(R.string.forgot_master_password_error_verification_title)
+    val forgotPasswordErrorVerificationSubtitle = c.getString(R.string.forgot_master_password_error_verification_subtitle)
+    val forgotPasswordVerificationSuccessTitle = c.getString(R.string.forgot_master_password_verification_success_title)
+    val forgotPasswordErrorAppLockedTitle = c.getString(R.string.forgot_master_password_error_app_locked_title)
 
     val loginDeleteConfirmTitle = c.getString(R.string.login_delete_confirm_title)
     val loginDeleteConfirmBody = c.getString(R.string.login_delete_confirm_body)

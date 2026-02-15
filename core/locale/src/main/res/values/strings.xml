@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 27 Jan 2026 00:35:04 -0800
+ Exported at: Sun, 15 Feb 2026 09:34:00 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -21,8 +21,8 @@
     <string name="common_continue">Continue</string>
     <string name="common_other">Other</string>
     <string name="common_try_again">Try again</string>
-    <string name="permission_camera_title">Camera Permission</string>
-    <string name="permission_camera_msg">Camera permission is required to scan QR Codes. To use this feature, go to Application Permissions and allow the app to access the camera.</string>
+    <string name="permission_camera_title">Camera access</string>
+    <string name="permission_camera_msg">Camera access is required to scan QR Codes. To use this feature, go to Application Permissions and allow the app to access the camera.</string>
     <string name="permission_notifications_title">Push Notifications</string>
     <string name="permission_notifications_msg">The app requires access to Push Notifications to access the browser extension functionality. You can change this setting at any time in System Settings.</string>
     <string name="onboarding_welcome1_title">Local-first Password Manager</string>
@@ -67,7 +67,7 @@
     <string name="decryption_kit_step2">Print it and keep it safe</string>
     <string name="decryption_kit_cta">Save PDF file</string>
     <string name="decryption_kit_notice_title">I understand that</string>
-    <string name="decryption_kit_notice_msg">If I lose this file, I will lose access to all of my 2FAS Pass data.</string>
+    <string name="decryption_kit_notice_msg">If I lose this file, I will lose access to all my 2FAS Pass data.</string>
     <string name="decryption_kit_confirm_title">Decryption Kit saved?</string>
     <string name="decryption_kit_confirm_description">Just double-checking: Have you securely saved your decryption kit? It\'s your lifeline to your Vault if you ever need to recover it.</string>
     <string name="decryption_kit_save_modal_title">Save Decryption Kit</string>
@@ -178,7 +178,7 @@
     <string name="settings_entry_google_drive">Google Drive</string>
     <string name="settings_entry_google_drive_sync">Google Drive sync</string>
     <string name="settings_entry_google_drive_sync_description">Automatically back up and sync your data across devices.</string>
-    <string name="settings_entry_google_drive_sync_explanation">Backup file is stored in a hidden folder on your Google Drive. This folder is only accessible by the 2FAS Pass app. Backup file is encrypted with your Master Password.</string>
+    <string name="settings_entry_google_drive_sync_explanation">The backup file is stored in a hidden folder on your Google Drive, accessible only by the 2FAS Pass app. \nIt is encrypted with your Secret Words and Master Password.</string>
     <string name="settings_entry_sync_info">Sync Info</string>
     <string name="settings_entry_sync_account">Account</string>
     <string name="settings_entry_sync_last">Last synchronization</string>
@@ -402,9 +402,9 @@
     <string name="connect_setup_push_step_title">Push notifications</string>
     <string name="connect_setup_push_warning_ios__0025_0040">Using push notifications makes communicating with the browser extension much more convenient. Go to **[System Settings](%s)**.</string>
     <string name="connect_setup_steps_header">2FAS Pass Browser Extension setup</string>
-    <string name="decryption_kit_settings_secret_words_ios">**Secret Words** (15-word phrase),</string>
+    <string name="decryption_kit_settings_secret_words_ios">**Secret Words** (15-word phrase)</string>
     <string name="known_browsers_header">Trusted Browser Extensions</string>
-    <string name="lock_screen_too_many_attempts_description">2FAS Pass access temporarily blocked due to failed master password attempts</string>
+    <string name="lock_screen_too_many_attempts_description">2FAS Pass access temporarily blocked due to failed Master Password attempts</string>
     <string name="lock_screen_try_again__0025_0040">Try again in: %s</string>
     <string name="lock_screen_unlock_biometrics_error">Error while unlocking using Biometry</string>
     <string name="lock_screen_unlock_biometrics_reason">Unlocking using Biometry</string>
@@ -549,7 +549,7 @@
     <string name="backup_export_failed_title">Export failed</string>
     <string name="backup_export_failed_description">2FAS Pass couldn’t export your Items. Please try again.</string>
     <string name="backup_export_success_title">Exported successfully</string>
-    <string name="backup_export_success_description">Your 2FAS Pass Items have been successfully exported to file.</string>
+    <string name="backup_export_success_description">Your 2FAS Pass Items have been successfully exported to a file.</string>
     <string name="backup_export_save_title">Export Items</string>
     <string name="backup_export_save_subtitle">Export your 2FAS Pass Items</string>
     <string name="backup_export_save_cta">Export</string>
@@ -571,7 +571,7 @@
     <string name="transfer_file_summary_logins_counter_description">Logins detected</string>
     <string name="transfer_importing_file_text">Importing...</string>
     <string name="transfer_importing_success_title">Imported successfully</string>
-    <string name="transfer_importing_success_description">Your 2FAS Pass Items have been successfully imported to Vault.</string>
+    <string name="transfer_importing_success_description">Your 2FAS Pass Items have been successfully imported to the Vault.</string>
     <string name="transfer_importing_failure_title">Import failed</string>
     <string name="transfer_importing_failure_description">2FAS Pass couldn’t import your Items. Please try again.</string>
     <string name="transfer_instructions_cta_csv">Upload CSV file</string>
@@ -1039,4 +1039,27 @@
     <string name="home_multiselect_tags_title">Tags</string>
     <string name="home_multiselect_tags_subtitle">Edit selected Items</string>
     <string name="transfer_instructions_nordpass">Open NordPass on your PC.\n\nGo to **Settings** and find the **Import and Export** section.\n\nSelect **Export items**, enter your master password and confirm the export.\n\nCopy the exported file to this device and tap **Upload CSV file** below.</string>
+    <string name="decryption_kit_file_date">Created on %s</string>
+    <string name="decryption_kit_file_qr_code_description">Scan this QR code instead of retyping your Secret Words.</string>
+    <string name="decryption_kit_file_qr_code_master_key_description">Scan this QR code instead of retyping your Secret Words and Master Password.</string>
+    <string name="lock_screen_forgot_master_password_cta">Forgot your Master Password?</string>
+    <string name="forgot_master_password_title">Master Password verification</string>
+    <string name="forgot_master_password_description">To verify the master password, you need the Decryption Kit that contains the Master Password hash.</string>
+    <string name="camera_no_permissions_title">No camera access</string>
+    <string name="camera_no_permissions_subtitle">Enable camera access in settings to scan the QR code.</string>
+    <string name="camera_no_permissions_cta">Settings</string>
+    <string name="forgot_master_password_no_master_key_title">Master Password hash is missing</string>
+    <string name="forgot_master_password_no_master_key_subtitle">It is required to verify the Decryption Kit</string>
+    <string name="forgot_master_password_error_verification_title">Verification failed</string>
+    <string name="forgot_master_password_error_verification_subtitle">Please try again with another Decryption Kit.</string>
+    <string name="forgot_master_password_verification_success_title">Verification successful</string>
+    <string name="camera_qr_code_unsupported_code">Unknown QR code</string>
+    <string name="forgot_master_password_error_app_locked_title">Verification blocked</string>
+    <string name="forgot_master_password_error_app_locked_subtitle">Access temporarily blocked due to failed attempts to verify the master password.</string>
+    <string name="security_tiers_help_local_first_section_figure_high">High</string>
+    <string name="security_tiers_help_local_first_section_figure_medium">Medium</string>
+    <string name="security_tiers_help_local_first_section_figure_low">Low</string>
+    <string name="security_tiers_help_local_first_section_figure_high_description">2FAS Pass with Security Tiers and Multi-layer Encryption</string>
+    <string name="security_tiers_help_local_first_section_figure_medium_description">Centralized Server Password Manager Solutions</string>
+    <string name="security_tiers_help_local_first_section_figure_low_description">Non-encrypted note applications</string>
 </resources>

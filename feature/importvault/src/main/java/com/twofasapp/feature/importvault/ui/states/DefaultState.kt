@@ -37,6 +37,9 @@ import com.twofasapp.core.locale.MdtLocale
 
 @Composable
 fun DefaultState(
+    supportedSources: List<DecryptionKitSource> = DecryptionKitSource.entries,
+    title: String = MdtLocale.strings.restoreDecryptVaultTitle,
+    description: String = MdtLocale.strings.restoreDecryptVaultDescription,
     onDecryptionFileLoaded: (Uri) -> Unit = {},
     onScanQrClick: () -> Unit = {},
     onEnterSeedClick: () -> Unit = {},
@@ -50,15 +53,15 @@ fun DefaultState(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ScreenHeader(
-            title = MdtLocale.strings.restoreDecryptVaultTitle,
-            description = MdtLocale.strings.restoreDecryptVaultDescription,
+            title = title,
+            description = description,
             icon = MdtIcons.Lock,
             iconTint = MdtTheme.color.primary,
         )
 
         Space(32.dp)
 
-        DecryptionKitSource.entries.forEach { item ->
+        supportedSources.forEach { item ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
