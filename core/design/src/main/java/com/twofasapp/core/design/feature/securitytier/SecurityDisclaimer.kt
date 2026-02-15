@@ -153,21 +153,21 @@ private fun SecurityDisclaimerModal(
                 SectionContent(
                     title = MdtLocale.strings.securityTiersHelpTiersSecretTitle,
                     subtitle = MdtLocale.strings.securityTiersHelpTiersSecretSubtitle,
-                    image = com.twofasapp.core.design.R.drawable.security_disclaimer_secret
+                    image = com.twofasapp.core.design.R.drawable.security_disclaimer_secret,
                 )
             }
             item {
                 SectionContent(
                     title = MdtLocale.strings.securityTiersHelpTiersHighlySecretTitle,
                     subtitle = MdtLocale.strings.securityTiersHelpTiersHighlySecretSubtitle,
-                    image = com.twofasapp.core.design.R.drawable.security_disclaimer_highly_secret
+                    image = com.twofasapp.core.design.R.drawable.security_disclaimer_highly_secret,
                 )
             }
             item {
                 SectionContent(
                     title = MdtLocale.strings.securityTiersHelpTiersTopSecretTitle,
                     subtitle = MdtLocale.strings.securityTiersHelpTiersTopSecretSubtitle,
-                    image = com.twofasapp.core.design.R.drawable.security_disclaimer_top_secret
+                    image = com.twofasapp.core.design.R.drawable.security_disclaimer_top_secret,
                 )
             }
             item {
@@ -219,7 +219,7 @@ private fun TiersContent() {
         SecurityType.entries.forEachIndexed { index, securityType ->
             Tier(
                 modifier = Modifier.padding(top = if (index == 0) 0.dp else 10.dp),
-                selectedSecurityType = securityType
+                selectedSecurityType = securityType,
             )
         }
     }
@@ -239,11 +239,11 @@ private fun Tier(selectedSecurityType: SecurityType, modifier: Modifier = Modifi
                 .offset(
                     x = if (bubbleOffset != 0.dp && bubbleWidth != 0.dp) {
                         (bubbleOffset - 32.dp - bubbleWidth / 2 - 3.dp).coerceAtMost(
-                            window.containerDpSize.width - 64.dp - bubbleWidth
+                            window.containerDpSize.width - 64.dp - bubbleWidth,
                         )
                     } else {
                         0.dp
-                    }
+                    },
                 )
                 .clip(RoundedShape8)
                 .background(MdtTheme.color.surfaceContainer)
@@ -252,16 +252,16 @@ private fun Tier(selectedSecurityType: SecurityType, modifier: Modifier = Modifi
                     bubbleWidth = with(density) { coordinates.size.width.toDp() }
                 },
             text = when (selectedSecurityType) {
-                SecurityType.Tier1 -> "High"
-                SecurityType.Tier2 -> "Medium"
-                SecurityType.Tier3 -> "Low"
+                SecurityType.Tier1 -> MdtLocale.strings.securityTiersHelpLocalFirstSectionFigureHigh
+                SecurityType.Tier2 -> MdtLocale.strings.securityTiersHelpLocalFirstSectionFigureMedium
+                SecurityType.Tier3 -> MdtLocale.strings.securityTiersHelpLocalFirstSectionFigureLow
             },
             style = MdtTheme.typo.bodyMedium.copy(fontSize = 7.sp),
             color = MdtTheme.color.onSurfaceVariant,
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             SecurityType.entries.reversed().forEach { securityType ->
                 TierSegment(
@@ -270,16 +270,16 @@ private fun Tier(selectedSecurityType: SecurityType, modifier: Modifier = Modifi
                     selectedSecurityType = selectedSecurityType,
                     onBubbleArrowPositioned = { offset ->
                         bubbleOffset = with(density) { offset.x.toDp() }
-                    }
+                    },
                 )
             }
         }
         Text(
             modifier = Modifier.padding(top = 4.dp),
             text = when (selectedSecurityType) {
-                SecurityType.Tier1 -> "2FAS Pass with Security Tiers and Multi-layer Encryption"
-                SecurityType.Tier2 -> "Centralized Server Password Manager Solutions"
-                SecurityType.Tier3 -> "Non-encrypted note applications"
+                SecurityType.Tier1 -> MdtLocale.strings.securityTiersHelpLocalFirstSectionFigureHighDescription
+                SecurityType.Tier2 -> MdtLocale.strings.securityTiersHelpLocalFirstSectionFigureMediumDescription
+                SecurityType.Tier3 -> MdtLocale.strings.securityTiersHelpLocalFirstSectionFigureLowDescription
             },
             style = MdtTheme.typo.bodySmall,
             color = MdtTheme.color.onSurface,
@@ -292,11 +292,11 @@ private fun TierSegment(
     modifier: Modifier = Modifier,
     securityType: SecurityType,
     selectedSecurityType: SecurityType,
-    onBubbleArrowPositioned: (Offset) -> Unit
+    onBubbleArrowPositioned: (Offset) -> Unit,
 ) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.BottomCenter
+        contentAlignment = Alignment.BottomCenter,
     ) {
         Box(
             modifier = Modifier
@@ -304,13 +304,13 @@ private fun TierSegment(
                 .fillMaxWidth()
                 .height(6.dp)
                 .clip(RoundedShape40)
-                .background(color = if (selectedSecurityType <= securityType) securityType.color() else MdtTheme.color.surfaceContainer)
+                .background(color = if (selectedSecurityType <= securityType) securityType.color() else MdtTheme.color.surfaceContainer),
         )
         if (securityType == selectedSecurityType) {
             Column(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(1.dp)
+                verticalArrangement = Arrangement.spacedBy(1.dp),
             ) {
                 Box(
                     modifier = Modifier
@@ -319,7 +319,7 @@ private fun TierSegment(
                         .background(MdtTheme.color.surfaceContainer)
                         .onGloballyPositioned { coordinates ->
                             onBubbleArrowPositioned(coordinates.positionOnScreen())
-                        }
+                        },
                 )
                 Box(
                     modifier = Modifier
@@ -328,7 +328,7 @@ private fun TierSegment(
                             shadow = Shadow(
                                 radius = 4.dp,
                                 color = securityType.color(),
-                                spread = 0.dp
+                                spread = 0.dp,
                             ),
                         )
                         .size(10.dp)
@@ -336,7 +336,7 @@ private fun TierSegment(
                         .background(MdtTheme.color.onSurface)
                         .padding(2.dp)
                         .clip(CircleShape)
-                        .background(securityType.color())
+                        .background(securityType.color()),
                 )
             }
         } else {
@@ -381,13 +381,13 @@ private fun SectionContent(title: String, subtitle: String, @DrawableRes image: 
 }
 
 private class RoundedBottomTriangleShape(
-    private val bottomRadius: Float = 99f
+    private val bottomRadius: Float = 99f,
 ) : Shape {
 
     override fun createOutline(
         size: Size,
         layoutDirection: LayoutDirection,
-        density: Density
+        density: Density,
     ): Outline {
         val path = Path().apply {
             val width = size.width
@@ -413,7 +413,7 @@ private class RoundedBottomTriangleShape(
                 x1 = halfWidth,
                 y1 = height,
                 x2 = endCurveX,
-                y2 = endCurveY
+                y2 = endCurveY,
             )
 
             close()

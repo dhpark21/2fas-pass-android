@@ -194,7 +194,7 @@ object DecryptionKitGenerator {
             BitmapFactory.decodeResource(context.resources, R.drawable.brand_logo_border)
         val logoScaled = logoBitmap.scale(
             logoSize,
-            ((logoSize * logoBitmap.height) / logoBitmap.width.toFloat()).toInt()
+            ((logoSize * logoBitmap.height) / logoBitmap.width.toFloat()).toInt(),
         )
 
         val qrImage = LosslessFactory.createFromImage(document, qrBitmap)

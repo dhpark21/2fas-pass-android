@@ -55,7 +55,7 @@ object SwitchDefaults {
 
     @Composable
     fun colors(
-        checkedIconColor: Color = MdtTheme.color.onTertiaryContainer
+        checkedIconColor: Color = MdtTheme.color.onTertiaryContainer,
     ): SwitchColors {
         return androidx.compose.material3.SwitchDefaults.colors(
             checkedIconColor = checkedIconColor,
