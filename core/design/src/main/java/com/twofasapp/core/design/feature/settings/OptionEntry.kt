@@ -38,10 +38,11 @@ import com.twofasapp.core.design.foundation.preview.PreviewText
 import com.twofasapp.core.design.foundation.preview.PreviewTextLong
 import com.twofasapp.core.design.foundation.preview.PreviewTextMedium
 
+val OptionEntryPaddingHorizontal = 16.dp
 val OptionEntryPadding = PaddingValues(
-    start = 16.dp,
+    start = OptionEntryPaddingHorizontal,
     top = 14.dp,
-    end = 16.dp,
+    end = OptionEntryPaddingHorizontal,
     bottom = 14.dp,
 )
 

@@ -22,5 +22,6 @@ internal object DimenTokens {
     val radius_lg = 16.dp
     val radius_xl = 24.dp
     val radius_xl2 = 32.dp
+    val radius_xl3 = 40.dp
     val radius_rounded = 9999.dp
 }
