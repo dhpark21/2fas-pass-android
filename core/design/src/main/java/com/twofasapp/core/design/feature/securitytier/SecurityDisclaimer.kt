@@ -275,6 +275,7 @@ private fun Tier(selectedSecurityType: SecurityType, modifier: Modifier = Modifi
             }
         }
         Text(
+            modifier = Modifier.padding(top = 4.dp),
             text = when (selectedSecurityType) {
                 SecurityType.Tier1 -> "2FAS Pass with Security Tiers and Multi-layer Encryption"
                 SecurityType.Tier2 -> "Centralized Server Password Manager Solutions"
