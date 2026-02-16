@@ -95,6 +95,7 @@ object DecryptionKitGenerator {
                         renderDate(
                             contentStream = contentStream,
                             font = font,
+                            context = context
                         )
 
                         renderWords(
@@ -109,6 +110,7 @@ object DecryptionKitGenerator {
                             contentStream = contentStream,
                             font = font,
                             content = kit.generateQrCodeContent(includeMasterKey),
+                            includeMasterKey = includeMasterKey
                         )
 
                         contentStream.close()
@@ -122,15 +124,17 @@ object DecryptionKitGenerator {
     }
 
     private fun renderDate(
+        context: Context,
         contentStream: PDPageContentStream,
         font: PDType0Font,
     ) {
         val x = 580f
         val y = 1020f
 
-        val formattedDateTime = "Created on ${
+        val formattedDateTime = context.getString(
+            com.twofasapp.core.locale.R.string.decryption_kit_file_date,
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        }"
+        )
 
         contentStream.beginText()
         contentStream.setFont(font, 12f)
@@ -169,6 +173,7 @@ object DecryptionKitGenerator {
         contentStream: PDPageContentStream,
         font: PDType0Font,
         content: String,
+        includeMasterKey: Boolean
     ) {
         val qrX = 415f
         val qrY = 330f
@@ -213,9 +218,11 @@ object DecryptionKitGenerator {
         contentStream.beginText()
         contentStream.setFont(font, 13f)
         contentStream.newLineAtOffset(qrX + 48, qrY - 20)
-        contentStream.showText("Scan this QR code instead of retyping your")
-        contentStream.newLineAtOffset(30f, -18f)
-        contentStream.showText("Secret Key and Master Password.")
+        if (includeMasterKey) {
+            contentStream.showText(context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_master_key_description))
+        } else {
+            contentStream.showText(context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_description))
+        }
         contentStream.endText()
     }
 
