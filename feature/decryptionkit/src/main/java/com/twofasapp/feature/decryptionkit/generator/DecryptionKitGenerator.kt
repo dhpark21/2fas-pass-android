@@ -28,6 +28,7 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.font.PDType0Font
 import com.tom_roush.pdfbox.pdmodel.graphics.image.LosslessFactory
+import com.tom_roush.pdfbox.util.Matrix.getTranslateInstance
 import com.twofasapp.core.design.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -215,14 +216,24 @@ object DecryptionKitGenerator {
             logoScaled.height.toFloat(),
         )
 
+
         contentStream.beginText()
-        contentStream.setFont(font, 13f)
-        contentStream.newLineAtOffset(qrX + 48, qrY - 20)
-        if (includeMasterKey) {
-            contentStream.showText(context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_master_key_description))
-        } else {
-            contentStream.showText(context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_description))
-        }
+        val fontSize = 13f
+        val lineHeight = 1.2f * 13
+        contentStream.showText(
+            text = if (includeMasterKey) {
+                context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_master_key_description)
+            } else {
+                context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_description)
+            },
+            center = true,
+            font = font,
+            width = qrSize.toFloat(),
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            x = qrX,
+            y = qrY - lineHeight
+        )
         contentStream.endText()
     }
 
@@ -248,4 +259,58 @@ object DecryptionKitGenerator {
 
         return bitmap
     }
+
+    private fun PDPageContentStream.showText(
+        text: String,
+        center: Boolean,
+        font: PDType0Font,
+        width: Float,
+        x: Float,
+        y: Float,
+        fontSize: Float,
+        lineHeight: Float
+    ) {
+        val lines = mutableListOf<String>()
+
+        text.split("\n").forEach { paragraph ->
+            var current = ""
+
+            paragraph.split(" ").forEach { word ->
+                val test = if (current.isEmpty()) word else "$current $word"
+
+                if (font.textWidth(test, fontSize) > width && current.isNotEmpty()) {
+                    lines.add(current)
+                    current = word
+                } else {
+                    current = test
+                }
+            }
+
+            if (current.isNotEmpty()) lines.add(current)
+        }
+
+        setFont(font, fontSize)
+
+        var currentY = y
+
+        for (line in lines) {
+            val lineWidth = font.textWidth(line, fontSize)
+
+            val drawX = if (center) {
+                x + (width - lineWidth) / 2f
+            } else {
+                x
+            }
+
+            setTextMatrix(
+                getTranslateInstance(drawX, currentY)
+            )
+
+            showText(line)
+            currentY -= lineHeight
+        }
+    }
+
+    private fun PDType0Font.textWidth(str: String, fontSize: Float): Float =
+        getStringWidth(str) / 1000f * fontSize
 }
