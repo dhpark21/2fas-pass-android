@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sun, 15 Feb 2026 12:51:18 -0800
+ Exported at: Mon, 16 Feb 2026 12:39:51 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1062,4 +1062,7 @@
     <string name="security_tiers_help_local_first_section_figure_high_description">2FAS Pass with Security Tiers and Multi-layer Encryption</string>
     <string name="security_tiers_help_local_first_section_figure_medium_description">Centralized Server Password Manager Solutions</string>
     <string name="security_tiers_help_local_first_section_figure_low_description">Non-encrypted note applications</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_title">Android Hardware-Backed Security</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_subtitle">When setting up a new device, you\'ll need a 15-word recovery phrase to restore your SEED. It\'s securely stored in Android Keystore and protected by the TEE or StrongBox - a dedicated, tamper-resistant chip. This ensures your encryption keys never leave your device.</string>
+    <string name="security_tiers_help_tiers_layers_android_e2ee_subtitle">Your data is protected with a unique, randomly generated SEED combined with your Master Password. \nOn your device, the SEED is securely stored by Android Keystore and protected by the Trusted Execution Environment or StrongBox, so you only need your Master Password to access your data.</string>
 </resources>

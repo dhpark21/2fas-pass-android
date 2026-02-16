@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Sun, 15 Feb 2026 12:51:19 -0800
+ Exported at: Mon, 16 Feb 2026 12:39:51 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -609,7 +609,7 @@
     <string name="security_tiers_help_layers_section_title">3. Szyfrowanie wielowarstwowe</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">Szyfrowanie end-to-end (E2EE)</string>
     <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z hasłem głównym.\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
-    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszcą twojego urządzenia.</string>
+    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszczą twojego urządzenia.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Zaawansowana Ochrona Danych Apple</string>
     <string name="security_tiers_help_tiers_layers_adp_subtitle">Gdy włączysz ADP i synchronizację z iCloud, twoje dane są szyfrowane podwójnie, najpierw przy użyciu E2EE, a następnie za pomocą kluczy szyfrujących Apple. Nawet jeśli ktoś uzyska dostęp do twojego iClouda, znajdzie tam jedynie w pełni zaszyfrowane i bezpieczne dane.</string>
@@ -1060,10 +1060,13 @@
     <string name="camera_qr_code_unsupported_code">Nieznany kod QR</string>
     <string name="forgot_master_password_error_app_locked_title">Weryfikacja zablokowana</string>
     <string name="forgot_master_password_error_app_locked_subtitle">Dostęp został tymczasowo zablokowany z powodu nieudanych prób weryfikacji hasła głównego.</string>
-    <string name="security_tiers_help_local_first_section_figure_high">High</string>
-    <string name="security_tiers_help_local_first_section_figure_medium">Medium</string>
-    <string name="security_tiers_help_local_first_section_figure_low">Low</string>
-    <string name="security_tiers_help_local_first_section_figure_high_description">2FAS Pass with Security Tiers and Multi-layer Encryption</string>
-    <string name="security_tiers_help_local_first_section_figure_medium_description">Centralized Server Password Manager Solutions</string>
-    <string name="security_tiers_help_local_first_section_figure_low_description">Non-encrypted note applications</string>
+    <string name="security_tiers_help_local_first_section_figure_high">Wysokie</string>
+    <string name="security_tiers_help_local_first_section_figure_medium">Średnie</string>
+    <string name="security_tiers_help_local_first_section_figure_low">Niskie</string>
+    <string name="security_tiers_help_local_first_section_figure_high_description">2FAS Pass z poziomami bezpieczeństwa i szyfrowaniem wielowarstwowym\u0020</string>
+    <string name="security_tiers_help_local_first_section_figure_medium_description">Scentralizowane, serwerowe rozwiązania do zarządzania hasłami</string>
+    <string name="security_tiers_help_local_first_section_figure_low_description">Nieszyfrowane aplikacje z notatkami</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_title">Sprzętowe zabezpieczenia Androida</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Keystore i zabezpieczony poprzez TEE lub w Strongboxie — dedykowanym, odpornym na manipulacje czipie. Gwarantuje to, że klucze szyfrujące nigdy nie opuszczą twojego urządzenia.</string>
+    <string name="security_tiers_help_tiers_layers_android_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z hasłem głównym.\nSEED jest bezpiecznie przechowywany w Android KeyStore i zabezpieczony poprzez Trusted Execution Environment lub Strongbox, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
 </resources>

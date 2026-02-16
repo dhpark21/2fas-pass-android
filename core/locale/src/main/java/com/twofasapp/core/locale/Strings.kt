@@ -655,6 +655,12 @@ class Strings(private val c: Context) {
         c.getString(R.string.settings_entry_protection_level2_description)
 
     // Security Tiers Help
+    val securityTiersHelpTiersLayersAndroidE2EeSubtitle =
+        c.getString(R.string.security_tiers_help_tiers_layers_android_e2ee_subtitle)
+    val securityTiersHelpTiersLayersAndroidSecureTitle =
+        c.getString(R.string.security_tiers_help_tiers_layers_android_secure_title)
+    val securityTiersHelpTiersLayersAndroidSecureSubtitle =
+        c.getString(R.string.security_tiers_help_tiers_layers_android_secure_subtitle)
     val securityTiersHelpLocalFirstSectionFigureLow =
         c.getString(R.string.security_tiers_help_local_first_section_figure_low)
     val securityTiersHelpLocalFirstSectionFigureLowDescription =
@@ -1026,12 +1032,18 @@ class Strings(private val c: Context) {
 
     val forgotPasswordTitle = c.getString(R.string.forgot_master_password_title)
     val forgotPasswordDescription = c.getString(R.string.forgot_master_password_description)
-    val forgotPasswordNoMasterKeyTitle = c.getString(R.string.forgot_master_password_no_master_key_title)
-    val forgotPasswordNoMasterKeySubtitle = c.getString(R.string.forgot_master_password_no_master_key_subtitle)
-    val forgotPasswordErrorVerificationTitle = c.getString(R.string.forgot_master_password_error_verification_title)
-    val forgotPasswordErrorVerificationSubtitle = c.getString(R.string.forgot_master_password_error_verification_subtitle)
-    val forgotPasswordVerificationSuccessTitle = c.getString(R.string.forgot_master_password_verification_success_title)
-    val forgotPasswordErrorAppLockedTitle = c.getString(R.string.forgot_master_password_error_app_locked_title)
+    val forgotPasswordNoMasterKeyTitle =
+        c.getString(R.string.forgot_master_password_no_master_key_title)
+    val forgotPasswordNoMasterKeySubtitle =
+        c.getString(R.string.forgot_master_password_no_master_key_subtitle)
+    val forgotPasswordErrorVerificationTitle =
+        c.getString(R.string.forgot_master_password_error_verification_title)
+    val forgotPasswordErrorVerificationSubtitle =
+        c.getString(R.string.forgot_master_password_error_verification_subtitle)
+    val forgotPasswordVerificationSuccessTitle =
+        c.getString(R.string.forgot_master_password_verification_success_title)
+    val forgotPasswordErrorAppLockedTitle =
+        c.getString(R.string.forgot_master_password_error_app_locked_title)
 
     val loginDeleteConfirmTitle = c.getString(R.string.login_delete_confirm_title)
     val loginDeleteConfirmBody = c.getString(R.string.login_delete_confirm_body)

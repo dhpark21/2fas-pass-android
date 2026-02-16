@@ -174,10 +174,16 @@ private fun SecurityDisclaimerModal(
                 SectionTitle(text = MdtLocale.strings.securityTiersHelpLayersSectionTitle)
             }
             item {
-                SectionSubtitle(text = MdtLocale.strings.securityTiersHelpTiersLayersE2eeTitle)
+                SectionContentTitle(text = MdtLocale.strings.securityTiersHelpTiersLayersE2eeTitle)
             }
             item {
-                SectionSubtitle(text = MdtLocale.strings.securityTiersHelpTiersLayersE2eeSubtitle)
+                SectionSubtitle(text = MdtLocale.strings.securityTiersHelpTiersLayersAndroidE2EeSubtitle)
+            }
+            item {
+                SectionContentTitle(text = MdtLocale.strings.securityTiersHelpTiersLayersAndroidSecureTitle)
+            }
+            item {
+                SectionSubtitle(text = MdtLocale.strings.securityTiersHelpTiersLayersAndroidSecureSubtitle)
             }
         }
     }
@@ -187,6 +193,16 @@ private fun SecurityDisclaimerModal(
 private fun SectionTitle(text: String) {
     Text(
         modifier = Modifier.padding(top = 32.dp),
+        text = text,
+        style = MdtTheme.typo.titleMedium,
+        color = MdtTheme.color.onSurface,
+    )
+}
+
+@Composable
+private fun SectionContentTitle(text: String) {
+    Text(
+        modifier = Modifier.padding(top = 16.dp),
         text = text,
         style = MdtTheme.typo.titleMedium,
         color = MdtTheme.color.onSurface,
@@ -374,9 +390,11 @@ private fun SectionContent(title: String, subtitle: String, @DrawableRes image: 
             color = MdtTheme.color.onSurfaceVariant,
         )
         Image(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .height(160.dp),
             painter = painterResource(image),
             contentDescription = null,
-            modifier = Modifier.height(160.dp),
         )
     }
 }
