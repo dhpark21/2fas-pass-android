@@ -50,16 +50,21 @@ import com.twofasapp.data.main.mapper.ConnectedBrowserMapper
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
 import com.twofasapp.data.main.mapper.IconTypeMapper
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapperDelegate
 import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
 import com.twofasapp.data.main.mapper.ItemUriMapper
+import com.twofasapp.data.main.mapper.LoginEncryptionMapperStrategy
+import com.twofasapp.data.main.mapper.PaymentCardEncryptionMapperStrategy
+import com.twofasapp.data.main.mapper.SecureNoteEncryptionMapperStrategy
 import com.twofasapp.data.main.mapper.SecurityItemMapper
 import com.twofasapp.data.main.mapper.TagMapper
-import com.twofasapp.data.main.mapper.UnknownItemEncryptionMapper
+import com.twofasapp.data.main.mapper.UnknownEncryptionMapperStrategy
 import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
 import com.twofasapp.data.main.mapper.VaultMapper
+import com.twofasapp.data.main.mapper.WifiEncryptionMapperStrategy
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
 import com.twofasapp.data.main.websocket.ConnectWebSocket
 import com.twofasapp.data.main.websocket.ConnectWebSocketImpl
@@ -76,7 +81,12 @@ class MainDataModule : KoinModule {
         singleOf(::VaultMapper)
         singleOf(::ItemMapper)
         singleOf(::ItemEncryptionMapper)
-        singleOf(::UnknownItemEncryptionMapper)
+        singleOf(::ItemEncryptionMapperDelegate)
+        singleOf(::LoginEncryptionMapperStrategy)
+        singleOf(::PaymentCardEncryptionMapperStrategy)
+        singleOf(::SecureNoteEncryptionMapperStrategy)
+        singleOf(::WifiEncryptionMapperStrategy)
+        singleOf(::UnknownEncryptionMapperStrategy)
         singleOf(::CloudMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)

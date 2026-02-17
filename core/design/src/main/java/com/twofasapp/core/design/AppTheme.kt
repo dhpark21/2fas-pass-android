@@ -121,7 +121,8 @@ fun AppTheme(
         itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
         itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
         itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
-
+        itemWifiContent = if (isInDarkTheme) Color(0xFFFF8D28) else Color(0xFFFF8D28),
+        itemWifiContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
         tagGray = if (isInDarkTheme) tagGrayDark else tagGrayLight,
         tagRed = if (isInDarkTheme) tagRedDark else tagRedLight,
         tagOrange = if (isInDarkTheme) tagOrangeDark else tagOrangeLight,

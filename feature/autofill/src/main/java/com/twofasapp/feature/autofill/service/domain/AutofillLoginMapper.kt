@@ -56,6 +56,7 @@ internal fun Item.asSecretAutofillLogin(): AutofillLogin? {
             }
 
             is ItemContent.SecureNote -> null
+            is ItemContent.Wifi -> null
         }
     }
 }
@@ -79,6 +80,7 @@ internal fun Item.asAutofillLogin(): AutofillLogin? {
             }
 
             is ItemContent.SecureNote -> null
+            is ItemContent.Wifi -> null
         }
     }
 }

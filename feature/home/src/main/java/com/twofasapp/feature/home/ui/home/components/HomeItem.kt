@@ -108,6 +108,13 @@ internal fun HomeItem(
                                             it,
                                         )
                                     }
+
+                                    is ItemContent.Wifi -> content.password?.let {
+                                        onCopySecretFieldToClipboard(
+                                            item,
+                                            it,
+                                        )
+                                    }
                                 }
                             }
                         }

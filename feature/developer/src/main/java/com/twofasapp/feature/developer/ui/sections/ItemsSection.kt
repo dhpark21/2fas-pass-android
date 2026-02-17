@@ -39,6 +39,7 @@ internal fun ItemsSection(
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
     onInsertRandomCreditCard: () -> Unit = {},
+    onInsertRandomWifi: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -108,6 +109,12 @@ internal fun ItemsSection(
             title = "Generate credit card",
             icon = MdtIcons.PaymentCard,
             onClick = { onInsertRandomCreditCard() },
+        )
+
+        OptionEntry(
+            title = "Generate wifi",
+            icon = MdtIcons.Wifi4Bar,
+            onClick = { onInsertRandomWifi() },
         )
 
         OptionEntry(

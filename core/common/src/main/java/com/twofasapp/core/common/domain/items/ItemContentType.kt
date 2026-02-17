@@ -11,6 +11,7 @@ sealed interface ItemContentType {
                 Login.key -> Login
                 SecureNote.key -> SecureNote
                 PaymentCard.key -> PaymentCard
+                Wifi.key -> Wifi
                 else -> Unknown(key = key)
             }
         }

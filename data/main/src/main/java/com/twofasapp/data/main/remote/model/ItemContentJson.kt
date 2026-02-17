@@ -74,4 +74,20 @@ sealed interface ItemContentJson {
         @SerialName("notes")
         val notes: String?,
     ) : ItemContentJson
+
+    @Serializable
+    data class Wifi(
+        @SerialName("name")
+        val name: String?,
+        @SerialName("ssid")
+        val ssid: String?,
+        @SerialName("s_password")
+        val password: String?,
+        @SerialName("securityType")
+        val securityType: String?,
+        @SerialName("hidden")
+        val hidden: Boolean?,
+        @SerialName("notes")
+        val notes: String?,
+    ) : ItemContentJson
 }

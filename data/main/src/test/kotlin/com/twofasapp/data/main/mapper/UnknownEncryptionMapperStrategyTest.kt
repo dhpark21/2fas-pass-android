@@ -14,17 +14,17 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Test
 
-class UnknownItemEncryptionMapperTest {
+class UnknownEncryptionMapperStrategyTest {
 
     private val json = Json
     private val vaultCipher = FakeVaultCipher()
-    private val mapper = UnknownItemEncryptionMapper(json)
+    private val mapper = UnknownEncryptionMapperStrategy(json)
 
     @Test
     fun `encrypt only transforms top level secret string fields`() {
         val raw = """{"name":"Example","s_secret":"topSecret","s_null":null,"count":5}"""
 
-        val encrypted = mapper.encrypt(raw, SecurityType.Tier1, vaultCipher)
+        val encrypted = mapper.encryptItem(raw, SecurityType.Tier1, vaultCipher)
 
         val element = json.parseToJsonElement(encrypted).jsonObject
         element["name"]!!.jsonPrimitive.content shouldBe "Example"
@@ -38,9 +38,9 @@ class UnknownItemEncryptionMapperTest {
     @Test
     fun `decrypt restores secret fields when decryption requested`() {
         val raw = """{"plain":"text","s_secret":"value"}"""
-        val encrypted = mapper.encrypt(raw, SecurityType.Tier2, vaultCipher)
+        val encrypted = mapper.encryptItem(raw, SecurityType.Tier2, vaultCipher)
 
-        val decrypted = mapper.decrypt(encrypted, SecurityType.Tier2, vaultCipher, decryptSecretFields = true) as ItemContent.Unknown
+        val decrypted = mapper.decryptItem(encrypted, SecurityType.Tier2, vaultCipher, decryptSecretFields = true) as ItemContent.Unknown
         val decryptedObject = json.parseToJsonElement(decrypted.rawJson).jsonObject
 
         decryptedObject["plain"]!!.jsonPrimitive.content shouldBe "text"
@@ -50,9 +50,9 @@ class UnknownItemEncryptionMapperTest {
     @Test
     fun `decrypt returns raw json when secret fields not requested`() {
         val raw = """{"s_secret":"value"}"""
-        val encrypted = mapper.encrypt(raw, SecurityType.Tier3, vaultCipher)
+        val encrypted = mapper.encryptItem(raw, SecurityType.Tier3, vaultCipher)
 
-        val decrypted = mapper.decrypt(encrypted, SecurityType.Tier3, vaultCipher, decryptSecretFields = false) as ItemContent.Unknown
+        val decrypted = mapper.decryptItem(encrypted, SecurityType.Tier3, vaultCipher, decryptSecretFields = false) as ItemContent.Unknown
 
         decrypted.rawJson shouldBe encrypted
     }
@@ -61,7 +61,7 @@ class UnknownItemEncryptionMapperTest {
     fun `encrypt ignores non string secret fields`() {
         val raw = """{"s_object":{"inner":"value"},"s_list":[1,2,3],"s_string":"text"}"""
 
-        val encrypted = mapper.encrypt(raw, SecurityType.Tier1, vaultCipher)
+        val encrypted = mapper.encryptItem(raw, SecurityType.Tier1, vaultCipher)
         val element = json.parseToJsonElement(encrypted).jsonObject
 
         element["s_object"]!!.jsonObject["inner"]!!.jsonPrimitive.content shouldBe "value"

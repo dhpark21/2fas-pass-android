@@ -25,21 +25,26 @@ internal data class ItemFormUiState<T : ItemContent>(
     val itemContent: T? = null,
     val tags: List<Tag> = emptyList(),
 ) {
+    companion object {
+        const val NOTES_LIMIT = 2048
+    }
+
     val hasUnsavedChanges: Boolean
         get() = initialItem != item
 
     val valid: Boolean
         get() = when (itemContent) {
-            is ItemContent.Login -> itemContent.name.isNotEmpty() && itemContent.notes.orEmpty().length <= 2048
+            is ItemContent.Login -> itemContent.name.isNotEmpty() && itemContent.notes.orEmpty().length <= NOTES_LIMIT
             is ItemContent.SecureNote -> itemContent.name.isNotEmpty() && itemContent.text.clearTextOrNull.orEmpty().length <= ItemContent.SecureNote.Limit
             is ItemContent.PaymentCard -> validatePaymentCard(itemContent)
             is ItemContent.Unknown -> false
+            is ItemContent.Wifi -> validateWifi(itemContent)
         }
 
     private fun validatePaymentCard(content: ItemContent.PaymentCard): Boolean {
         if (content.name.isEmpty()) return false
 
-        if (content.notes.orEmpty().length > 2048) return false
+        if (content.notes.orEmpty().length > NOTES_LIMIT) return false
 
         content.cardNumber.clearTextOrNull?.takeIf { it.isNotBlank() }?.let {
             if (PaymentCardValidator.validateCardNumber(it, content.cardIssuer).not()) {
@@ -59,6 +64,19 @@ internal data class ItemFormUiState<T : ItemContent>(
             }
         }
 
+        return true
+    }
+
+    private fun validateWifi(content: ItemContent.Wifi): Boolean {
+        if (content.name.isEmpty()) {
+            return false
+        }
+        if (content.ssid.isNullOrEmpty()) {
+            return false
+        }
+        if (content.password.clearTextOrNull.isNullOrEmpty()) {
+            return false
+        }
         return true
     }
 }

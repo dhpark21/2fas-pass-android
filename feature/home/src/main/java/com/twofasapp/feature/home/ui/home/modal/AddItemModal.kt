@@ -63,6 +63,12 @@ private fun Content(
             icon = MdtIcons.PaymentCard,
             onClick = { onSelect(ItemContentType.PaymentCard) },
         )
+
+        OptionEntry(
+            title = "TODO Wifi add",
+            icon = MdtIcons.Wifi4Bar,
+            onClick = { onSelect(ItemContentType.Wifi) },
+        )
     }
 }
 

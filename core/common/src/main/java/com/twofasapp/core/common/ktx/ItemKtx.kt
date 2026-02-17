@@ -30,7 +30,7 @@ fun List<Item>.filterBySearchQuery(query: String): List<Item> {
                                     .contains(query, ignoreCase = true)
                     }
 
-                    is ItemContent.Wifi -> item.content.network.orEmpty()
+                    is ItemContent.Wifi -> item.content.ssid.orEmpty()
                         .contains(query, ignoreCase = true)
                 }
     }.distinctBy { it.id }

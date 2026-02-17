@@ -62,6 +62,7 @@ internal fun DeveloperScreen(
         onInsertRandomTag = { viewModel.insertRandomTag() },
         onInsertRandomSecureNote = { viewModel.insertRandomSecureNote() },
         onInsertRandomCreditCard = { viewModel.insertRandomCreditCard() },
+        onInsertRandomWifi = { viewModel.insertRandomWifi() },
     )
 }
 
@@ -78,6 +79,7 @@ private fun Content(
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
     onInsertRandomCreditCard: () -> Unit = {},
+    onInsertRandomWifi: () -> Unit = {},
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Items", "Subscription", "Other")
@@ -123,6 +125,7 @@ private fun Content(
                     onInsertRandomTag = onInsertRandomTag,
                     onInsertRandomSecureNote = onInsertRandomSecureNote,
                     onInsertRandomCreditCard = onInsertRandomCreditCard,
+                    onInsertRandomWifi = onInsertRandomWifi
                 )
 
                 1 -> SubscriptionSection(

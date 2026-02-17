@@ -8,6 +8,8 @@
 
 package com.twofasapp.data.main.websocket.messages
 
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.serializers.EncryptedBytesSerializer
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -168,6 +170,14 @@ internal sealed interface BrowserRequestActionJson {
             val s_expirationDate: String?,
             @SerialName("s_securityCode")
             val s_securityCode: String?,
+            @SerialName("ssid")
+            val ssid: String?,
+            @SerialName("s_wifi_password")
+            val s_wifi_password: String?,
+            @SerialName("securityType")
+            val securityType: String?,
+            @SerialName("hidden")
+            val hidden: Boolean?,
         )
     }
 
@@ -220,6 +230,14 @@ internal sealed interface BrowserRequestActionJson {
             val s_expirationDate: String?,
             @SerialName("s_securityCode")
             val s_securityCode: String?,
+            @SerialName("ssid")
+            val ssid: String?,
+            @SerialName("s_wifi_password")
+            val s_wifi_password: String?,
+            @SerialName("securityType")
+            val securityType: String?,
+            @SerialName("hidden")
+            val hidden: Boolean?,
         ) {
             @Serializable
             data class Uri(

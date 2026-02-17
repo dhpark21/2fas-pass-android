@@ -74,6 +74,7 @@ object MdtIcons {
     val Export @Composable get() = painterResource(R.drawable.ic_export)
     val Document @Composable get() = painterResource(R.drawable.ic_document)
     val SecureNote @Composable get() = painterResource(R.drawable.ic_document)
+    val Wifi4Bar @Composable get() = painterResource(R.drawable.ic_wifi_4_bar)
     val PasswordGenerator @Composable get() = painterResource(R.drawable.ic_password_generator)
     val Filter @Composable get() = painterResource(R.drawable.ic_filter)
     val FilterAlt @Composable get() = painterResource(R.drawable.ic_filter_alt)

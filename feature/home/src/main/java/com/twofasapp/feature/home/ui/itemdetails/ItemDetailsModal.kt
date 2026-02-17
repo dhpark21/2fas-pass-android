@@ -35,6 +35,7 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.itemdetails.content.LoginContent
 import com.twofasapp.feature.home.ui.itemdetails.content.PaymentCardContent
 import com.twofasapp.feature.home.ui.itemdetails.content.SecureNoteContent
+import com.twofasapp.feature.home.ui.itemdetails.content.WifiContent
 import kotlinx.collections.immutable.ImmutableList
 import org.koin.androidx.compose.koinViewModel
 
@@ -128,6 +129,8 @@ private fun Content(
                     onToggleSecretField = viewModel::toggleSecretField,
                     onCopySecretField = viewModel::copySecretFieldToClipboard,
                 )
+
+                is ItemContent.Wifi -> WifiContent()
             }
         }
 

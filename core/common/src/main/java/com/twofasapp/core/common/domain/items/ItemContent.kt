@@ -4,6 +4,7 @@ import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.clearTextOrNull
 
 sealed interface ItemContent {
@@ -170,10 +171,21 @@ sealed interface ItemContent {
 
     data class Wifi(
         override val name: String,
-        val network: String?,
+        val ssid: String?,
         val password: SecretField?,
-        val type: String?,
-        val hiddenNetwork: Boolean,
+        val securityType: WifiSecurityType?,
+        val hidden: Boolean,
         val notes: String?,
-    ) : ItemContent
+    ) : ItemContent {
+        companion object {
+            val Empty = Wifi(
+                name = "",
+                ssid = null,
+                password = null,
+                securityType = null,
+                hidden = false,
+                notes = null,
+            )
+        }
+    }
 }

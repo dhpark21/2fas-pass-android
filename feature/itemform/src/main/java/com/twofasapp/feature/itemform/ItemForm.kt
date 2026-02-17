@@ -10,6 +10,7 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.feature.itemform.forms.login.LoginForm
 import com.twofasapp.feature.itemform.forms.paymentcard.PaymentCardForm
 import com.twofasapp.feature.itemform.forms.securenote.SecureNoteForm
+import com.twofasapp.feature.itemform.forms.wifi.WifiForm
 
 @Composable
 fun ItemForm(
@@ -51,6 +52,8 @@ fun ItemForm(
                     listener = listener,
                 )
             }
+
+            is ItemContent.Wifi -> WifiForm()
         }
     }
 }

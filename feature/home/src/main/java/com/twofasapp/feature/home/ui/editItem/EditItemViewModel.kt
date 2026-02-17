@@ -35,7 +35,8 @@ internal class EditItemViewModel(
 
     private val id: String = savedStateHandle.toRoute<Screen.EditItem>().itemId
     private val vaultId: String = savedStateHandle.toRoute<Screen.EditItem>().vaultId
-    private val itemContentType: ItemContentType = ItemContentType.fromKey(savedStateHandle.toRoute<Screen.EditItem>().itemContentTypeKey)
+    private val itemContentType: ItemContentType =
+        ItemContentType.fromKey(savedStateHandle.toRoute<Screen.EditItem>().itemContentTypeKey)
 
     private val isNewItem = id.isBlank()
     val uiState = MutableStateFlow(EditItemUiState())
@@ -50,6 +51,7 @@ internal class EditItemViewModel(
                         is ItemContentType.SecureNote -> ItemContent.SecureNote.Empty
                         is ItemContentType.PaymentCard -> ItemContent.PaymentCard.Empty
                         is ItemContentType.Unknown -> ItemContent.Unknown("")
+                        is ItemContentType.Wifi -> ItemContent.Wifi.Empty
                     },
                 )
 

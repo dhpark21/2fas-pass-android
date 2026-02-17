@@ -24,6 +24,7 @@ import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.PasswordGenerator
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.Item
@@ -144,7 +145,10 @@ internal class RequestWebSocketImpl(
                             }
 
                             if (message.id != expectedIncomingId) {
-                                throw WebSocketException(1001, "Message identifier could not be verified.")
+                                throw WebSocketException(
+                                    1001,
+                                    "Message identifier could not be verified."
+                                )
                             }
 
                             when (message) {
@@ -182,7 +186,10 @@ internal class RequestWebSocketImpl(
                                             ),
                                         )
                                     } catch (e: Exception) {
-                                        throw WebSocketException(1300, "Error when calculating challenge (${e.message})")
+                                        throw WebSocketException(
+                                            1300,
+                                            "Error when calculating challenge (${e.message})"
+                                        )
                                     }
                                 }
 
@@ -199,11 +206,14 @@ internal class RequestWebSocketImpl(
 
                                         Timber.d("Request data: $requestString")
 
-                                        val action = json.decodeFromString<BrowserRequestActionJson>(requestString)
-                                            .asDomain(
-                                                hkdfSalt = hkdfSalt,
-                                                sessionKey = sessionKey,
+                                        val action =
+                                            json.decodeFromString<BrowserRequestActionJson>(
+                                                requestString
                                             )
+                                                .asDomain(
+                                                    hkdfSalt = hkdfSalt,
+                                                    sessionKey = sessionKey,
+                                                )
 
                                         val response = onBrowserRequestAction(action)
 
@@ -233,7 +243,10 @@ internal class RequestWebSocketImpl(
                                     } catch (e: WebSocketException) {
                                         throw e
                                     } catch (e: Exception) {
-                                        throw WebSocketException(1500, "Error when generating request data (${e.message})")
+                                        throw WebSocketException(
+                                            1500,
+                                            "Error when generating request data (${e.message})"
+                                        )
                                     }
                                 }
 
@@ -258,7 +271,10 @@ internal class RequestWebSocketImpl(
                                 }
 
                                 is IncomingMessageJson.Unknown -> {
-                                    throw WebSocketException(1005, "Unknown websocket message received.")
+                                    throw WebSocketException(
+                                        1005,
+                                        "Unknown websocket message received."
+                                    )
                                 }
 
                                 is IncomingMessageJson.InitTransferConfirmed -> {
@@ -314,13 +330,17 @@ internal class RequestWebSocketImpl(
             return if (error != null) {
                 RequestWebSocketResult.Failure(
                     errorCode = (error as? WebSocketException)?.errorCode ?: 1000,
-                    errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message ?: "Unknown error.",
+                    errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message
+                    ?: "Unknown error.",
                 )
             } else {
                 RequestWebSocketResult.Success
             }
         } catch (e: CancellationException) {
-            return RequestWebSocketResult.Failure(1000, "Browser extension request is no longer valid.")
+            return RequestWebSocketResult.Failure(
+                1000,
+                "Browser extension request is no longer valid."
+            )
         } catch (e: Exception) {
             return RequestWebSocketResult.Failure(1000, e.message ?: "Unknown error.")
         }
@@ -336,7 +356,10 @@ internal class RequestWebSocketImpl(
             is BrowserRequestActionJson.PasswordRequest -> {
                 BrowserRequestAction.PasswordRequest(
                     type = type,
-                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                    item = getItem(data.itemId) ?: throw WebSocketException(
+                        1501,
+                        "Could not find requested item."
+                    ),
                 )
             }
 
@@ -402,7 +425,8 @@ internal class RequestWebSocketImpl(
                                 password = if (data.passwordMobile == true) {
                                     SecretField.ClearText(
                                         PasswordGenerator.generatePassword(
-                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                            settingsRepository.observePasswordGeneratorSettings()
+                                                .first(),
                                         ),
                                     )
                                 } else {
@@ -410,7 +434,9 @@ internal class RequestWebSocketImpl(
                                         val updatePasswordKey = HkdfGenerator.generate(
                                             inputKeyMaterial = sessionKey,
                                             salt = hkdfSalt,
-                                            contextInfo = when (data.securityType.let(itemSecurityTypeMapper::mapToDomainFromJson)) {
+                                            contextInfo = when (data.securityType.let(
+                                                itemSecurityTypeMapper::mapToDomainFromJson
+                                            )) {
                                                 SecurityType.Tier1 -> "PassT1"
                                                 SecurityType.Tier2 -> "PassT2"
                                                 SecurityType.Tier3 -> "PassT3"
@@ -447,24 +473,26 @@ internal class RequestWebSocketImpl(
             is BrowserRequestActionJson.SecretFieldRequest -> {
                 BrowserRequestAction.SecretFieldRequest(
                     type = type,
-                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                    item = getItem(data.itemId) ?: throw WebSocketException(
+                        1501,
+                        "Could not find requested item."
+                    ),
                 )
             }
 
             is BrowserRequestActionJson.DeleteItem -> {
                 BrowserRequestAction.DeleteItem(
                     type = type,
-                    item = getItem(data.itemId) ?: throw WebSocketException(1501, "Could not find requested item."),
+                    item = getItem(data.itemId) ?: throw WebSocketException(
+                        1501,
+                        "Could not find requested item."
+                    ),
                 )
             }
 
             is BrowserRequestActionJson.AddItem -> {
-                val contentType = when (data.contentType) {
-                    "login" -> ItemContentType.Login
-                    "secureNote" -> ItemContentType.SecureNote
-                    "paymentCard" -> ItemContentType.PaymentCard
-                    else -> throw IllegalArgumentException("Unsupported item type")
-                }
+                val contentType = ItemContentType.fromKey(data.contentType)
+                require(contentType !is ItemContentType.Unknown) { "Unsupported item type" }
 
                 val newItemKey = HkdfGenerator.generate(
                     inputKeyMaterial = sessionKey,
@@ -476,17 +504,21 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
-                            name = (data.content.url.orEmpty().toUri().host ?: data.content.url).orEmpty().removePrefix("www."),
+                            name = (data.content.url.orEmpty().toUri().host
+                                ?: data.content.url).orEmpty().removePrefix("www."),
                             uris = listOf(ItemUri(text = data.content.url.orEmpty())),
                             username = when (data.content.username?.action) {
-                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull()
+                                    .orEmpty()
+
                                 else -> data.content.username?.value.orEmpty()
                             },
                             password = when (data.content.s_password?.action) {
                                 "generate" -> {
                                     SecretField.ClearText(
                                         PasswordGenerator.generatePassword(
-                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                            settingsRepository.observePasswordGeneratorSettings()
+                                                .first(),
                                         ),
                                     )
                                 }
@@ -573,6 +605,26 @@ internal class RequestWebSocketImpl(
                             },
                         )
                     }
+
+                    ItemContentType.Wifi -> ItemContent.Wifi(
+                        name = data.content.name.orEmpty(),
+                        ssid = data.content.ssid,
+                        password = data.content.s_wifi_password?.let { encryptedPassword ->
+                            if (encryptedPassword.isEmpty()) {
+                                SecretField.ClearText("")
+                            } else {
+                                val password = decrypt(
+                                    key = newItemKey,
+                                    data = EncryptedBytes(encryptedPassword.decodeBase64()),
+                                )
+
+                                SecretField.ClearText(password.decodeString())
+                            }
+                        },
+                        securityType = WifiSecurityType.fromValue(data.content.securityType),
+                        hidden = data.content.hidden ?: false,
+                        notes = null
+                    )
                 }
 
                 BrowserRequestAction.AddItem(
@@ -588,14 +640,12 @@ internal class RequestWebSocketImpl(
                 val item = getItem(data.itemId)
                     ?: throw WebSocketException(1501, "Could not find requested item.")
 
-                val contentType = when (data.contentType) {
-                    "login" -> ItemContentType.Login
-                    "secureNote" -> ItemContentType.SecureNote
-                    "paymentCard" -> ItemContentType.PaymentCard
-                    else -> throw IllegalArgumentException("Unsupported item type")
-                }
+                val contentType = ItemContentType.fromKey(data.contentType)
+                require(contentType !is ItemContentType.Unknown) { "Unsupported item type" }
 
-                val securityType = data.securityType?.let(itemSecurityTypeMapper::mapToDomainFromJson) ?: item.securityType
+                val securityType =
+                    data.securityType?.let(itemSecurityTypeMapper::mapToDomainFromJson)
+                        ?: item.securityType
                 val tagIds = data.tags ?: item.tagIds
 
                 val updateItemKey = HkdfGenerator.generate(
@@ -615,14 +665,17 @@ internal class RequestWebSocketImpl(
                         existingContent.copy(
                             name = data.content.name ?: existingContent.name,
                             username = when (data.content.username?.action) {
-                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull().orEmpty()
+                                "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull()
+                                    .orEmpty()
+
                                 else -> data.content.username?.value ?: existingContent.username
                             },
                             password = when (data.content.s_password?.action) {
                                 "generate" -> {
                                     SecretField.ClearText(
                                         PasswordGenerator.generatePassword(
-                                            settingsRepository.observePasswordGeneratorSettings().first(),
+                                            settingsRepository.observePasswordGeneratorSettings()
+                                                .first(),
                                         ),
                                     )
                                 }
@@ -690,7 +743,8 @@ internal class RequestWebSocketImpl(
                             name = data.content.name ?: existingContent.name,
                             cardHolder = data.content.cardHolder ?: existingContent.cardHolder,
                             cardNumber = cardNumber,
-                            cardNumberMask = cardNumber?.clearTextOrNull?.replace(" ", "")?.takeLast(4),
+                            cardNumberMask = cardNumber?.clearTextOrNull?.replace(" ", "")
+                                ?.takeLast(4),
                             expirationDate = data.content.s_expirationDate?.let { encryptedExpirationDate ->
                                 if (encryptedExpirationDate.isEmpty()) {
                                     SecretField.ClearText("")
@@ -703,7 +757,11 @@ internal class RequestWebSocketImpl(
                                     SecretField.ClearText(expirationDate.decodeString())
                                 }
                             } ?: existingContent.expirationDate,
-                            cardIssuer = cardNumber?.clearTextOrNull?.let { PaymentCardValidator.detectCardIssuer(it) } ?: existingContent.cardIssuer,
+                            cardIssuer = cardNumber?.clearTextOrNull?.let {
+                                PaymentCardValidator.detectCardIssuer(
+                                    it
+                                )
+                            } ?: existingContent.cardIssuer,
                             securityCode = data.content.s_securityCode?.let { encryptedSecurityCode ->
                                 if (encryptedSecurityCode.isEmpty()) {
                                     SecretField.ClearText("")
@@ -716,6 +774,33 @@ internal class RequestWebSocketImpl(
                                     SecretField.ClearText(securityCode.decodeString())
                                 }
                             } ?: existingContent.securityCode,
+                            notes = data.content.notes ?: existingContent.notes,
+                        )
+                    }
+
+                    ItemContentType.Wifi -> {
+                        val existingContent = item.content as ItemContent.Wifi
+                        existingContent.copy(
+                            name = data.content.name ?: existingContent.name,
+                            ssid = data.content.ssid ?: existingContent.ssid,
+                            password = data.content.s_password?.let { encryptedPassword ->
+                                if (encryptedPassword.value.isEmpty()) {
+                                    SecretField.ClearText("")
+                                } else {
+                                    val password = decrypt(
+                                        key = updateItemKey,
+                                        data = EncryptedBytes(encryptedPassword.value.decodeBase64()),
+                                    )
+
+                                    SecretField.ClearText(password.decodeString())
+                                }
+                            } ?: existingContent.password,
+                            securityType = if (data.content.securityType != null) {
+                                WifiSecurityType.fromValue(data.content.securityType)
+                            } else {
+                                existingContent.securityType
+                            },
+                            hidden = data.content.hidden ?: existingContent.hidden,
                             notes = data.content.notes ?: existingContent.notes,
                         )
                     }
@@ -814,8 +899,13 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                        -> {
-                            val loginData = createLoginAcceptData(item = response.item, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
+                            -> {
+                            val loginData = createLoginAcceptData(
+                                item = response.item,
+                                deviceId = deviceId,
+                                hkdfSalt = hkdfSalt,
+                                sessionKey = sessionKey
+                            )
                             put("login", loginData)
                         }
                     }
@@ -826,8 +916,13 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                        -> {
-                            val loginData = createLoginAcceptData(item = response.item, deviceId = deviceId, hkdfSalt = hkdfSalt, sessionKey = sessionKey)
+                            -> {
+                            val loginData = createLoginAcceptData(
+                                item = response.item,
+                                deviceId = deviceId,
+                                hkdfSalt = hkdfSalt,
+                                sessionKey = sessionKey
+                            )
                             put("login", loginData)
                         }
                     }
@@ -872,12 +967,13 @@ internal class RequestWebSocketImpl(
                         contextInfo = "ItemT3",
                     )
 
-                    val vaultDataGzip = backupRepository.createSerializedVaultDataForBrowserExtension(
-                        version = 2,
-                        vaultId = vaultsRepository.getVault().id,
-                        deviceId = device.uniqueId(),
-                        encryptionKey = itemT3Key,
-                    )
+                    val vaultDataGzip =
+                        backupRepository.createSerializedVaultDataForBrowserExtension(
+                            version = 2,
+                            vaultId = vaultsRepository.getVault().id,
+                            deviceId = device.uniqueId(),
+                            encryptionKey = itemT3Key,
+                        )
 
                     val vaultDataGzipEnc = encrypt(
                         key = dataKey,
@@ -900,7 +996,10 @@ internal class RequestWebSocketImpl(
 
                     put("totalChunks", JsonPrimitive(totalChunks))
                     put("totalSize", JsonPrimitive(totalSize))
-                    put("sha256GzipVaultDataEnc", JsonPrimitive(sha256EncGzipVaultData.encodeBase64()))
+                    put(
+                        "sha256GzipVaultDataEnc",
+                        JsonPrimitive(sha256EncGzipVaultData.encodeBase64())
+                    )
                 }
 
                 is BrowserRequestResponse.DeleteItemAccept -> Unit
@@ -910,7 +1009,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                        -> {
+                            -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = true,
@@ -933,7 +1032,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                        -> {
+                            -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = response.sifFetched,
@@ -1066,6 +1165,7 @@ internal class RequestWebSocketImpl(
                 }
 
                 is ItemContent.Unknown -> contentWithEncryptedFields
+                is ItemContent.Wifi -> contentWithEncryptedFields
             },
         )
 

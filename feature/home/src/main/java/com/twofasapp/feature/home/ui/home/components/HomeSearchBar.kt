@@ -307,6 +307,7 @@ private fun ItemContentType?.contentColor(): Color {
         ItemContentType.PaymentCard -> MdtTheme.color.itemPaymentCardContent
         is ItemContentType.Unknown -> MdtTheme.color.primaryContainer
         null -> MdtTheme.color.primaryContainer
+        ItemContentType.Wifi -> MdtTheme.color.itemWifiContent
     }
 }
 

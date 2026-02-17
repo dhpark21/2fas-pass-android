@@ -106,6 +106,14 @@ fun ItemImage(
                     }
                 }
             }
+
+            is ItemContent.Wifi -> StaticIcon(
+                modifier = modifier,
+                icon = MdtIcons.Wifi4Bar,
+                iconColor = MdtTheme.color.itemWifiContent,
+                backgroundColor = MdtTheme.color.itemWifiContainer,
+                size = size,
+            )
         }
     }
 }

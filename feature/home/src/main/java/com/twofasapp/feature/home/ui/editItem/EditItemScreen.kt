@@ -66,6 +66,7 @@ private fun Content(
                             is ItemContentType.Login -> strings.loginAddTitle
                             is ItemContentType.SecureNote -> strings.secureNoteAddTitle
                             is ItemContentType.PaymentCard -> strings.paymentCardAddTitle
+                            is ItemContentType.Wifi -> "TODO Wifi itemAddTitle"
                         }
                     }
 
@@ -75,6 +76,7 @@ private fun Content(
                             is ItemContentType.Login -> strings.loginEditTitle
                             is ItemContentType.SecureNote -> strings.secureNoteEditTitle
                             is ItemContentType.PaymentCard -> strings.paymentCardEditTitle
+                            is ItemContentType.Wifi -> "TODO Wifi itemAddTitle"
                         }
                     }
                 },

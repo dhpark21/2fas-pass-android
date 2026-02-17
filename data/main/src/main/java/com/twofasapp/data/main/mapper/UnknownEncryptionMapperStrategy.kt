@@ -11,7 +11,9 @@ package com.twofasapp.data.main.mapper
 import com.twofasapp.core.common.crypto.encrypt
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.data.main.VaultCipher
@@ -21,64 +23,52 @@ import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-class UnknownItemEncryptionMapper(
+class UnknownEncryptionMapperStrategy(
     private val json: Json,
-) {
-    fun encrypt(
-        rawJson: String,
-        securityType: SecurityType,
+) : ItemEncryptionMapperStrategy<ItemContent.Unknown> {
+
+    override fun encryptItem(
+        item: Item,
+        content: ItemContent.Unknown,
         vaultCipher: VaultCipher,
     ): String {
-        val jsonElement = runCatching { json.parseToJsonElement(rawJson) }.getOrNull()
+        val jsonElement = runCatching { json.parseToJsonElement(content.rawJson) }.getOrNull()
         if (jsonElement !is JsonObject) {
-            return rawJson
+            return content.rawJson
         }
 
         val processed = jsonElement.mapValues { (key, value) ->
             if (key.startsWith(SecretFieldPrefix)) {
-                encryptValue(value, securityType, vaultCipher)
+                encryptValue(value, item.securityType, vaultCipher)
             } else {
                 value
             }
         }
 
-        return runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { rawJson }
+        return runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { content.rawJson }
     }
 
-    fun decrypt(
-        rawJson: String,
-        securityType: SecurityType,
+    override fun decryptItem(
+        itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-    ): ItemContent {
-        if (!decryptSecretFields) {
-            return ItemContent.Unknown(rawJson = rawJson)
-        }
-
-        val jsonElement = runCatching { json.parseToJsonElement(rawJson) }.getOrNull()
-        if (jsonElement !is JsonObject) {
-            return ItemContent.Unknown(rawJson = rawJson)
-        }
-
-        val processed = jsonElement.mapValues { (key, value) ->
-            if (key.startsWith(SecretFieldPrefix)) {
-                decryptValue(value, securityType, vaultCipher)
-            } else {
-                value
-            }
-        }
-
-        val decryptedJson = runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { rawJson }
-        return ItemContent.Unknown(rawJson = decryptedJson)
+        contentEntityJson: String
+    ): ItemContent.Unknown {
+        return decryptItemInternal(
+            itemEncrypted.securityType,
+            vaultCipher,
+            decryptSecretFields,
+            contentEntityJson
+        )
     }
 
-    fun encryptSecretFields(
-        rawJson: String,
+    override fun encryptSecretFields(
+        content: ItemContent.Unknown,
         encryptionKey: ByteArray,
     ): ItemContent.Unknown {
-        val jsonElement = runCatching { json.parseToJsonElement(rawJson) }.getOrNull()
+        val jsonElement = runCatching { json.parseToJsonElement(content.rawJson) }.getOrNull()
         if (jsonElement !is JsonObject) {
-            return ItemContent.Unknown(rawJson = rawJson)
+            return ItemContent.Unknown(rawJson = content.rawJson)
         }
 
         val processed = jsonElement.mapValues { (key, value) ->
@@ -89,8 +79,50 @@ class UnknownItemEncryptionMapper(
             }
         }
 
-        val encryptedJson = runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { rawJson }
+        val encryptedJson =
+            runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { content.rawJson }
         return ItemContent.Unknown(rawJson = encryptedJson)
+    }
+
+    override fun decryptSecretFields(
+        vaultCipher: VaultCipher,
+        securityType: SecurityType,
+        content: ItemContent.Unknown,
+    ): ItemContent.Unknown {
+        return decryptItemInternal(
+            securityType,
+            vaultCipher,
+            true,
+            content.rawJson
+        )
+    }
+
+    private fun decryptItemInternal(
+        securityType: SecurityType,
+        vaultCipher: VaultCipher,
+        decryptSecretFields: Boolean,
+        contentEntityJson: String
+    ): ItemContent.Unknown {
+        if (!decryptSecretFields) {
+            return ItemContent.Unknown(rawJson = contentEntityJson)
+        }
+
+        val jsonElement = runCatching { json.parseToJsonElement(contentEntityJson) }.getOrNull()
+        if (jsonElement !is JsonObject) {
+            return ItemContent.Unknown(rawJson = contentEntityJson)
+        }
+
+        val processed = jsonElement.mapValues { (key, value) ->
+            if (key.startsWith(SecretFieldPrefix)) {
+                decryptValue(value, securityType, vaultCipher)
+            } else {
+                value
+            }
+        }
+
+        val decryptedJson =
+            runCatching { json.encodeToString(JsonObject(processed)) }.getOrElse { contentEntityJson }
+        return ItemContent.Unknown(rawJson = decryptedJson)
     }
 
     private fun encryptValue(

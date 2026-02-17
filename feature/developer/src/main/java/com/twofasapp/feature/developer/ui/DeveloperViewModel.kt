@@ -18,6 +18,7 @@ import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
@@ -247,7 +248,10 @@ internal class DeveloperViewModel(
             val vault = vaultsRepository.getVault()
             val securityType = SecurityType.entries.random()
             val nameSeed = WordList.words.random().replaceFirstChar { it.uppercase() }
-            val body = (1..Random.nextInt(2, 5)).joinToString(separator = "\n\n") { loremSentences.random() }
+            val body = (1..Random.nextInt(
+                2,
+                5
+            )).joinToString(separator = "\n\n") { loremSentences.random() }
 
             itemsRepository.importItems(
                 listOf(
@@ -266,11 +270,39 @@ internal class DeveloperViewModel(
         }
     }
 
+    fun insertRandomWifi() {
+        launchScoped(Dispatchers.IO) {
+            val vault = vaultsRepository.getVault()
+            val nameSeed = WordList.words.random().replaceFirstChar { it.uppercase() }
+            val id = Random.nextInt(9999999)
+
+            itemsRepository.importItems(
+                listOf(
+                    Item.create(
+                        securityType = SecurityType.entries.random(),
+                        contentType = ItemContentType.Wifi,
+                        vaultId = vault.id,
+                        content = ItemContent.Wifi(
+                            name = "$nameSeed wifi",
+                            ssid = "$nameSeed ssid",
+                            password = SecretField.ClearText("pass$id"),
+                            securityType = WifiSecurityType.values().random(),
+                            hidden = listOf(true, false).random(),
+                            notes = null
+                        ),
+                    ).copy(id = Uuid.generate()),
+                ),
+            )
+        }
+    }
+
     fun insertRandomCreditCard() {
         launchScoped(Dispatchers.IO) {
             val vault = vaultsRepository.getVault()
             val securityType = SecurityType.entries.random()
-            val cardholderName = "${WordList.words.random().replaceFirstChar { it.uppercase() }} ${WordList.words.random().replaceFirstChar { it.uppercase() }}"
+            val cardholderName = "${
+                WordList.words.random().replaceFirstChar { it.uppercase() }
+            } ${WordList.words.random().replaceFirstChar { it.uppercase() }}"
 
             // Generate one of 4 card types with valid numbers
             val cardType = listOf("Visa", "Mastercard", "American Express", "UnionPay").random()
@@ -280,21 +312,25 @@ internal class DeveloperViewModel(
                     ItemContent.PaymentCard.Issuer.Visa,
                     generateRandomCvv(3),
                 )
+
                 "Mastercard" -> Triple(
                     generateValidCardNumber(listOf("51", "52", "53", "54", "55").random(), 16),
                     ItemContent.PaymentCard.Issuer.MasterCard,
                     generateRandomCvv(3),
                 )
+
                 "American Express" -> Triple(
                     generateValidCardNumber(listOf("34", "37").random(), 15),
                     ItemContent.PaymentCard.Issuer.AmericanExpress,
                     generateRandomCvv(4),
                 )
+
                 "UnionPay" -> Triple(
                     generateValidCardNumber("62", 19),
                     ItemContent.PaymentCard.Issuer.UnionPay,
                     generateRandomCvv(3),
                 )
+
                 else -> error("Unknown card type")
             }
 
