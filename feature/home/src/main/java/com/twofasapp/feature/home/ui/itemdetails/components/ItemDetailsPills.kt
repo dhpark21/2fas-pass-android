@@ -34,27 +34,25 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun ItemDetailsPills(item: Item, tags: ImmutableList<Tag>) {
-    if (tags.isNotEmpty()) {
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            itemVerticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(
-                8.dp,
-                Alignment.CenterHorizontally,
-            ),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Pill(
-                text = item.securityType.asTitle(),
-                icon = item.securityType.asIcon(),
-                color = securityItemPillColor,
-            )
+    FlowRow(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        itemVerticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(
+            8.dp,
+            Alignment.CenterHorizontally,
+        ),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Pill(
+            text = item.securityType.asTitle(),
+            icon = item.securityType.asIcon(),
+            color = securityItemPillColor,
+        )
 
-            tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
-                Pill(text = tag.name, icon = MdtIcons.TagFilled, color = tag.iconTint())
-            }
+        tags.filter { item.tagIds.contains(it.id) }.forEach { tag ->
+            Pill(text = tag.name, icon = MdtIcons.TagFilled, color = tag.iconTint())
         }
     }
 }
