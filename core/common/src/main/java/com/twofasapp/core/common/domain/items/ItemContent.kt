@@ -182,7 +182,7 @@ sealed interface ItemContent {
                 name = "",
                 ssid = null,
                 password = null,
-                securityType = null,
+                securityType = WifiSecurityType.None,
                 hidden = false,
                 notes = null,
             )

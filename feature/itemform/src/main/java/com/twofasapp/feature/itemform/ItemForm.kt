@@ -53,7 +53,15 @@ fun ItemForm(
                 )
             }
 
-            is ItemContent.Wifi -> WifiForm()
+            is ItemContent.Wifi -> {
+                WifiForm(
+                    modifier = modifier,
+                    initialItem = initialItem,
+                    containerColor = containerColor,
+                    properties = properties,
+                    listener = listener,
+                )
+            }
         }
     }
 }

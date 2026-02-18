@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Mon, 16 Feb 2026 12:39:51 -0800
+ Exported at: Wed, 18 Feb 2026 00:54:03 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1067,6 +1067,30 @@
     <string name="security_tiers_help_local_first_section_figure_medium_description">Scentralizowane, serwerowe rozwiązania do zarządzania hasłami</string>
     <string name="security_tiers_help_local_first_section_figure_low_description">Nieszyfrowane aplikacje z notatkami</string>
     <string name="security_tiers_help_tiers_layers_android_secure_title">Sprzętowe zabezpieczenia Androida</string>
-    <string name="security_tiers_help_tiers_layers_android_secure_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Keystore i zabezpieczony poprzez TEE lub w Strongboxie — dedykowanym, odpornym na manipulacje czipie. Gwarantuje to, że klucze szyfrujące nigdy nie opuszczą twojego urządzenia.</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Keystore i zabezpieczony poprzez TEE lub Strongbox, czyli dedykowanym, odpornym na manipulacje czipie. Gwarantuje to, że klucze szyfrujące nigdy nie opuszczą twojego urządzenia.</string>
     <string name="security_tiers_help_tiers_layers_android_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z hasłem głównym.\nSEED jest bezpiecznie przechowywany w Android KeyStore i zabezpieczony poprzez Trusted Execution Environment lub Strongbox, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
+    <string name="request_modal_wifi_request_title">Prośba o dostęp do Wi-Fi</string>
+    <string name="request_modal_wifi_request_subtitle">Rozszerzenie przeglądaki prosi o dostęp do Wi-Fi</string>
+    <string name="content_type_wifi_name">Wi-Fi</string>
+    <string name="content_type_unknown_name">Nieznany</string>
+    <string name="wifi_view_action_copy_ssid">Kopiuj SSID</string>
+    <string name="wifi_view_action_copy_password">Kopiuj hasło</string>
+    <string name="wifi_qr_scan_action">Zeskanuj</string>
+    <string name="wifi_show_qr_code_action">Pokaż kod QR sieci</string>
+    <string name="request_modal_new_wifi_title">Dodaj Wi-Fi</string>
+    <string name="wifi_field_hidden_value">Ukryta</string>
+    <string name="wifi_add_title">Dodaj Wi-Fi</string>
+    <string name="wifi_hidden_network_label">Ukryta sieć</string>
+    <string name="wifi_security_type_label">Zabezpieczenia</string>
+    <string name="wifi_password_label">Hasło</string>
+    <string name="wifi_ssid_label">SSID</string>
+    <string name="wifi_name_label">Nazwa</string>
+    <string name="wifi_qr_join_title">Zeskanuj kod QR aby dołączyć do \"%s\"</string>
+    <string name="wifi_qr_scan_title">Zeskanuj kod QR Wi-Fi</string>
+    <string name="request_modal_remove_wifi_title">Usuń Wi-Fi</string>
+    <string name="wifi_network_header">Sieć</string>
+    <string name="request_modal_update_wifi_title">Zaktualizuj Wi-Fi</string>
+    <string name="wifi_edit_title">Edycja WiFi</string>
+    <string name="transfer_file_summary_wifi_counter_description">Wykrytych sieci Wi-Fi</string>
+    <string name="wifi_notes_label">Notatki</string>
 </resources>

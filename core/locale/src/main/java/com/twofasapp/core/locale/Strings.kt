@@ -455,6 +455,32 @@ class Strings(private val c: Context) {
     val secureNoteErrorCopy = c.getString(R.string.secure_note_error_copy)
     val secureNoteAdditionalInfoLabel = c.getString(R.string.secure_note_additional_info_label)
 
+    //Wifi
+    val requestModalWifiRequestTitle = c.getString(R.string.request_modal_wifi_request_title)
+    val requestModalWifiRequestSubtitle = c.getString(R.string.request_modal_wifi_request_subtitle)
+    val contentTypeWifiName = c.getString(R.string.content_type_wifi_name)
+    val wifiViewActionCopySsid = c.getString(R.string.wifi_view_action_copy_ssid)
+    val wifiViewActionCopyPassword = c.getString(R.string.wifi_view_action_copy_password)
+    val wifiQrScanAction = c.getString(R.string.wifi_qr_scan_action)
+    val wifiShowQrCodeAction = c.getString(R.string.wifi_show_qr_code_action)
+    val requestModalNewWifiTitle = c.getString(R.string.request_modal_new_wifi_title)
+    val wifiFieldHiddenValue = c.getString(R.string.wifi_field_hidden_value)
+    val wifiAddTitle = c.getString(R.string.wifi_add_title)
+    val wifiHiddenNetworkLabel = c.getString(R.string.wifi_hidden_network_label)
+    val wifiSecurityTypeLabel = c.getString(R.string.wifi_security_type_label)
+    val wifiPasswordLabel = c.getString(R.string.wifi_password_label)
+    val wifiSsidLabel = c.getString(R.string.wifi_ssid_label)
+    val wifiNameLabel = c.getString(R.string.wifi_name_label)
+    val wifiQrJoinTitle = c.getString(R.string.wifi_qr_join_title)
+    val wifiQrScanTitle = c.getString(R.string.wifi_qr_scan_title)
+    val requestModalRemoveWifiTitle = c.getString(R.string.request_modal_remove_wifi_title)
+    val wifiNetworkHeader = c.getString(R.string.wifi_network_header)
+    val requestModalUpdateWifiTitle = c.getString(R.string.request_modal_update_wifi_title)
+    val wifiEditTitle = c.getString(R.string.wifi_edit_title)
+    val transferFileSummaryWifiCounterDescription =
+        c.getString(R.string.transfer_file_summary_wifi_counter_description)
+    val wifiNotesLabel = c.getString(R.string.wifi_notes_label)
+
     // Credit Card
     val creditCardName = c.getString(R.string.credit_card_name_label)
     val creditCardCardholder = c.getString(R.string.credit_card_cardholder_label)

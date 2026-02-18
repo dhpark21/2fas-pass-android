@@ -8,6 +8,7 @@
 
 package com.twofasapp.feature.itemform
 
+import androidx.compose.runtime.Immutable
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
@@ -17,6 +18,7 @@ import com.twofasapp.data.main.mapper.PaymentCardValidator
 /**
  * Common UI state for all item forms.
  */
+@Immutable
 internal data class ItemFormUiState<T : ItemContent>(
     val initialised: Boolean = false,
     val initialItem: Item = Item.Empty,

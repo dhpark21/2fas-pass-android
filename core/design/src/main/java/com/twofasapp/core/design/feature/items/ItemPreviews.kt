@@ -4,6 +4,7 @@ import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.foundation.preview.PreviewTextLong
@@ -45,6 +46,16 @@ val PaymentCardItemContentPreview: ItemContent.PaymentCard = ItemContent.Payment
     notes = "Personal card for online purchases",
 )
 
+val WifiItemContentPreview: ItemContent.Wifi = ItemContent.Wifi(
+    name = "Wifi",
+    ssid = "Wifi ssid",
+    password = SecretField.ClearText(""),
+    securityType = WifiSecurityType.Wpa2,
+    hidden = false,
+    notes = null,
+)
+
 val LoginItemPreview = itemPreview(LoginItemContentPreview)
 val SecureNoteItemPreview = itemPreview(SecureNoteItemContentPreview)
 val PaymentCardItemPreview = itemPreview(PaymentCardItemContentPreview)
+val WifiItemPreview = itemPreview(WifiItemContentPreview)
