@@ -149,7 +149,7 @@ internal fun HomeItemDropdownMenu(
                     is ItemContent.Wifi -> {
                         content.ssid.takeIf { it.isNullOrEmpty().not() }?.let {
                             DropdownMenuItem(
-                                text = "TODO Wifi itemAddTitle",
+                                text = MdtLocale.strings.wifiViewActionCopySsid,
                                 icon = MdtIcons.Wifi4Bar,
                                 onClick = {
                                     showDropdown = false
@@ -159,7 +159,7 @@ internal fun HomeItemDropdownMenu(
                         }
                         content.password?.let {
                             DropdownMenuItem(
-                                text = "TODO Wifi itemAddTitle",
+                                text = MdtLocale.strings.wifiViewActionCopyPassword,
                                 icon = MdtIcons.Key,
                                 onClick = {
                                     showDropdown = false

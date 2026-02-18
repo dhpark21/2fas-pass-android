@@ -50,7 +50,7 @@ internal fun ItemFormState(
                         is ItemContentType.SecureNote -> strings.secureNoteAddTitle
                         is ItemContentType.PaymentCard -> strings.itemAddTitle
                         is ItemContentType.Unknown -> strings.itemAddTitle
-                        is ItemContentType.Wifi -> "TODO Wifi itemAddTitle"
+                        is ItemContentType.Wifi -> strings.wifiAddTitle
                     }
                 }
 
@@ -60,7 +60,7 @@ internal fun ItemFormState(
                         is ItemContentType.SecureNote -> strings.secureNoteEditTitle
                         is ItemContentType.PaymentCard -> strings.itemEditTitle
                         is ItemContentType.Unknown -> strings.itemEditTitle
-                        is ItemContentType.Wifi -> "TODO Wifi itemEditTitle"
+                        is ItemContentType.Wifi -> strings.wifiEditTitle
                     }
                 }
             },

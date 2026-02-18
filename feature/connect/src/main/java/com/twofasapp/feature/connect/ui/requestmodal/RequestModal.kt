@@ -272,14 +272,14 @@ private fun Content(
                                     is ItemContentType.Login -> strings.requestModalPasswordRequestTitle
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalCardRequestTitle
-                                    is ItemContentType.Wifi -> "TODO Wifi requestModalRequestTitle"
+                                    is ItemContentType.Wifi -> strings.requestModalWifiRequestTitle
                                 },
                                 subtitle = when (secretFieldRequestState.item.contentType) {
                                     is ItemContentType.Unknown -> ""
                                     is ItemContentType.Login -> strings.requestModalPasswordRequestSubtitle
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestSubtitle
                                     is ItemContentType.PaymentCard -> strings.requestModalCardRequestSubtitle
-                                    is ItemContentType.Wifi -> "TODO Wifi requestModalRequestSubtitle"
+                                    is ItemContentType.Wifi -> strings.requestModalWifiRequestSubtitle
                                 },
                                 icon = MdtIcons.Downloading,
                                 iconTint = MdtTheme.color.primary,
@@ -357,7 +357,7 @@ private fun Content(
                                     is ItemContentType.Login -> strings.requestModalNewLoginTitle
                                     is ItemContentType.SecureNote -> strings.requestModalNewSecureNoteTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalNewCardTitle
-                                    is ItemContentType.Wifi -> "TODO Wifi requestModalNewTitle"
+                                    is ItemContentType.Wifi -> strings.requestModalNewWifiTitle
                                 },
                                 subtitle = strings.requestModalNewItemSubtitle,
                                 icon = MdtIcons.AddCircle,
@@ -377,7 +377,7 @@ private fun Content(
                                     is ItemContentType.Login -> strings.requestModalUpdateLoginTitle
                                     is ItemContentType.SecureNote -> strings.requestModalUpdateSecureNoteTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalUpdateCardTitle
-                                    is ItemContentType.Wifi -> "TODO Wifi requestModalUpdateTitle"
+                                    is ItemContentType.Wifi -> strings.requestModalUpdateWifiTitle
                                 },
                                 subtitle = strings.requestModalUpdateItemSubtitle,
                                 icon = MdtIcons.RotateLeft,

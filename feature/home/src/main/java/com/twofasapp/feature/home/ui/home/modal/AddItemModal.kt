@@ -65,7 +65,7 @@ private fun Content(
         )
 
         OptionEntry(
-            title = "TODO Wifi add",
+            title = strings.contentTypeWifiName,
             icon = MdtIcons.Wifi4Bar,
             onClick = { onSelect(ItemContentType.Wifi) },
         )
