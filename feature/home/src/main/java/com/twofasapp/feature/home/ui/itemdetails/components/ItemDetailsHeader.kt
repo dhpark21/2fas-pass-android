@@ -22,6 +22,7 @@ import kotlinx.collections.immutable.ImmutableList
 internal fun ItemDetailsHeader(
     tags: ImmutableList<Tag>,
     item: Item,
+    subtitle: String? = null
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -38,9 +39,22 @@ internal fun ItemDetailsHeader(
             style = MdtTheme.typo.medium.lg.copy(lineHeight = 22.sp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(top = 12.dp)
+                .padding(bottom = if (subtitle != null) 0.dp else 12.dp),
             textAlign = TextAlign.Center,
         )
+
+        subtitle?.let {
+            Text(
+                text = subtitle,
+                style = MdtTheme.typo.titleSmall,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp),
+                textAlign = TextAlign.Center,
+                color = MdtTheme.color.onSurface
+            )
+        }
 
         ItemDetailsPills(item = item, tags = tags)
 

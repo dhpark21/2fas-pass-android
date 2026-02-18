@@ -130,7 +130,14 @@ private fun Content(
                     onCopySecretField = viewModel::copySecretFieldToClipboard,
                 )
 
-                is ItemContent.Wifi -> WifiContent()
+                is ItemContent.Wifi -> WifiContent(
+                    item = uiState.item,
+                    tags = uiState.tags,
+                    content = content,
+                    decryptedFields = uiState.decryptedFields,
+                    onToggleSecretField = viewModel::toggleSecretField,
+                    onCopySecretField = viewModel::copySecretFieldToClipboard,
+                )
             }
         }
 
