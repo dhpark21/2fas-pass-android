@@ -166,6 +166,19 @@ internal fun HomeSearchBar(
                     },
                 )
             }
+
+            item {
+                Tab(
+                    text = strings.contentTypeWifiName,
+                    icon = MdtIcons.Wifi4Bar,
+                    type = ItemContentType.Wifi,
+                    selected = selectedItemType is ItemContentType.Wifi,
+                    onClick = {
+                        focusManager.clearFocus()
+                        onSelectedItemTypeChange(ItemContentType.Wifi)
+                    },
+                )
+            }
         }
 
         LazyRow(
