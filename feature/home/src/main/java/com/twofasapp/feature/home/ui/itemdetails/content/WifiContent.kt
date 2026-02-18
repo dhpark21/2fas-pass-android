@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.qrCodeContent
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.WifiItemContentPreview
@@ -33,6 +35,7 @@ import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.layout.ZeroPadding
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
+import com.twofasapp.core.design.foundation.qr.QrCode
 import com.twofasapp.core.design.foundation.text.secretAnnotatedString
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.passwordColorized
@@ -59,6 +62,15 @@ internal fun ColumnScope.WifiContent(
 
     if (showWifiQrCodeModal) {
         WifiQrCodeModal(
+            content = content.qrCodeContent(
+                if (content.password == null) {
+                    content.qrCodeContent(null)
+                } else {
+                    decryptedFields[SecretFieldType.WifiQrPassword]?.let {
+                        content.qrCodeContent(it)
+                    }
+                }
+            ),
             onDismissRequest = { showWifiQrCodeModal = false },
         )
     }
@@ -128,7 +140,12 @@ internal fun ColumnScope.WifiContent(
             .fillMaxWidth()
             .clip(RoundedShape12)
             .background(MdtTheme.color.surfaceContainerHigh)
-            .clickable { showWifiQrCodeModal = true }
+            .clickable {
+                content.password?.let {
+                    onToggleSecretField(SecretFieldType.WifiQrPassword, it)
+                }
+                showWifiQrCodeModal = true
+            }
             .padding(16.dp),
         external = true,
         externalIcon = MdtIcons.ChevronRight,
@@ -139,12 +156,20 @@ internal fun ColumnScope.WifiContent(
 
 @Composable
 private fun WifiQrCodeModal(
+    content: String,
     onDismissRequest: () -> Unit,
 ) {
     Modal(
+        headerText = MdtLocale.strings.wifiQrScanTitle,
         onDismissRequest = onDismissRequest,
     ) {
-
+        QrCode(
+            modifier = Modifier
+                .padding(all = 16.dp)
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            content = content
+        )
     }
 }
 

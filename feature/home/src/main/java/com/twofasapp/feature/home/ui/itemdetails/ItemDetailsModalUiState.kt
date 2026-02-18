@@ -26,4 +26,5 @@ internal enum class SecretFieldType {
     PaymentCardExpiration,
     PaymentCardSecurityCode,
     WifiPassword,
+    WifiQrPassword,
 }

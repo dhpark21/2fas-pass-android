@@ -1,5 +1,7 @@
 package com.twofasapp.core.common.domain.items
 
+import com.twofasapp.core.common.domain.WifiSecurityType
+
 fun String.formatWithGrouping(grouping: List<Int>): String {
     if (isEmpty()) return this
 
@@ -40,6 +42,33 @@ fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
         ItemContent.PaymentCard.Issuer.Jcb,
         ItemContent.PaymentCard.Issuer.UnionPay,
         null,
-        -> listOf(4, 4, 4, 4, 3)
+            -> listOf(4, 4, 4, 4, 3)
+    }
+}
+
+fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
+    return buildString {
+        append("WIFI:")
+        append("T:")
+        append(
+            when (securityType) {
+                WifiSecurityType.None,
+                null,
+                is WifiSecurityType.Unknown -> "nopass"
+
+                WifiSecurityType.Wep -> "WPA"
+                WifiSecurityType.Wpa,
+                WifiSecurityType.Wpa2,
+                WifiSecurityType.Wpa3 -> "WPA"
+            }
+        )
+        append(";")
+        ssid?.let {
+            append("S:$it;")
+        }
+        decryptedPassword?.let {
+            append("P:$it;")
+        }
+        append(";")
     }
 }

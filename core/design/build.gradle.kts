@@ -26,4 +26,5 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.bundles.coil)
     implementation(libs.appcompat)
+    implementation(libs.zxing)
 }
