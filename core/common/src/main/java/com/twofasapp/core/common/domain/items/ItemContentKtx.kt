@@ -1,5 +1,6 @@
 package com.twofasapp.core.common.domain.items
 
+import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.WifiSecurityType
 
 fun String.formatWithGrouping(grouping: List<Int>): String {
@@ -62,10 +63,9 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
         append(
             when (securityType) {
                 WifiSecurityType.None,
-                null,
                 is WifiSecurityType.Unknown -> "nopass"
 
-                WifiSecurityType.Wep -> "WPA"
+                WifiSecurityType.Wep -> "WEP"
                 WifiSecurityType.Wpa,
                 WifiSecurityType.Wpa2,
                 WifiSecurityType.Wpa3 -> "WPA"
@@ -80,4 +80,80 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
         }
         append(";")
     }
+}
+
+fun ItemContent.Wifi.Companion.parseWifiQr(content: String): ItemContent.Wifi? {
+
+    fun String.unescape(): String {
+        val out = StringBuilder()
+        var escape = false
+        for (c in this) {
+            if (escape) {
+                out.append(c)
+                escape = false
+            } else if (c == '\\') {
+                escape = true
+            } else {
+                out.append(c)
+            }
+        }
+        return out.toString()
+    }
+
+    if (!content.startsWith("WIFI:")) return null
+
+    val body = content.removePrefix("WIFI:")
+        .removeSuffix(";")
+
+    val fields = mutableMapOf<String, String>()
+
+    var current = StringBuilder()
+    var escape = false
+    val parts = mutableListOf<String>()
+
+    for (c in body) {
+        when {
+            escape -> {
+                current.append(c)
+                escape = false
+            }
+
+            c == '\\' -> escape = true
+            c == ';' -> {
+                parts += current.toString()
+                current = StringBuilder()
+            }
+
+            else -> current.append(c)
+        }
+    }
+    if (current.isNotEmpty()) parts += current.toString()
+
+    parts.forEach { part ->
+        val idx = part.indexOf(':')
+        if (idx > 0) {
+            val key = part.substring(0, idx)
+            val value = part.substring(idx + 1)
+            fields[key] = value
+        }
+    }
+
+    val type = when (fields["T"]?.uppercase()) {
+        "WEP" -> WifiSecurityType.Wep
+        "WPA" -> WifiSecurityType.Wpa2
+        else -> WifiSecurityType.None
+    }
+
+    val ssid = fields["S"]?.unescape()
+    val password = fields["P"]?.unescape()?.let { SecretField.ClearText(it) }
+    val hidden = fields["H"]?.equals("true", ignoreCase = true) == true
+
+    return ItemContent.Wifi(
+        name = ssid ?: "WiFi",
+        ssid = ssid,
+        password = password,
+        securityType = type,
+        hidden = hidden,
+        notes = null
+    )
 }

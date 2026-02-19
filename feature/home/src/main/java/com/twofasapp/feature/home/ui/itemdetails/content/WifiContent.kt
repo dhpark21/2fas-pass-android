@@ -130,15 +130,13 @@ internal fun ColumnScope.WifiContent(
     Spacer(modifier = Modifier.height(16.dp))
 
     QrCodeEntry(
-        qrCodeContent = content.qrCodeContent(
-            if (content.password == null) {
-                content.qrCodeContent(null)
-            } else {
-                decryptedFields[SecretFieldType.WifiQrPassword]?.let {
-                    content.qrCodeContent(it)
-                }
+        qrCodeContent = if (content.password == null) {
+            content.qrCodeContent(null)
+        } else {
+            decryptedFields[SecretFieldType.WifiQrPassword]?.let {
+                content.qrCodeContent(it)
             }
-        ),
+        },
         expanded = showWifiQrCode,
         ssid = content.ssid,
         onClick = {

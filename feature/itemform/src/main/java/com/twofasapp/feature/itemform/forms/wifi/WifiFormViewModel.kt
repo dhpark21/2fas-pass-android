@@ -3,6 +3,7 @@ package com.twofasapp.feature.itemform.forms.wifi
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.parseWifiQr
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.settings.SettingsRepository
@@ -58,5 +59,17 @@ internal class WifiFormViewModel(
 
     fun onPasswordToggleClicked() {
         passwordVisibilityState.update { it.not() }
+    }
+
+    fun onQrCodeScanned(qrCode: String): Boolean {
+        val scannedContent = ItemContent.Wifi.parseWifiQr(qrCode) ?: return false
+        updateItemContent { content ->
+            content.copy(
+                ssid = scannedContent.ssid,
+                securityType = scannedContent.securityType,
+                password = scannedContent.password
+            )
+        }
+        return true
     }
 }

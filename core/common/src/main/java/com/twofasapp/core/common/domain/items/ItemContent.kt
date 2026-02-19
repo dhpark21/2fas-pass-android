@@ -178,6 +178,7 @@ sealed interface ItemContent {
         val notes: String?,
     ) : ItemContent {
         companion object {
+
             val Empty = Wifi(
                 name = "",
                 ssid = null,
@@ -186,6 +187,7 @@ sealed interface ItemContent {
                 hidden = false,
                 notes = null,
             )
+
         }
     }
 }

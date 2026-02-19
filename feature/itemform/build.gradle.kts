@@ -27,6 +27,8 @@ dependencies {
     implementation(project(":data:settings"))
     implementation(project(":data:main"))
     implementation(project(":feature:lock"))
+    implementation(project(":feature:qrscan"))
+    implementation(project(":feature:permissions"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

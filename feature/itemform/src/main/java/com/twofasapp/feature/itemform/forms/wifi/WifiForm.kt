@@ -1,5 +1,6 @@
 package com.twofasapp.feature.itemform.forms.wifi
 
+import android.Manifest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +18,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,19 +45,24 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.ItemImage
 import com.twofasapp.core.design.feature.items.WifiItemContentPreview
 import com.twofasapp.core.design.feature.items.WifiItemPreview
+import com.twofasapp.core.design.feature.settings.OptionEntry
+import com.twofasapp.core.design.feature.settings.OptionEntryPaddingHorizontal
 import com.twofasapp.core.design.feature.settings.OptionSwitch
 import com.twofasapp.core.design.feature.wifi.formatName
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.checked.CheckIcon
 import com.twofasapp.core.design.foundation.layout.ActionsRow
+import com.twofasapp.core.design.foundation.layout.ZeroPadding
 import com.twofasapp.core.design.foundation.lazy.listItem
 import com.twofasapp.core.design.foundation.menu.DropdownMenu
+import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.textfield.SecretField
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.design.foundation.textfield.passwordColors
 import com.twofasapp.core.design.theme.RoundedShape12
+import com.twofasapp.core.design.theme.RoundedShape16
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemFormListener
@@ -64,6 +74,9 @@ import com.twofasapp.feature.itemform.forms.common.noteItem
 import com.twofasapp.feature.itemform.forms.common.securityTypePickerItem
 import com.twofasapp.feature.itemform.forms.common.tagsPickerItem
 import com.twofasapp.feature.itemform.forms.common.timestampInfoItem
+import com.twofasapp.feature.permissions.RequestPermission
+import com.twofasapp.feature.qrscan.QrScan
+import kotlinx.coroutines.android.awaitFrame
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -77,6 +90,34 @@ internal fun WifiForm(
 ) {
     val passwordVisibilityState by viewModel.passwordVisibilityState.collectAsStateWithLifecycle()
     val wifiSecurityTypeDropdownVisibilityState by viewModel.wifiSecurityTypeDropdownVisibilityState.collectAsStateWithLifecycle()
+    var askForCameraPermission by remember { mutableStateOf(false) }
+    var showQrModal by remember { mutableStateOf(false) }
+
+    if (showQrModal) {
+        QrScannerModal(
+            onDismiss = { showQrModal = false },
+            onScanned = {
+                val valid = viewModel.onQrCodeScanned(it)
+                if (valid) {
+                    showQrModal = false
+                }
+            }
+        )
+    }
+
+    if (askForCameraPermission) {
+        RequestPermission(
+            permission = Manifest.permission.CAMERA,
+            rationaleEnabled = true,
+            rationaleTitle = MdtLocale.strings.permissionCameraTitle,
+            rationaleText = MdtLocale.strings.permissionCameraMsg,
+            onGranted = {
+                showQrModal = true
+                askForCameraPermission = false
+            },
+            onDismissRequest = { askForCameraPermission = false },
+        )
+    }
 
     ItemContentFormContainer(
         viewModel = viewModel,
@@ -100,7 +141,10 @@ internal fun WifiForm(
             onHiddenChange = viewModel::onHiddenChanged,
             onWifiSecurityTypeChange = viewModel::onWifiSecurityTypeChanged,
             onWifiSecurityTypeClick = viewModel::onWifiSecurityTypeClicked,
-            onWifiSecurityTypeDropdownDismiss = viewModel::onWifiSecurityTypeDropdownDismissed
+            onWifiSecurityTypeDropdownDismiss = viewModel::onWifiSecurityTypeDropdownDismissed,
+            onScanQrCodeClick = {
+                askForCameraPermission = true
+            }
         )
     }
 }
@@ -124,6 +168,7 @@ private fun WifiFormContent(
     onWifiSecurityTypeChange: (WifiSecurityType) -> Unit,
     onWifiSecurityTypeClick: () -> Unit,
     onWifiSecurityTypeDropdownDismiss: () -> Unit,
+    onScanQrCodeClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -139,6 +184,7 @@ private fun WifiFormContent(
         ),
     ) {
         nameTextField(uiState = uiState, onValueChange = onNameChange)
+        scanQrCode(onClick = onScanQrCodeClick)
         ssidTextField(uiState = uiState, onValueChange = onSsidChange)
         passwordTextField(
             passwordVisible = passwordVisible,
@@ -359,6 +405,23 @@ private fun WifiSecurityTypeMenuItem(text: String, checked: Boolean, onClick: ()
     }
 }
 
+private fun LazyListScope.scanQrCode(onClick: () -> Unit) {
+    listItem(FormListItem.Field("QrCode")) {
+        OptionEntry(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedShape12)
+                .background(MdtTheme.color.surfaceContainer)
+                .clickable(onClick = onClick)
+                .padding(horizontal = OptionEntryPaddingHorizontal),
+            external = true,
+            externalIcon = MdtIcons.QrScanner,
+            title = MdtLocale.strings.wifiQrScanTitle,
+            contentPadding = ZeroPadding,
+        )
+    }
+}
+
 private fun LazyListScope.hiddenSwitch(
     uiState: ItemFormUiState<ItemContent.Wifi>,
     onValueChange: (Boolean) -> Unit
@@ -368,6 +431,25 @@ private fun LazyListScope.hiddenSwitch(
             title = MdtLocale.strings.wifiHiddenNetworkLabel,
             checked = uiState.itemContent?.hidden ?: false,
             onToggle = onValueChange
+        )
+    }
+}
+
+@Composable
+private fun QrScannerModal(onDismiss: () -> Unit, onScanned: (String) -> Unit) {
+    Modal(
+        onDismissRequest = onDismiss,
+    ) {
+        LaunchedEffect(Unit) {
+            awaitFrame()
+        }
+        QrScan(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .clip(RoundedShape16),
+            requireAuth = false,
+            onScanned = onScanned
         )
     }
 }
@@ -394,6 +476,7 @@ private fun WifiFormContentPreview() {
             onWifiSecurityTypeChange = {},
             onWifiSecurityTypeClick = {},
             onWifiSecurityTypeDropdownDismiss = {},
+            onScanQrCodeClick = {}
         )
     }
 }
@@ -420,6 +503,7 @@ private fun WifiFormContentTypeDropdownPreview() {
             onWifiSecurityTypeChange = {},
             onWifiSecurityTypeClick = {},
             onWifiSecurityTypeDropdownDismiss = {},
+            onScanQrCodeClick = {}
         )
     }
 }
@@ -440,5 +524,16 @@ private fun WifiSecurityTypeMenuItemPreview() {
                 onClick = {}
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun QrScannerModalPreview() {
+    PreviewTheme {
+        QrScannerModal(
+            onDismiss = {},
+            onScanned = {}
+        )
     }
 }

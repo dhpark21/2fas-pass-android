@@ -39,7 +39,8 @@ fun QrCode(
     content: String,
     modifier: Modifier = Modifier,
     colors: QrCodeColors = QrCodeDefaults.colors(),
-    margin: Dp = 0.dp
+    margin: Dp = 0.dp,
+    characterSet: String = "UTF-8"
 ) {
     BoxWithConstraints(modifier = modifier, contentAlignment = Alignment.Center) {
         val bitmap = rememberQrBitmap(
@@ -47,7 +48,8 @@ fun QrCode(
             size = min(maxHeight, maxWidth),
             backgroundColor = colors.backgroundColor.toArgb(),
             foregroundColor = colors.foregroundColor.toArgb(),
-            margin = margin
+            margin = margin,
+            characterSet = characterSet
         )
         Crossfade(bitmap) { qrBitmap ->
             if (qrBitmap != null) {
@@ -72,7 +74,8 @@ private fun rememberQrBitmap(
     margin: Dp,
     size: Dp,
     @ColorInt backgroundColor: Int,
-    @ColorInt foregroundColor: Int
+    @ColorInt foregroundColor: Int,
+    characterSet: String
 ): Bitmap? {
     val density = LocalDensity.current
     val sizePx = remember(size) { with(density) { size.roundToPx() } }
@@ -88,6 +91,7 @@ private fun rememberQrBitmap(
 
             val encodeHints = mutableMapOf<EncodeHintType, Any?>().apply {
                 this[EncodeHintType.MARGIN] = marginPx
+                this[EncodeHintType.CHARACTER_SET] = characterSet
             }
 
             val bitmapMatrix = try {
