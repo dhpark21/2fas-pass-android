@@ -236,7 +236,7 @@ private fun WifiContentPreview() {
 
 @Preview
 @Composable
-private fun QrCodeEntryExpandedPreview() {
+private fun QrCodeEntryPreview() {
     PreviewTheme {
         QrCodeEntry(
             qrCodeContent = null,

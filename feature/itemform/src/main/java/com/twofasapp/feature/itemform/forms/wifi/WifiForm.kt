@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,8 +62,9 @@ import com.twofasapp.core.design.foundation.textfield.SecretField
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.design.foundation.textfield.passwordColors
+import com.twofasapp.core.design.foundation.topbar.TopAppBarTitle
 import com.twofasapp.core.design.theme.RoundedShape12
-import com.twofasapp.core.design.theme.RoundedShape16
+import com.twofasapp.core.design.theme.RoundedShape24
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemFormListener
@@ -443,14 +445,30 @@ private fun QrScannerModal(onDismiss: () -> Unit, onScanned: (String) -> Unit) {
         LaunchedEffect(Unit) {
             awaitFrame()
         }
-        QrScan(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
-                .clip(RoundedShape16),
-            requireAuth = false,
-            onScanned = onScanned
-        )
+                .padding(ScreenPadding),
+            verticalArrangement = Arrangement.spacedBy(ScreenPadding)
+        ) {
+            TopAppBarTitle(text = MdtLocale.strings.wifiQrScanAction)
+            QrScan(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedShape24),
+                requireAuth = false,
+                onScanned = onScanned
+            )
+            Text(
+                text = MdtLocale.strings.wifiQrScanTitle,
+                color = MdtTheme.color.tertiary,
+                style = MdtTheme.typo.regular.sm,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterHorizontally),
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 
