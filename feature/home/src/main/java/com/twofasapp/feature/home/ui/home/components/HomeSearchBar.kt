@@ -128,56 +128,61 @@ internal fun HomeSearchBar(
                 )
             }
 
-            item {
-                Tab(
-                    text = strings.contentTypeFilterLoginName,
-                    icon = MdtIcons.Login,
-                    type = ItemContentType.Login,
-                    selected = selectedItemType is ItemContentType.Login,
-                    onClick = {
-                        focusManager.clearFocus()
-                        onSelectedItemTypeChange(ItemContentType.Login)
-                    },
-                )
-            }
+            ItemContentType.values().forEach { itemContentType ->
+                when (itemContentType) {
+                    ItemContentType.Login -> item {
+                        Tab(
+                            text = strings.contentTypeFilterLoginName,
+                            icon = MdtIcons.Login,
+                            type = ItemContentType.Login,
+                            selected = selectedItemType is ItemContentType.Login,
+                            onClick = {
+                                focusManager.clearFocus()
+                                onSelectedItemTypeChange(ItemContentType.Login)
+                            },
+                        )
+                    }
 
-            item {
-                Tab(
-                    text = strings.contentTypeFilterSecureNoteName,
-                    icon = MdtIcons.SecureNote,
-                    type = ItemContentType.SecureNote,
-                    selected = selectedItemType is ItemContentType.SecureNote,
-                    onClick = {
-                        focusManager.clearFocus()
-                        onSelectedItemTypeChange(ItemContentType.SecureNote)
-                    },
-                )
-            }
+                    ItemContentType.PaymentCard -> item {
+                        Tab(
+                            text = strings.contentTypeFilterCardName,
+                            icon = MdtIcons.PaymentCard,
+                            type = ItemContentType.PaymentCard,
+                            selected = selectedItemType is ItemContentType.PaymentCard,
+                            onClick = {
+                                focusManager.clearFocus()
+                                onSelectedItemTypeChange(ItemContentType.PaymentCard)
+                            },
+                        )
+                    }
 
-            item {
-                Tab(
-                    text = strings.contentTypeFilterCardName,
-                    icon = MdtIcons.PaymentCard,
-                    type = ItemContentType.PaymentCard,
-                    selected = selectedItemType is ItemContentType.PaymentCard,
-                    onClick = {
-                        focusManager.clearFocus()
-                        onSelectedItemTypeChange(ItemContentType.PaymentCard)
-                    },
-                )
-            }
+                    ItemContentType.SecureNote -> item {
+                        Tab(
+                            text = strings.contentTypeFilterSecureNoteName,
+                            icon = MdtIcons.SecureNote,
+                            type = ItemContentType.SecureNote,
+                            selected = selectedItemType is ItemContentType.SecureNote,
+                            onClick = {
+                                focusManager.clearFocus()
+                                onSelectedItemTypeChange(ItemContentType.SecureNote)
+                            },
+                        )
+                    }
 
-            item {
-                Tab(
-                    text = strings.contentTypeWifiName,
-                    icon = MdtIcons.Wifi4Bar,
-                    type = ItemContentType.Wifi,
-                    selected = selectedItemType is ItemContentType.Wifi,
-                    onClick = {
-                        focusManager.clearFocus()
-                        onSelectedItemTypeChange(ItemContentType.Wifi)
-                    },
-                )
+                    is ItemContentType.Unknown -> Unit
+                    ItemContentType.Wifi -> item {
+                        Tab(
+                            text = strings.contentTypeWifiName,
+                            icon = MdtIcons.Wifi4Bar,
+                            type = ItemContentType.Wifi,
+                            selected = selectedItemType is ItemContentType.Wifi,
+                            onClick = {
+                                focusManager.clearFocus()
+                                onSelectedItemTypeChange(ItemContentType.Wifi)
+                            },
+                        )
+                    }
+                }
             }
         }
 

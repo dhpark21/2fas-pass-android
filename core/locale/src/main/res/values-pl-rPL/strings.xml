@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Wed, 18 Feb 2026 00:54:03 -0800
+ Exported at: Thu, 19 Feb 2026 01:38:47 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1081,16 +1081,30 @@
     <string name="wifi_field_hidden_value">Ukryta</string>
     <string name="wifi_add_title">Dodaj Wi-Fi</string>
     <string name="wifi_hidden_network_label">Ukryta sieć</string>
-    <string name="wifi_security_type_label">Zabezpieczenia</string>
+    <string name="wifi_security_type_label">Typ szyfrowania</string>
     <string name="wifi_password_label">Hasło</string>
     <string name="wifi_ssid_label">SSID</string>
     <string name="wifi_name_label">Nazwa</string>
-    <string name="wifi_qr_join_title">Zeskanuj kod QR aby dołączyć do \"%s\"</string>
-    <string name="wifi_qr_scan_title">Zeskanuj kod QR Wi-Fi</string>
+    <string name="wifi_qr_join_title">Zeskanuj kod QR, aby dołączyć do \"%s\"</string>
+    <string name="wifi_qr_scan_title">Zeskanuj kod QR sieci</string>
     <string name="request_modal_remove_wifi_title">Usuń Wi-Fi</string>
     <string name="wifi_network_header">Sieć</string>
     <string name="request_modal_update_wifi_title">Zaktualizuj Wi-Fi</string>
     <string name="wifi_edit_title">Edycja WiFi</string>
     <string name="transfer_file_summary_wifi_counter_description">Wykrytych sieci Wi-Fi</string>
     <string name="wifi_notes_label">Notatki</string>
+    <string name="wifi_security_type_none">Brak</string>
+    <string name="credential_exchange_export_error_title">Eksport nieudany</string>
+    <string name="credential_exchange_export_title">Eksportuj do innej aplikacji</string>
+    <string name="credential_exchange_export_description">Wyeksportuj swoje dane logowania do innego menedżera haseł.</string>
+    <string name="credential_exchange_export_cta">Eksportuj</string>
+    <string name="credential_exchange_import_title">Importuj dane logowania</string>
+    <string name="credential_exchange_import_desciption">Twoje dane logowania są gotowe do importu.</string>
+    <string name="credential_exchange_import_error_title">Import nie powiódł się</string>
+    <string name="credential_exchange_importing_description">Importowanie danych logowania…</string>
+    <string name="credential_exchange_import_cta">Importuj</string>
+    <string name="backup_export_to_another_app">Eksportuj do innej aplikacji</string>
+    <string name="backup_export_to_another_app_footer">Wyeksportuj swoje dane logowania do innego menedżera haseł.</string>
+    <string name="credential_exchange_import_success_title">Import zakończony</string>
+    <string name="credential_exchange_import_success_description">Twoje dane logowania zostały pomyślnie zaimportowane.</string>
 </resources>

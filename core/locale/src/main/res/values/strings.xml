@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Wed, 18 Feb 2026 00:54:03 -0800
+ Exported at: Thu, 19 Feb 2026 01:38:47 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1087,6 +1087,20 @@
     <string name="wifi_network_header">Network</string>
     <string name="request_modal_update_wifi_title">Update Wi-Fi</string>
     <string name="wifi_edit_title">Edit Wi-Fi</string>
-    <string name="transfer_file_summary_wifi_counter_description">WiFis detected</string>
+    <string name="transfer_file_summary_wifi_counter_description">Wi-Fis detected</string>
     <string name="wifi_notes_label">Notes</string>
+    <string name="wifi_security_type_none">None</string>
+    <string name="credential_exchange_export_error_title">Export Failed</string>
+    <string name="credential_exchange_export_title">Export to Another App</string>
+    <string name="credential_exchange_export_description">Export your credentials to another password manager.</string>
+    <string name="credential_exchange_export_cta">Export</string>
+    <string name="credential_exchange_import_title">Import Credentials</string>
+    <string name="credential_exchange_import_desciption">Your credentials are ready to be imported.</string>
+    <string name="credential_exchange_import_error_title">Import Failed</string>
+    <string name="credential_exchange_importing_description">Importing your credentials…</string>
+    <string name="credential_exchange_import_cta">Import</string>
+    <string name="backup_export_to_another_app">Export to Another App</string>
+    <string name="backup_export_to_another_app_footer">Export your credentials to another password manager.</string>
+    <string name="credential_exchange_import_success_title">Import Complete</string>
+    <string name="credential_exchange_import_success_description">Your credentials have been imported successfully.</string>
 </resources>

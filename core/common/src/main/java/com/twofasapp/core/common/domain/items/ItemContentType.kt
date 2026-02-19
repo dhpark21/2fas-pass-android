@@ -15,6 +15,15 @@ sealed interface ItemContentType {
                 else -> Unknown(key = key)
             }
         }
+
+        fun values(): List<ItemContentType> {
+            return listOf(
+                Login,
+                PaymentCard,
+                SecureNote,
+                Wifi
+            )
+        }
     }
 
     object Login : ItemContentType {

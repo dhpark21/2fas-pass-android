@@ -173,7 +173,7 @@ sealed interface ItemContent {
         override val name: String,
         val ssid: String?,
         val password: SecretField?,
-        val securityType: WifiSecurityType?,
+        val securityType: WifiSecurityType,
         val hidden: Boolean,
         val notes: String?,
     ) : ItemContent {
@@ -182,7 +182,7 @@ sealed interface ItemContent {
                 name = "",
                 ssid = null,
                 password = null,
-                securityType = WifiSecurityType.None,
+                securityType = WifiSecurityType.Wpa2,
                 hidden = false,
                 notes = null,
             )

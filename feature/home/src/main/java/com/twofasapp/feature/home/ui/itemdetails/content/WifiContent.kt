@@ -1,20 +1,25 @@
 package com.twofasapp.feature.home.ui.itemdetails.content
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
@@ -31,15 +36,18 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.WifiItemContentPreview
 import com.twofasapp.core.design.feature.items.WifiItemPreview
 import com.twofasapp.core.design.feature.settings.OptionEntry
+import com.twofasapp.core.design.feature.settings.OptionEntryPaddingHorizontal
+import com.twofasapp.core.design.feature.wifi.formatName
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.layout.ZeroPadding
-import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.qr.QrCode
+import com.twofasapp.core.design.foundation.qr.QrCodeDefaults
 import com.twofasapp.core.design.foundation.text.secretAnnotatedString
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.passwordColorized
 import com.twofasapp.core.design.theme.RoundedShape12
+import com.twofasapp.core.design.theme.RoundedShape16
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.itemdetails.SecretFieldType
 import com.twofasapp.feature.home.ui.itemdetails.components.ItemDetailsEntry
@@ -57,23 +65,7 @@ internal fun ColumnScope.WifiContent(
     onCopySecretField: (SecretField?, (String) -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
-
-    var showWifiQrCodeModal by remember { mutableStateOf(false) }
-
-    if (showWifiQrCodeModal) {
-        WifiQrCodeModal(
-            content = content.qrCodeContent(
-                if (content.password == null) {
-                    content.qrCodeContent(null)
-                } else {
-                    decryptedFields[SecretFieldType.WifiQrPassword]?.let {
-                        content.qrCodeContent(it)
-                    }
-                }
-            ),
-            onDismissRequest = { showWifiQrCodeModal = false },
-        )
-    }
+    var showWifiQrCode by remember { mutableStateOf(false) }
 
     ItemDetailsHeader(
         item = item,
@@ -86,16 +78,18 @@ internal fun ColumnScope.WifiContent(
             .clip(RoundedShape12),
         verticalArrangement = Arrangement.spacedBy(1.dp),
     ) {
-        ItemDetailsEntry(
-            title = MdtLocale.strings.wifiNetworkHeader,
-            subtitle = content.name,
-            actions = {
-                IconButton(
-                    icon = MdtIcons.Copy,
-                    onClick = { context.copyToClipboard(content.name) },
-                )
-            },
-        )
+        content.ssid?.let { ssid ->
+            ItemDetailsEntry(
+                title = MdtLocale.strings.wifiNetworkHeader,
+                subtitle = ssid,
+                actions = {
+                    IconButton(
+                        icon = MdtIcons.Copy,
+                        onClick = { context.copyToClipboard(ssid) },
+                    )
+                },
+            )
+        }
 
         content.password?.let { password ->
             ItemDetailsEntry(
@@ -123,11 +117,11 @@ internal fun ColumnScope.WifiContent(
 
         ItemDetailsEntry(
             title = MdtLocale.strings.wifiSecurityTypeLabel,
-            subtitle = content.securityType?.value.orEmpty(),
+            subtitle = content.securityType.formatName(),
             actions = {
                 IconButton(
                     icon = MdtIcons.Copy,
-                    onClick = { context.copyToClipboard(content.securityType?.value.orEmpty()) },
+                    onClick = { context.copyToClipboard(content.securityType.value) },
                 )
             },
         )
@@ -135,41 +129,93 @@ internal fun ColumnScope.WifiContent(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    OptionEntry(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(RoundedShape12)
-            .background(MdtTheme.color.surfaceContainerHigh)
-            .clickable {
+    QrCodeEntry(
+        qrCodeContent = content.qrCodeContent(
+            if (content.password == null) {
+                content.qrCodeContent(null)
+            } else {
+                decryptedFields[SecretFieldType.WifiQrPassword]?.let {
+                    content.qrCodeContent(it)
+                }
+            }
+        ),
+        expanded = showWifiQrCode,
+        ssid = content.ssid,
+        onClick = {
+            if (showWifiQrCode) {
+                showWifiQrCode = false
+            } else {
                 content.password?.let {
                     onToggleSecretField(SecretFieldType.WifiQrPassword, it)
                 }
-                showWifiQrCodeModal = true
+                showWifiQrCode = true
             }
-            .padding(16.dp),
-        external = true,
-        externalIcon = MdtIcons.ChevronRight,
-        title = MdtLocale.strings.wifiShowQrCodeAction,
-        contentPadding = ZeroPadding,
+        }
     )
 }
 
 @Composable
-private fun WifiQrCodeModal(
-    content: String,
-    onDismissRequest: () -> Unit,
+private fun QrCodeEntry(
+    ssid: String?,
+    qrCodeContent: String?,
+    expanded: Boolean,
+    onClick: () -> Unit
 ) {
-    Modal(
-        headerText = MdtLocale.strings.wifiQrScanTitle,
-        onDismissRequest = onDismissRequest,
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedShape12)
+            .background(MdtTheme.color.surfaceContainerHigh)
+            .clickable(onClick = onClick)
+            .padding(horizontal = OptionEntryPaddingHorizontal)
     ) {
-        QrCode(
-            modifier = Modifier
-                .padding(all = 16.dp)
-                .fillMaxWidth()
-                .aspectRatio(1f),
-            content = content
+        OptionEntry(
+            external = true,
+            externalIcon = if (expanded) MdtIcons.VisibilityOff else MdtIcons.Visibility,
+            title = MdtLocale.strings.wifiShowQrCodeAction,
+            contentPadding = ZeroPadding,
         )
+        AnimatedVisibility(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally),
+            visible = expanded
+        ) {
+            Column(
+                modifier = Modifier.padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                WifiQrCode(content = qrCodeContent)
+                Text(
+                    text = if (ssid == null) {
+                        MdtLocale.strings.wifiQrScanTitle
+                    } else {
+                        MdtLocale.strings.wifiQrJoinTitle(ssid)
+                    },
+                    style = MdtTheme.typo.labelSmall,
+                    color = MdtTheme.color.onPrimaryContainer
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun WifiQrCode(content: String?) {
+    Box(
+        modifier = Modifier
+            .size(176.dp)
+            .clip(RoundedShape16)
+            .background(QrCodeDefaults.colors().backgroundColor)
+            .padding(16.dp)
+    ) {
+        content?.let {
+            QrCode(
+                modifier = Modifier
+                    .fillMaxSize(),
+                content = content
+            )
+        }
     }
 }
 
@@ -187,5 +233,18 @@ private fun WifiContentPreview() {
                 onToggleSecretField = { _, _ -> }
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun QrCodeEntryExpandedPreview() {
+    PreviewTheme {
+        QrCodeEntry(
+            qrCodeContent = null,
+            expanded = true,
+            ssid = null,
+            onClick = {}
+        )
     }
 }

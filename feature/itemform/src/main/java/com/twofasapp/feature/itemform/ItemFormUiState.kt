@@ -70,15 +70,6 @@ internal data class ItemFormUiState<T : ItemContent>(
     }
 
     private fun validateWifi(content: ItemContent.Wifi): Boolean {
-        if (content.name.isEmpty()) {
-            return false
-        }
-        if (content.ssid.isNullOrEmpty()) {
-            return false
-        }
-        if (content.password.clearTextOrNull.isNullOrEmpty()) {
-            return false
-        }
-        return true
+        return content.name.isNotEmpty()
     }
 }

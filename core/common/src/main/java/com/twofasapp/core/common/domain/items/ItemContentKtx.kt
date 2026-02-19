@@ -47,6 +47,15 @@ fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
 }
 
 fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
+
+    fun String.escape(): String {
+        return replace("\\", "\\\\")
+            .replace(";", "\\;")
+            .replace(",", "\\,")
+            .replace(":", "\\:")
+            .replace("\"", "\\\"")
+    }
+
     return buildString {
         append("WIFI:")
         append("T:")
@@ -64,10 +73,10 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
         )
         append(";")
         ssid?.let {
-            append("S:$it;")
+            append("S:${it.escape()};")
         }
         decryptedPassword?.let {
-            append("P:$it;")
+            append("P:${it.escape()};")
         }
         append(";")
     }

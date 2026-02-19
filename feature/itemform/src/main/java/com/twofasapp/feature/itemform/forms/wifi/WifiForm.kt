@@ -41,6 +41,7 @@ import com.twofasapp.core.design.feature.items.ItemImage
 import com.twofasapp.core.design.feature.items.WifiItemContentPreview
 import com.twofasapp.core.design.feature.items.WifiItemPreview
 import com.twofasapp.core.design.feature.settings.OptionSwitch
+import com.twofasapp.core.design.feature.wifi.formatName
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.checked.CheckIcon
 import com.twofasapp.core.design.foundation.layout.ActionsRow
@@ -273,7 +274,7 @@ private fun LazyListScope.wifiSecurityTypePicker(
         Box {
             TextField(
                 readOnly = true,
-                value = uiState.itemContent?.securityType?.value ?: WifiSecurityType.None.value,
+                value = uiState.itemContent?.securityType?.formatName() ?: "",
                 textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
                 labelText = MdtLocale.strings.wifiSecurityTypeLabel,
                 singleLine = true,
@@ -318,7 +319,7 @@ private fun WifiSecurityTypeDropdownMenu(
         content = {
             WifiSecurityType.values().forEach { wifiSecurityType ->
                 WifiSecurityTypeMenuItem(
-                    text = wifiSecurityType.value,
+                    text = wifiSecurityType.formatName(),
                     checked = wifiSecurityType == selectedValue,
                     onClick = { onValueChange(wifiSecurityType) }
                 )
