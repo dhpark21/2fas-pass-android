@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,8 @@ import com.twofasapp.feature.home.ui.itemdetails.components.ItemDetailsEntry
 import com.twofasapp.feature.home.ui.itemdetails.components.ItemDetailsHeader
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun ColumnScope.WifiContent(
@@ -63,7 +66,9 @@ internal fun ColumnScope.WifiContent(
     decryptedFields: Map<SecretFieldType, String>,
     onToggleSecretField: (SecretFieldType, SecretField?) -> Unit,
     onCopySecretField: (SecretField?, (String) -> Unit) -> Unit,
+    onScrollToBottom: () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showWifiQrCode by remember { mutableStateOf(false) }
 
@@ -163,6 +168,15 @@ internal fun ColumnScope.WifiContent(
                     }
                 }
                 showWifiQrCode = true
+                scope.launch {
+                    onScrollToBottom()
+                    val animationDuration = 300
+                    val dt = 10
+                    repeat(animationDuration / dt + 1) {
+                        delay(dt.toLong())
+                        onScrollToBottom()
+                    }
+                }
             }
         }
     )
@@ -245,7 +259,8 @@ private fun WifiContentPreview() {
                 WifiItemContentPreview.copy(hidden = true),
                 decryptedFields = emptyMap(),
                 onCopySecretField = { _, _ -> },
-                onToggleSecretField = { _, _ -> }
+                onToggleSecretField = { _, _ -> },
+                onScrollToBottom = {}
             )
         }
     }

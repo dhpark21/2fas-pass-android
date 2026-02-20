@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,7 @@ import com.twofasapp.feature.home.ui.itemdetails.content.PaymentCardContent
 import com.twofasapp.feature.home.ui.itemdetails.content.SecureNoteContent
 import com.twofasapp.feature.home.ui.itemdetails.content.WifiContent
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -88,6 +90,8 @@ private fun Content(
     uiState: ItemDetailsModalUiState,
     onEditClick: () -> Unit,
 ) {
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -98,7 +102,7 @@ private fun Content(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = ButtonHeight + 16.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState),
         ) {
             when (val content = uiState.item.content) {
                 is ItemContent.Unknown -> Unit
@@ -137,6 +141,7 @@ private fun Content(
                     decryptedFields = uiState.decryptedFields,
                     onToggleSecretField = viewModel::toggleSecretField,
                     onCopySecretField = viewModel::copySecretFieldToClipboard,
+                    onScrollToBottom = { scope.launch { scrollState.animateScrollTo(scrollState.maxValue) } }
                 )
             }
         }
