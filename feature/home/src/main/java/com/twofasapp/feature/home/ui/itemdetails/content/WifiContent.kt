@@ -1,5 +1,6 @@
 package com.twofasapp.feature.home.ui.itemdetails.content
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -157,8 +157,10 @@ internal fun ColumnScope.WifiContent(
             if (showWifiQrCode) {
                 showWifiQrCode = false
             } else {
-                content.password?.let {
-                    onToggleSecretField(SecretFieldType.WifiQrPassword, it)
+                content.password?.let { password ->
+                    if (decryptedFields[SecretFieldType.WifiQrPassword] == null) {
+                        onToggleSecretField(SecretFieldType.WifiQrPassword, password)
+                    }
                 }
                 showWifiQrCode = true
             }
@@ -214,18 +216,19 @@ private fun QrCodeEntry(
 
 @Composable
 private fun WifiQrCode(content: String?) {
+    Log.e("QR_DEBUG", "content=$content")
     Box(
         modifier = Modifier
             .size(176.dp)
             .clip(RoundedShape16)
             .background(QrCodeDefaults.colors().backgroundColor)
-            .padding(16.dp)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
         content?.let {
             QrCode(
-                modifier = Modifier
-                    .fillMaxSize(),
-                content = content
+                content = content,
+                size = 160.dp
             )
         }
     }
