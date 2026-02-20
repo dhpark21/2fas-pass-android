@@ -336,10 +336,14 @@ private fun LazyListScope.wifiSecurityTypePicker(
                     ) {
                         IconButton(
                             icon = MdtIcons.ChevronDown,
-                            onClick = onClick,
                         )
                     }
                 },
+            )
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable(onClick = onClick)
             )
             Box(modifier = Modifier.align(Alignment.TopEnd)) {
                 WifiSecurityTypeDropdownMenu(
