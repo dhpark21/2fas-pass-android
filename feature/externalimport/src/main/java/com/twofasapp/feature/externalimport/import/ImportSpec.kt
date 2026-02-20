@@ -12,9 +12,11 @@ import android.net.Uri
 import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.core.design.R
 import com.twofasapp.core.design.foundation.preview.PreviewTextMedium
 import timber.log.Timber
@@ -134,13 +136,13 @@ internal abstract class ImportSpec() {
         return try {
             val bytes = date.decodeBase64()
             val secondsFromYearOne = (bytes[0].toLong() and 0xFF) or
-                ((bytes[1].toLong() and 0xFF) shl 8) or
-                ((bytes[2].toLong() and 0xFF) shl 16) or
-                ((bytes[3].toLong() and 0xFF) shl 24) or
-                ((bytes[4].toLong() and 0xFF) shl 32) or
-                ((bytes[5].toLong() and 0xFF) shl 40) or
-                ((bytes[6].toLong() and 0xFF) shl 48) or
-                ((bytes[7].toLong() and 0xFF) shl 56)
+                    ((bytes[1].toLong() and 0xFF) shl 8) or
+                    ((bytes[2].toLong() and 0xFF) shl 16) or
+                    ((bytes[3].toLong() and 0xFF) shl 24) or
+                    ((bytes[4].toLong() and 0xFF) shl 32) or
+                    ((bytes[5].toLong() and 0xFF) shl 40) or
+                    ((bytes[6].toLong() and 0xFF) shl 48) or
+                    ((bytes[7].toLong() and 0xFF) shl 56)
             val secondsBetweenYearOneAnd1970 = 62135596800L
             val secondsFromYear1970 = secondsFromYearOne - secondsBetweenYearOneAnd1970
             Instant.ofEpochSecond(secondsFromYear1970).toEpochMilli()
@@ -148,6 +150,50 @@ internal abstract class ImportSpec() {
             Timber.e(t)
             null
         }
+    }
+
+    protected fun parseWifiSecurityType(securityText: String?): WifiSecurityType {
+        if (securityText == null) {
+            return WifiSecurityType.Wpa2
+        }
+
+        val text = securityText.trim().removeWhitespace().replace(" ", "")
+
+        if (text.equals("unsecured", true)) {
+            return WifiSecurityType.None
+        }
+        if (text.equals("nopass", true)) {
+            return WifiSecurityType.None
+        }
+        if (text == "0") {
+            return WifiSecurityType.None
+        }
+        if (text == "1") {
+            return WifiSecurityType.Wep
+        }
+        if (text == "2") {
+            return WifiSecurityType.Wpa
+        }
+        if (text == "3") {
+            return WifiSecurityType.Wpa2
+        }
+        if (text == "4") {
+            return WifiSecurityType.Wpa3
+        }
+        if (text.contains("wpa2", true)) {
+            return WifiSecurityType.Wpa2
+        }
+        if (text.contains("wpa3", true)) {
+            return WifiSecurityType.Wpa3
+        }
+        if (text.contains("wpa", true)) {
+            return WifiSecurityType.Wpa
+        }
+        val wifiSecurityType = WifiSecurityType.fromValue(text.lowercase())
+        if (wifiSecurityType is WifiSecurityType.Unknown) {
+            return WifiSecurityType.Wpa2
+        }
+        return wifiSecurityType
     }
 
     protected data class ParsedItem(

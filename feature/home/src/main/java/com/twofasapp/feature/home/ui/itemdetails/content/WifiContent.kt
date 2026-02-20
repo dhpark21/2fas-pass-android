@@ -125,6 +125,20 @@ internal fun ColumnScope.WifiContent(
                 )
             },
         )
+
+        if (content.notes.isNullOrEmpty().not()) {
+            ItemDetailsEntry(
+                title = MdtLocale.strings.wifiNotesLabel,
+                subtitle = content.notes.orEmpty(),
+                isCompact = true,
+                actions = {
+                    IconButton(
+                        icon = MdtIcons.Copy,
+                        onClick = { context.copyToClipboard(content.notes.orEmpty()) },
+                    )
+                },
+            )
+        }
     }
 
     Spacer(modifier = Modifier.height(16.dp))

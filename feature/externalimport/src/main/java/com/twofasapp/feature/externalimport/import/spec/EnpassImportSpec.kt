@@ -17,6 +17,7 @@ import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
@@ -105,6 +106,7 @@ internal class EnpassImportSpec(
                     "login", "password" -> item.parseLogin(vaultId, tagIds)
                     "creditcard" -> item.parseCreditCard(vaultId, tagIds)
                     "note" -> item.parseSecureNote(vaultId, tagIds)
+                    "computer" -> item.parseWifi(vaultId, tagIds)
                     else -> {
                         // finance, identity, and other categories -> secure note
                         unknownItems++
@@ -248,6 +250,148 @@ internal class EnpassImportSpec(
                 iconType = IconType.Icon,
                 iconUriIndex = if (itemUri == null) null else 0,
                 uris = listOfNotNull(itemUri),
+            ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
+    }
+
+    private fun EnpassItem.parseWifi(vaultId: String, tagIds: List<String>?): Item? {
+        val name = title?.trim()?.takeIf { it.isNotBlank() } ?: return null
+        val noteText = note?.trim()?.takeIf { it.isNotBlank() }
+
+        var stationPassword: String? = null
+        var networkPassword: String? = null
+        var storagePassword: String? = null
+        var password: String? = null
+        var networkName: String? = null
+        var stationName: String? = null
+        var securityType: WifiSecurityType = WifiSecurityType.Wpa2
+        val additionalFields = mutableListOf<Pair<String, String>>()
+
+        fields.orEmpty()
+            .filter { field -> field.deleted != 1 }
+            .filterNot { field -> field.value?.trim().isNullOrEmpty() }
+            .forEach { field ->
+                val label = field.label.orEmpty().trim()
+                val value = field.value?.trim()
+                if (value != null) {
+                    when {
+                        label.equals(other = "Station name", ignoreCase = true) ->
+                            stationName = value
+
+                        label.equals(other = "Station password", ignoreCase = true) ->
+                            stationPassword = value
+
+                        label.equals(other = "Network name", ignoreCase = true) ->
+                            networkName = value
+
+                        label.equals(other = "Network password", ignoreCase = true) ->
+                            networkPassword = value
+
+                        label.equals(other = "Security", ignoreCase = true) ->
+                            securityType = parseWifiSecurityType(value)
+
+                        label.equals(other = "Password", ignoreCase = true) ->
+                            password = value
+
+                        label.equals(other = "Storage password", ignoreCase = true) ->
+                            storagePassword = value
+                    }
+
+                    if (label.equals(other = "Security", ignoreCase = true).not()) {
+                        val formattedLabel = field.label?.trim() ?: formatFieldType(value)
+                        additionalFields.add(formattedLabel to value)
+                    }
+                }
+            }
+
+        var ssid: String? = null
+        var wifiPassword: String? = null
+
+        when {
+            password.isNullOrBlank().not() -> {
+                wifiPassword = password
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Password",
+                        ignoreCase = true
+                    )
+                }
+            }
+
+            networkPassword.isNullOrBlank().not() -> {
+                wifiPassword = networkPassword
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Network password",
+                        ignoreCase = true
+                    )
+                }
+            }
+
+            stationPassword.isNullOrBlank().not() -> {
+                wifiPassword = stationPassword
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Station password",
+                        ignoreCase = true
+                    )
+                }
+            }
+
+            storagePassword.isNullOrBlank().not() -> {
+                wifiPassword = storagePassword
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Storage password",
+                        ignoreCase = true
+                    )
+                }
+            }
+        }
+
+        when {
+            networkName.isNullOrBlank().not() -> {
+                ssid = networkName
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Network name",
+                        ignoreCase = true
+                    )
+                }
+            }
+
+            stationName.isNullOrBlank().not() -> {
+                ssid = stationName
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Station name",
+                        ignoreCase = true
+                    )
+                }
+            }
+        }
+
+        val mergedNotes = TransferUtils.formatNote(
+            note = noteText,
+            fields = additionalFields.toMap(),
+        )
+
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
+        return Item.create(
+            contentType = ItemContentType.Wifi,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.Wifi.Empty.copy(
+                name = name,
+                ssid = ssid,
+                password = wifiPassword?.let { SecretField.ClearText(it) },
+                securityType = securityType,
+                notes = mergedNotes
             ),
             createdAt = createdAt,
             updatedAt = updatedAt,

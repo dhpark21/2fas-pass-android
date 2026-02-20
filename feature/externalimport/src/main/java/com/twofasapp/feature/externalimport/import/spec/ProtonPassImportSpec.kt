@@ -111,6 +111,10 @@ internal class ProtonPassImportSpec(
                             item.parseSecureNoteFromJson(vaultId, sourceVaultName)?.let { add(it) }
                         }
 
+                        "wifi" -> {
+                            item.parseWifiFromJson(vaultId, sourceVaultName)?.let { add(it) }
+                        }
+
                         else -> {
                             unknownItems++
                             item.parseAsSecureNoteFromJson(vaultId, sourceVaultName)
@@ -279,6 +283,65 @@ internal class ProtonPassImportSpec(
                 expirationDate = expirationDate,
                 securityCode = securityCode,
                 notes = notes,
+            ),
+            createdAt = createTime?.let { parseSecondsFrom1970(it) },
+            updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
+        )
+    }
+
+    private fun ProtonPassItem.parseWifiFromJson(
+        vaultId: String,
+        sourceVaultName: String?,
+    ): Item? {
+        val itemData = data ?: return null
+        val metadata = itemData.metadata ?: return null
+        val itemName = metadata.name?.trim()?.takeIf { it.isNotBlank() }
+        val content = itemData.content ?: return null
+
+        val ssid = content["ssid"]?.jsonPrimitive?.contentOrNull?.trim()
+            ?.takeIf { it.isNotBlank() }
+        val password =
+            content["password"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+        val security =
+            parseWifiSecurityType(content["security"]?.jsonPrimitive?.contentOrNull?.trim())
+
+        // Build notes
+        val noteComponents = mutableListOf<String>()
+        metadata.note?.trim()?.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
+
+        // Add extra fields from content (excluding used keys)
+        val usedKeys = setOf("ssid", "password", "security")
+        val additionalData = content.entries
+            .filter { !usedKeys.contains(it.key) }
+            .mapNotNull { (key, value) ->
+                val valueStr = value.toStringOrNull() ?: return@mapNotNull null
+                formatFieldType(key) to valueStr
+            }
+        formatAdditionalFields(additionalData)?.let { noteComponents.add(it) }
+
+        // Add extra fields
+        formatExtraFields(itemData.extraFields)?.let { noteComponents.add(it) }
+
+        // Add TOTP if present
+        content["totpUri"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let {
+            noteComponents.add("TOTP: $it")
+        }
+
+        sourceVaultName?.let { noteComponents.add("Vault: $it") }
+
+        val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
+
+        return Item.create(
+            contentType = ItemContentType.Wifi,
+            vaultId = vaultId,
+            content = ItemContent.Wifi.Empty.copy(
+                ssid = ssid,
+                password = password
+                    ?.let { SecretField.ClearText(it) },
+                name = itemName.orEmpty(),
+                notes = notes,
+                hidden = false,
+                securityType = security
             ),
             createdAt = createTime?.let { parseSecondsFrom1970(it) },
             updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
