@@ -187,7 +187,6 @@ sealed interface ItemContent {
                 hidden = false,
                 notes = null,
             )
-
         }
     }
 }

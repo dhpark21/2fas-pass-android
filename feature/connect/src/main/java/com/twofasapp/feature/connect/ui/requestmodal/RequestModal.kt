@@ -291,29 +291,29 @@ private fun Content(
                                             is ItemContent.Login -> {
                                                 put(
                                                     "s_password",
-                                                    content.password.clearTextOrNull.orEmpty()
+                                                    content.password.clearTextOrNull.orEmpty(),
                                                 )
                                             }
 
                                             is ItemContent.SecureNote -> {
                                                 put(
                                                     "s_text",
-                                                    content.text.clearTextOrNull.orEmpty()
+                                                    content.text.clearTextOrNull.orEmpty(),
                                                 )
                                             }
 
                                             is ItemContent.PaymentCard -> {
                                                 put(
                                                     "s_cardNumber",
-                                                    content.cardNumber.clearTextOrNull.orEmpty()
+                                                    content.cardNumber.clearTextOrNull.orEmpty(),
                                                 )
                                                 put(
                                                     "s_expirationDate",
-                                                    content.expirationDate.clearTextOrNull.orEmpty()
+                                                    content.expirationDate.clearTextOrNull.orEmpty(),
                                                 )
                                                 put(
                                                     "s_securityCode",
-                                                    content.securityCode.clearTextOrNull.orEmpty()
+                                                    content.securityCode.clearTextOrNull.orEmpty(),
                                                 )
                                             }
 
@@ -321,7 +321,7 @@ private fun Content(
                                             is ItemContent.Wifi -> {
                                                 put(
                                                     "s_password",
-                                                    content.password.clearTextOrNull.orEmpty()
+                                                    content.password.clearTextOrNull.orEmpty(),
                                                 )
                                             }
                                         }
@@ -393,7 +393,7 @@ private fun Content(
                             ErrorState(
                                 title = strings.requestModalErrorItemsLimitTitle,
                                 subtitle = strings.requestModalErrorItemsLimitSubtitle.format(
-                                    uiState.requestState.maxItems
+                                    uiState.requestState.maxItems,
                                 ),
                                 cta = MdtLocale.strings.requestModalErrorItemsLimitCta,
                                 onCta = { onUpgradePlan() },

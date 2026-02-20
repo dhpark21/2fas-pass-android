@@ -1,6 +1,5 @@
 package com.twofasapp.feature.home.ui.itemdetails.content
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -66,7 +65,7 @@ internal fun ColumnScope.WifiContent(
     decryptedFields: Map<SecretFieldType, String>,
     onToggleSecretField: (SecretFieldType, SecretField?) -> Unit,
     onCopySecretField: (SecretField?, (String) -> Unit) -> Unit,
-    onScrollToBottom: () -> Unit
+    onScrollToBottom: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -75,7 +74,7 @@ internal fun ColumnScope.WifiContent(
     ItemDetailsHeader(
         item = item,
         tags = tags,
-        subtitle = MdtLocale.strings.wifiFieldHiddenValue.takeIf { content.hidden }
+        subtitle = MdtLocale.strings.wifiFieldHiddenValue.takeIf { content.hidden },
     )
     Column(
         modifier = Modifier
@@ -178,7 +177,7 @@ internal fun ColumnScope.WifiContent(
                     }
                 }
             }
-        }
+        },
     )
 }
 
@@ -187,7 +186,7 @@ private fun QrCodeEntry(
     ssid: String?,
     qrCodeContent: String?,
     expanded: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -195,7 +194,7 @@ private fun QrCodeEntry(
             .clip(RoundedShape12)
             .background(MdtTheme.color.surfaceContainerHigh)
             .clickable(onClick = onClick)
-            .padding(horizontal = OptionEntryPaddingHorizontal)
+            .padding(horizontal = OptionEntryPaddingHorizontal),
     ) {
         OptionEntry(
             external = true,
@@ -206,12 +205,12 @@ private fun QrCodeEntry(
         AnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
-            visible = expanded
+            visible = expanded,
         ) {
             Column(
                 modifier = Modifier.padding(vertical = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 WifiQrCode(content = qrCodeContent)
                 Text(
@@ -221,7 +220,7 @@ private fun QrCodeEntry(
                         MdtLocale.strings.wifiQrJoinTitle(ssid)
                     },
                     style = MdtTheme.typo.labelSmall,
-                    color = MdtTheme.color.onPrimaryContainer
+                    color = MdtTheme.color.onPrimaryContainer,
                 )
             }
         }
@@ -230,19 +229,18 @@ private fun QrCodeEntry(
 
 @Composable
 private fun WifiQrCode(content: String?) {
-    Log.e("QR_DEBUG", "content=$content")
     Box(
         modifier = Modifier
             .size(176.dp)
             .clip(RoundedShape16)
             .background(QrCodeDefaults.colors().backgroundColor)
             .padding(16.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         content?.let {
             QrCode(
                 content = content,
-                size = 160.dp
+                size = 160.dp,
             )
         }
     }
@@ -260,7 +258,7 @@ private fun WifiContentPreview() {
                 decryptedFields = emptyMap(),
                 onCopySecretField = { _, _ -> },
                 onToggleSecretField = { _, _ -> },
-                onScrollToBottom = {}
+                onScrollToBottom = {},
             )
         }
     }
@@ -274,7 +272,7 @@ private fun QrCodeEntryPreview() {
             qrCodeContent = null,
             expanded = true,
             ssid = null,
-            onClick = {}
+            onClick = {},
         )
     }
 }

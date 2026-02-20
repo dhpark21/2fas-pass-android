@@ -21,7 +21,7 @@ class LoginEncryptionMapperStrategy(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent.Login {
         val contentEntity =
             json.decodeFromString(LoginContentEntityV1.serializer(), contentEntityJson)

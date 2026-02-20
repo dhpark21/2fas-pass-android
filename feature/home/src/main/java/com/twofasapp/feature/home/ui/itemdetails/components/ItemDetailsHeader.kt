@@ -22,7 +22,7 @@ import kotlinx.collections.immutable.ImmutableList
 internal fun ItemDetailsHeader(
     tags: ImmutableList<Tag>,
     item: Item,
-    subtitle: String? = null
+    subtitle: String? = null,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -52,7 +52,7 @@ internal fun ItemDetailsHeader(
                     .fillMaxWidth()
                     .padding(bottom = 12.dp),
                 textAlign = TextAlign.Center,
-                color = MdtTheme.color.onSurface
+                color = MdtTheme.color.onSurface,
             )
         }
 

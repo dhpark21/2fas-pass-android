@@ -31,7 +31,7 @@ sealed interface WifiSecurityType {
             Wep,
             Wpa,
             Wpa2,
-            Wpa3
+            Wpa3,
         )
 
         fun fromValue(value: String?): WifiSecurityType {

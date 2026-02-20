@@ -12,49 +12,49 @@ class ItemEncryptionMapperDelegate(
     private val paymentCardEncryptionMapperStrategy: PaymentCardEncryptionMapperStrategy,
     private val secureNoteEncryptionMapperStrategy: SecureNoteEncryptionMapperStrategy,
     private val unknownEncryptionMapperStrategy: UnknownEncryptionMapperStrategy,
-    private val wifiEncryptionMapperStrategy: WifiEncryptionMapperStrategy
+    private val wifiEncryptionMapperStrategy: WifiEncryptionMapperStrategy,
 ) : ItemEncryptionMapperStrategy<ItemContent> {
 
     override fun decryptItem(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent {
         return when (itemEncrypted.contentType) {
             ItemContentType.Login -> loginEncryptionMapperStrategy.decryptItem(
                 itemEncrypted,
                 vaultCipher,
                 decryptSecretFields,
-                contentEntityJson
+                contentEntityJson,
             )
 
             ItemContentType.PaymentCard -> paymentCardEncryptionMapperStrategy.decryptItem(
                 itemEncrypted,
                 vaultCipher,
                 decryptSecretFields,
-                contentEntityJson
+                contentEntityJson,
             )
 
             ItemContentType.SecureNote -> secureNoteEncryptionMapperStrategy.decryptItem(
                 itemEncrypted,
                 vaultCipher,
                 decryptSecretFields,
-                contentEntityJson
+                contentEntityJson,
             )
 
             is ItemContentType.Unknown -> unknownEncryptionMapperStrategy.decryptItem(
                 itemEncrypted,
                 vaultCipher,
                 decryptSecretFields,
-                contentEntityJson
+                contentEntityJson,
             )
 
             ItemContentType.Wifi -> wifiEncryptionMapperStrategy.decryptItem(
                 itemEncrypted,
                 vaultCipher,
                 decryptSecretFields,
-                contentEntityJson
+                contentEntityJson,
             )
         }
     }
@@ -62,37 +62,37 @@ class ItemEncryptionMapperDelegate(
     override fun encryptItem(
         item: Item,
         content: ItemContent,
-        vaultCipher: VaultCipher
+        vaultCipher: VaultCipher,
     ): String {
         return when (content) {
             is ItemContent.Login -> loginEncryptionMapperStrategy.encryptItem(
                 item,
                 content,
-                vaultCipher
+                vaultCipher,
             )
 
             is ItemContent.PaymentCard -> paymentCardEncryptionMapperStrategy.encryptItem(
                 item,
                 content,
-                vaultCipher
+                vaultCipher,
             )
 
             is ItemContent.SecureNote -> secureNoteEncryptionMapperStrategy.encryptItem(
                 item,
                 content,
-                vaultCipher
+                vaultCipher,
             )
 
             is ItemContent.Unknown -> unknownEncryptionMapperStrategy.encryptItem(
                 item,
                 content,
-                vaultCipher
+                vaultCipher,
             )
 
             is ItemContent.Wifi -> wifiEncryptionMapperStrategy.encryptItem(
                 item,
                 content,
-                vaultCipher
+                vaultCipher,
             )
         }
     }
@@ -100,69 +100,69 @@ class ItemEncryptionMapperDelegate(
     override fun decryptSecretFields(
         vaultCipher: VaultCipher,
         securityType: SecurityType,
-        content: ItemContent
+        content: ItemContent,
     ): ItemContent {
         return when (content) {
             is ItemContent.Login -> loginEncryptionMapperStrategy.decryptSecretFields(
                 vaultCipher,
                 securityType,
-                content
+                content,
             )
 
             is ItemContent.PaymentCard -> paymentCardEncryptionMapperStrategy.decryptSecretFields(
                 vaultCipher,
                 securityType,
-                content
+                content,
             )
 
             is ItemContent.SecureNote -> secureNoteEncryptionMapperStrategy.decryptSecretFields(
                 vaultCipher,
                 securityType,
-                content
+                content,
             )
 
             is ItemContent.Unknown -> unknownEncryptionMapperStrategy.decryptSecretFields(
                 vaultCipher,
                 securityType,
-                content
+                content,
             )
 
             is ItemContent.Wifi -> wifiEncryptionMapperStrategy.decryptSecretFields(
                 vaultCipher,
                 securityType,
-                content
+                content,
             )
         }
     }
 
     override fun encryptSecretFields(
         content: ItemContent,
-        encryptionKey: ByteArray
+        encryptionKey: ByteArray,
     ): ItemContent {
-     return   when (content) {
+        return when (content) {
             is ItemContent.Login -> loginEncryptionMapperStrategy.encryptSecretFields(
                 content,
-                encryptionKey
+                encryptionKey,
             )
 
             is ItemContent.PaymentCard -> paymentCardEncryptionMapperStrategy.encryptSecretFields(
                 content,
-                encryptionKey
+                encryptionKey,
             )
 
             is ItemContent.SecureNote -> secureNoteEncryptionMapperStrategy.encryptSecretFields(
                 content,
-                encryptionKey
+                encryptionKey,
             )
 
             is ItemContent.Unknown -> unknownEncryptionMapperStrategy.encryptSecretFields(
                 content,
-                encryptionKey
+                encryptionKey,
             )
 
             is ItemContent.Wifi -> wifiEncryptionMapperStrategy.encryptSecretFields(
                 content,
-                encryptionKey
+                encryptionKey,
             )
         }
     }

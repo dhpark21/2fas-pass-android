@@ -147,7 +147,7 @@ internal class RequestWebSocketImpl(
                             if (message.id != expectedIncomingId) {
                                 throw WebSocketException(
                                     1001,
-                                    "Message identifier could not be verified."
+                                    "Message identifier could not be verified.",
                                 )
                             }
 
@@ -188,7 +188,7 @@ internal class RequestWebSocketImpl(
                                     } catch (e: Exception) {
                                         throw WebSocketException(
                                             1300,
-                                            "Error when calculating challenge (${e.message})"
+                                            "Error when calculating challenge (${e.message})",
                                         )
                                     }
                                 }
@@ -208,7 +208,7 @@ internal class RequestWebSocketImpl(
 
                                         val action =
                                             json.decodeFromString<BrowserRequestActionJson>(
-                                                requestString
+                                                requestString,
                                             )
                                                 .asDomain(
                                                     hkdfSalt = hkdfSalt,
@@ -245,7 +245,7 @@ internal class RequestWebSocketImpl(
                                     } catch (e: Exception) {
                                         throw WebSocketException(
                                             1500,
-                                            "Error when generating request data (${e.message})"
+                                            "Error when generating request data (${e.message})",
                                         )
                                     }
                                 }
@@ -273,7 +273,7 @@ internal class RequestWebSocketImpl(
                                 is IncomingMessageJson.Unknown -> {
                                     throw WebSocketException(
                                         1005,
-                                        "Unknown websocket message received."
+                                        "Unknown websocket message received.",
                                     )
                                 }
 
@@ -331,7 +331,7 @@ internal class RequestWebSocketImpl(
                 RequestWebSocketResult.Failure(
                     errorCode = (error as? WebSocketException)?.errorCode ?: 1000,
                     errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message
-                    ?: "Unknown error.",
+                        ?: "Unknown error.",
                 )
             } else {
                 RequestWebSocketResult.Success
@@ -339,7 +339,7 @@ internal class RequestWebSocketImpl(
         } catch (e: CancellationException) {
             return RequestWebSocketResult.Failure(
                 1000,
-                "Browser extension request is no longer valid."
+                "Browser extension request is no longer valid.",
             )
         } catch (e: Exception) {
             return RequestWebSocketResult.Failure(1000, e.message ?: "Unknown error.")
@@ -358,7 +358,7 @@ internal class RequestWebSocketImpl(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(
                         1501,
-                        "Could not find requested item."
+                        "Could not find requested item.",
                     ),
                 )
             }
@@ -434,9 +434,11 @@ internal class RequestWebSocketImpl(
                                         val updatePasswordKey = HkdfGenerator.generate(
                                             inputKeyMaterial = sessionKey,
                                             salt = hkdfSalt,
-                                            contextInfo = when (data.securityType.let(
-                                                itemSecurityTypeMapper::mapToDomainFromJson
-                                            )) {
+                                            contextInfo = when (
+                                                data.securityType.let(
+                                                    itemSecurityTypeMapper::mapToDomainFromJson,
+                                                )
+                                            ) {
                                                 SecurityType.Tier1 -> "PassT1"
                                                 SecurityType.Tier2 -> "PassT2"
                                                 SecurityType.Tier3 -> "PassT3"
@@ -475,7 +477,7 @@ internal class RequestWebSocketImpl(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(
                         1501,
-                        "Could not find requested item."
+                        "Could not find requested item.",
                     ),
                 )
             }
@@ -485,7 +487,7 @@ internal class RequestWebSocketImpl(
                     type = type,
                     item = getItem(data.itemId) ?: throw WebSocketException(
                         1501,
-                        "Could not find requested item."
+                        "Could not find requested item.",
                     ),
                 )
             }
@@ -504,8 +506,10 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.Unknown -> throw IllegalArgumentException("Unsupported item type")
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
-                            name = (data.content.url.orEmpty().toUri().host
-                                ?: data.content.url).orEmpty().removePrefix("www."),
+                            name = (
+                                data.content.url.orEmpty().toUri().host
+                                    ?: data.content.url
+                                ).orEmpty().removePrefix("www."),
                             uris = listOf(ItemUri(text = data.content.url.orEmpty())),
                             username = when (data.content.username?.action) {
                                 "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull()
@@ -623,7 +627,7 @@ internal class RequestWebSocketImpl(
                         },
                         securityType = WifiSecurityType.fromValue(data.content.securityType),
                         hidden = data.content.hidden ?: false,
-                        notes = null
+                        notes = null,
                     )
                 }
 
@@ -759,7 +763,7 @@ internal class RequestWebSocketImpl(
                             } ?: existingContent.expirationDate,
                             cardIssuer = cardNumber?.clearTextOrNull?.let {
                                 PaymentCardValidator.detectCardIssuer(
-                                    it
+                                    it,
                                 )
                             } ?: existingContent.cardIssuer,
                             securityCode = data.content.s_securityCode?.let { encryptedSecurityCode ->
@@ -899,12 +903,12 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val loginData = createLoginAcceptData(
                                 item = response.item,
                                 deviceId = deviceId,
                                 hkdfSalt = hkdfSalt,
-                                sessionKey = sessionKey
+                                sessionKey = sessionKey,
                             )
                             put("login", loginData)
                         }
@@ -916,12 +920,12 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val loginData = createLoginAcceptData(
                                 item = response.item,
                                 deviceId = deviceId,
                                 hkdfSalt = hkdfSalt,
-                                sessionKey = sessionKey
+                                sessionKey = sessionKey,
                             )
                             put("login", loginData)
                         }
@@ -998,7 +1002,7 @@ internal class RequestWebSocketImpl(
                     put("totalSize", JsonPrimitive(totalSize))
                     put(
                         "sha256GzipVaultDataEnc",
-                        JsonPrimitive(sha256EncGzipVaultData.encodeBase64())
+                        JsonPrimitive(sha256EncGzipVaultData.encodeBase64()),
                     )
                 }
 
@@ -1009,7 +1013,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = true,
@@ -1032,7 +1036,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = response.sifFetched,

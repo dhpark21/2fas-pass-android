@@ -96,7 +96,7 @@ object DecryptionKitGenerator {
                         renderDate(
                             contentStream = contentStream,
                             font = font,
-                            context = context
+                            context = context,
                         )
 
                         renderWords(
@@ -111,7 +111,7 @@ object DecryptionKitGenerator {
                             contentStream = contentStream,
                             font = font,
                             content = kit.generateQrCodeContent(includeMasterKey),
-                            includeMasterKey = includeMasterKey
+                            includeMasterKey = includeMasterKey,
                         )
 
                         contentStream.close()
@@ -134,7 +134,7 @@ object DecryptionKitGenerator {
 
         val formattedDateTime = context.getString(
             com.twofasapp.core.locale.R.string.decryption_kit_file_date,
-            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
         )
 
         contentStream.beginText()
@@ -174,7 +174,7 @@ object DecryptionKitGenerator {
         contentStream: PDPageContentStream,
         font: PDType0Font,
         content: String,
-        includeMasterKey: Boolean
+        includeMasterKey: Boolean,
     ) {
         val qrX = 415f
         val qrY = 330f
@@ -216,7 +216,6 @@ object DecryptionKitGenerator {
             logoScaled.height.toFloat(),
         )
 
-
         contentStream.beginText()
         val fontSize = 13f
         val lineHeight = 1.2f * 13
@@ -232,7 +231,7 @@ object DecryptionKitGenerator {
             fontSize = fontSize,
             lineHeight = lineHeight,
             x = qrX,
-            y = qrY - lineHeight
+            y = qrY - lineHeight,
         )
         contentStream.endText()
     }
@@ -268,7 +267,7 @@ object DecryptionKitGenerator {
         x: Float,
         y: Float,
         fontSize: Float,
-        lineHeight: Float
+        lineHeight: Float,
     ) {
         val lines = mutableListOf<String>()
 
@@ -303,7 +302,7 @@ object DecryptionKitGenerator {
             }
 
             setTextMatrix(
-                getTranslateInstance(drawX, currentY)
+                getTranslateInstance(drawX, currentY),
             )
 
             showText(line)

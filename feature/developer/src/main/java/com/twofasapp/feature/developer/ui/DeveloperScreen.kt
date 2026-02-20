@@ -125,7 +125,7 @@ private fun Content(
                     onInsertRandomTag = onInsertRandomTag,
                     onInsertRandomSecureNote = onInsertRandomSecureNote,
                     onInsertRandomCreditCard = onInsertRandomCreditCard,
-                    onInsertRandomWifi = onInsertRandomWifi
+                    onInsertRandomWifi = onInsertRandomWifi,
                 )
 
                 1 -> SubscriptionSection(

@@ -103,7 +103,7 @@ internal fun WifiForm(
                 if (valid) {
                     showQrModal = false
                 }
-            }
+            },
         )
     }
 
@@ -146,7 +146,7 @@ internal fun WifiForm(
             onWifiSecurityTypeDropdownDismiss = viewModel::onWifiSecurityTypeDropdownDismissed,
             onScanQrCodeClick = {
                 askForCameraPermission = true
-            }
+            },
         )
     }
 }
@@ -182,7 +182,7 @@ private fun WifiFormContent(
             start = ScreenPadding,
             end = ScreenPadding,
             bottom = ScreenPadding,
-            top = 8.dp
+            top = 8.dp,
         ),
     ) {
         nameTextField(uiState = uiState, onValueChange = onNameChange)
@@ -192,14 +192,14 @@ private fun WifiFormContent(
             passwordVisible = passwordVisible,
             uiState = uiState,
             onValueChange = onPasswordChange,
-            onToggleClick = onPasswordToggleClick
+            onToggleClick = onPasswordToggleClick,
         )
         wifiSecurityTypePicker(
             uiState = uiState,
             onValueChange = onWifiSecurityTypeChange,
             dropdownVisible = wifiSecurityTypeDropdownVisible,
             onDropdownDismiss = onWifiSecurityTypeDropdownDismiss,
-            onClick = onWifiSecurityTypeClick
+            onClick = onWifiSecurityTypeClick,
         )
         hiddenSwitch(uiState = uiState, onValueChange = onHiddenChange)
         securityTypePickerItem(
@@ -267,7 +267,7 @@ private fun LazyListScope.ssidTextField(
             maxLines = 1,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Next,
-            )
+            ),
         )
     }
 }
@@ -276,7 +276,7 @@ private fun LazyListScope.passwordTextField(
     passwordVisible: Boolean,
     uiState: ItemFormUiState<ItemContent.Wifi>,
     onValueChange: (String) -> Unit,
-    onToggleClick: () -> Unit
+    onToggleClick: () -> Unit,
 ) {
     listItem(FormListItem.Field("Password")) {
         TextField(
@@ -291,11 +291,11 @@ private fun LazyListScope.passwordTextField(
                 .animateItem(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Next,
             ),
             visualTransformation = VisualTransformation.SecretField(
                 passwordVisible,
-                passwordColors
+                passwordColors,
             ),
             trailingIcon = {
                 ActionsRow(
@@ -316,7 +316,7 @@ private fun LazyListScope.wifiSecurityTypePicker(
     uiState: ItemFormUiState<ItemContent.Wifi>,
     onValueChange: (WifiSecurityType) -> Unit,
     onDropdownDismiss: () -> Unit,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     listItem(FormListItem.Field("WifiSecurityType")) {
         Box {
@@ -343,14 +343,14 @@ private fun LazyListScope.wifiSecurityTypePicker(
             Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .clickable(onClick = onClick)
+                    .clickable(onClick = onClick),
             )
             Box(modifier = Modifier.align(Alignment.TopEnd)) {
                 WifiSecurityTypeDropdownMenu(
                     selectedValue = uiState.itemContent?.securityType ?: WifiSecurityType.None,
                     visible = dropdownVisible,
                     onValueChange = onValueChange,
-                    onDismiss = onDropdownDismiss
+                    onDismiss = onDropdownDismiss,
                 )
             }
         }
@@ -362,7 +362,7 @@ private fun WifiSecurityTypeDropdownMenu(
     selectedValue: WifiSecurityType,
     visible: Boolean,
     onValueChange: (WifiSecurityType) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     DropdownMenu(
         visible = visible,
@@ -373,7 +373,7 @@ private fun WifiSecurityTypeDropdownMenu(
                 WifiSecurityTypeMenuItem(
                     text = wifiSecurityType.formatName(),
                     checked = wifiSecurityType == selectedValue,
-                    onClick = { onValueChange(wifiSecurityType) }
+                    onClick = { onValueChange(wifiSecurityType) },
                 )
             }
         },
@@ -392,10 +392,10 @@ private fun WifiSecurityTypeMenuItem(text: String, checked: Boolean, onClick: ()
                     end = 12.dp,
                     top = 12.dp,
                     bottom = 12.dp,
-                )
+                ),
             ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         Text(
             modifier = Modifier
@@ -430,13 +430,13 @@ private fun LazyListScope.scanQrCode(onClick: () -> Unit) {
 
 private fun LazyListScope.hiddenSwitch(
     uiState: ItemFormUiState<ItemContent.Wifi>,
-    onValueChange: (Boolean) -> Unit
+    onValueChange: (Boolean) -> Unit,
 ) {
     listItem(FormListItem.Field("Hidden")) {
         OptionSwitch(
             title = MdtLocale.strings.wifiHiddenNetworkLabel,
             checked = uiState.itemContent?.hidden ?: false,
-            onToggle = onValueChange
+            onToggle = onValueChange,
         )
     }
 }
@@ -453,7 +453,7 @@ private fun QrScannerModal(onDismiss: () -> Unit, onScanned: (String) -> Unit) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(ScreenPadding),
-            verticalArrangement = Arrangement.spacedBy(ScreenPadding)
+            verticalArrangement = Arrangement.spacedBy(ScreenPadding),
         ) {
             TopAppBarTitle(text = MdtLocale.strings.wifiQrScanAction)
             QrScan(
@@ -461,7 +461,7 @@ private fun QrScannerModal(onDismiss: () -> Unit, onScanned: (String) -> Unit) {
                     .weight(1f)
                     .clip(RoundedShape24),
                 requireAuth = false,
-                onScanned = onScanned
+                onScanned = onScanned,
             )
             Text(
                 text = MdtLocale.strings.wifiQrScanTitle,
@@ -498,7 +498,7 @@ private fun WifiFormContentPreview() {
             onWifiSecurityTypeChange = {},
             onWifiSecurityTypeClick = {},
             onWifiSecurityTypeDropdownDismiss = {},
-            onScanQrCodeClick = {}
+            onScanQrCodeClick = {},
         )
     }
 }
@@ -525,7 +525,7 @@ private fun WifiFormContentTypeDropdownPreview() {
             onWifiSecurityTypeChange = {},
             onWifiSecurityTypeClick = {},
             onWifiSecurityTypeDropdownDismiss = {},
-            onScanQrCodeClick = {}
+            onScanQrCodeClick = {},
         )
     }
 }
@@ -538,12 +538,12 @@ private fun WifiSecurityTypeMenuItemPreview() {
             WifiSecurityTypeMenuItem(
                 text = WifiSecurityType.None.value,
                 checked = true,
-                onClick = {}
+                onClick = {},
             )
             WifiSecurityTypeMenuItem(
                 text = WifiSecurityType.Wpa2.value,
                 checked = false,
-                onClick = {}
+                onClick = {},
             )
         }
     }
@@ -555,7 +555,7 @@ private fun QrScannerModalPreview() {
     PreviewTheme {
         QrScannerModal(
             onDismiss = {},
-            onScanned = {}
+            onScanned = {},
         )
     }
 }

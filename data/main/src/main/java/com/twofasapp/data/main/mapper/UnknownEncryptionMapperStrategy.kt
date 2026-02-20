@@ -52,13 +52,13 @@ class UnknownEncryptionMapperStrategy(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent.Unknown {
         return decryptItemInternal(
             itemEncrypted.securityType,
             vaultCipher,
             decryptSecretFields,
-            contentEntityJson
+            contentEntityJson,
         )
     }
 
@@ -93,7 +93,7 @@ class UnknownEncryptionMapperStrategy(
             securityType,
             vaultCipher,
             true,
-            content.rawJson
+            content.rawJson,
         )
     }
 
@@ -101,7 +101,7 @@ class UnknownEncryptionMapperStrategy(
         securityType: SecurityType,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent.Unknown {
         if (!decryptSecretFields) {
             return ItemContent.Unknown(rawJson = contentEntityJson)

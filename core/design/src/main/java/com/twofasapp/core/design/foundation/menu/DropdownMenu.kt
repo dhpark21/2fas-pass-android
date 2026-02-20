@@ -78,7 +78,7 @@ fun DropdownMenuItem(
                 painter = icon,
                 contentDescription = null,
                 tint = contentColor,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier.size(22.dp),
             )
             Spacer(modifier = Modifier.width(16.dp))
         }

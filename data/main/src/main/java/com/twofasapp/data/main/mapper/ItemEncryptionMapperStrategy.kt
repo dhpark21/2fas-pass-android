@@ -12,7 +12,7 @@ interface ItemEncryptionMapperStrategy<T : ItemContent> {
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): T
 
     fun encryptItem(

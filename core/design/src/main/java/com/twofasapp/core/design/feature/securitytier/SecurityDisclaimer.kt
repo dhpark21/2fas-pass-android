@@ -274,7 +274,7 @@ private fun Tier(selectedSecurityType: SecurityType, modifier: Modifier = Modifi
             },
             style = MdtTheme.typo.bodyMedium.copy(fontSize = 7.sp),
             color = MdtTheme.color.onSurfaceVariant,
-            maxLines = 1
+            maxLines = 1,
         )
         Row(
             horizontalArrangement = Arrangement.spacedBy(6.dp),

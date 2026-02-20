@@ -296,18 +296,22 @@ private fun PreviewResult() {
                 importState = ImportState.ReadSuccess(
                     ImportContent(
                         items = buildList {
-                            addAll(List(15) {
-                                Item.create(
-                                    ItemContentType.Login,
-                                    ItemContent.Login.Empty
-                                )
-                            })
-                            addAll(List(35) {
-                                Item.create(
-                                    ItemContentType.SecureNote,
-                                    ItemContent.SecureNote.Empty
-                                )
-                            })
+                            addAll(
+                                List(15) {
+                                    Item.create(
+                                        ItemContentType.Login,
+                                        ItemContent.Login.Empty,
+                                    )
+                                },
+                            )
+                            addAll(
+                                List(35) {
+                                    Item.create(
+                                        ItemContentType.SecureNote,
+                                        ItemContent.SecureNote.Empty,
+                                    )
+                                },
+                            )
                         },
                         tags = listOf(Tag.Empty, Tag.Empty),
                         unknownItems = 4,

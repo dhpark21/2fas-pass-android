@@ -78,7 +78,7 @@ internal class ItemMapper(
         json: ItemJson,
         vaultId: String,
         tagIds: List<String>?,
-        hasSecretFieldsEncrypted: Boolean
+        hasSecretFieldsEncrypted: Boolean,
     ): Item {
         return with(json) {
             val itemContentType = ItemContentType.fromKey(contentType)
@@ -94,7 +94,7 @@ internal class ItemMapper(
                 content = mapItemContentToDomain(
                     contentType = itemContentType,
                     contentJson = content,
-                    hasSecretFieldsEncrypted = hasSecretFieldsEncrypted
+                    hasSecretFieldsEncrypted = hasSecretFieldsEncrypted,
                 ),
                 tagIds = tagIds.orEmpty(),
             )
@@ -208,8 +208,8 @@ internal class ItemMapper(
 
             is ItemContentType.Unknown -> ItemContent.Unknown(
                 rawJson = jsonSerializer.encodeToString(
-                    contentJson
-                )
+                    contentJson,
+                ),
             )
 
             ItemContentType.Wifi -> {
@@ -228,7 +228,7 @@ internal class ItemMapper(
                     ssid = content.ssid,
                     securityType = WifiSecurityType.fromValue(content.securityType),
                     hidden = content.hidden ?: false,
-                    notes = content.notes
+                    notes = content.notes,
                 )
             }
         }

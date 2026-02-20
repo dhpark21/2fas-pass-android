@@ -18,7 +18,7 @@ import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.domain.VaultKeysExpiredException
 
 class ItemEncryptionMapper(
-    private val mapperDelegate: ItemEncryptionMapperDelegate
+    private val mapperDelegate: ItemEncryptionMapperDelegate,
 ) {
     fun decryptItem(
         itemEncrypted: ItemEncrypted,
@@ -36,7 +36,7 @@ class ItemEncryptionMapper(
                 itemEncrypted,
                 vaultCipher,
                 decryptSecretFields,
-                contentEntityJson
+                contentEntityJson,
             )
 
             itemEncrypted.asDecrypted(content = content)

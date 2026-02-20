@@ -173,7 +173,7 @@ internal class OnePasswordImportSpec(
                                 // Convert identity to secure note
                                 unknownItems++
                                 add(
-                                    parseAsSecureNote(item, vaultId, "Identity", itemTagIds)
+                                    parseAsSecureNote(item, vaultId, "Identity", itemTagIds),
                                 )
                             }
 
@@ -189,7 +189,7 @@ internal class OnePasswordImportSpec(
                                 } else {
                                     unknownItems++
                                     add(
-                                        parseAsSecureNote(item, vaultId, "Item", itemTagIds)
+                                        parseAsSecureNote(item, vaultId, "Item", itemTagIds),
                                     )
                                 }
                             }
@@ -324,15 +324,15 @@ internal class OnePasswordImportSpec(
                 name = name.orEmpty(),
                 notes = mergedNotes,
                 hidden = false,
-                securityType = securityType
-            )
+                securityType = securityType,
+            ),
         )
     }
 
     private fun parseSecureNote(
         item: OnePasswordItem,
         vaultId: String,
-        tagIds: List<String>?
+        tagIds: List<String>?,
     ): Item {
         val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
@@ -369,7 +369,7 @@ internal class OnePasswordImportSpec(
     private fun parseCreditCard(
         item: OnePasswordItem,
         vaultId: String,
-        tagIds: List<String>?
+        tagIds: List<String>?,
     ): Item {
         val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
         val notes = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
@@ -407,9 +407,11 @@ internal class OnePasswordImportSpec(
                         } ?: field.value?.stringValue
                     }
                     // Security code (CVV)
-                    fieldId == "cvv" || fieldTitle.contains("security code") || fieldTitle.contains(
-                        "cvv"
-                    ) -> {
+                    fieldId == "cvv" ||
+                        fieldTitle.contains("security code") ||
+                        fieldTitle.contains(
+                            "cvv",
+                        ) -> {
                         securityCodeString = field.value?.concealed ?: field.value?.stringValue
                     }
                     // PIN code
@@ -623,7 +625,7 @@ internal class OnePasswordImportSpec(
     ) {
         val stringValue: String?
             get() = string ?: concealed ?: totp ?: phone ?: url ?: creditCardNumber
-            ?: creditCardType ?: menu
+                ?: creditCardType ?: menu
     }
 
     @Serializable

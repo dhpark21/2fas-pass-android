@@ -342,7 +342,7 @@ internal class ProtonPassImportSpec(
                 name = itemName.orEmpty(),
                 notes = notes,
                 hidden = false,
-                securityType = security
+                securityType = security,
             ),
             createdAt = createTime?.let { parseSecondsFrom1970(it) },
             updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },

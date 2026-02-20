@@ -8,11 +8,13 @@ import com.twofasapp.core.locale.MdtLocale
 fun WifiSecurityType.formatName(): String {
     return when (this) {
         WifiSecurityType.None,
-        is WifiSecurityType.Unknown -> MdtLocale.strings.wifiSecurityTypeNone
+        is WifiSecurityType.Unknown,
+        -> MdtLocale.strings.wifiSecurityTypeNone
 
         WifiSecurityType.Wep,
         WifiSecurityType.Wpa,
         WifiSecurityType.Wpa2,
-        WifiSecurityType.Wpa3 -> value.uppercase()
+        WifiSecurityType.Wpa3,
+        -> value.uppercase()
     }
 }

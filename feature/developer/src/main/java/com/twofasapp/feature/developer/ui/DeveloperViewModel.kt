@@ -248,10 +248,12 @@ internal class DeveloperViewModel(
             val vault = vaultsRepository.getVault()
             val securityType = SecurityType.entries.random()
             val nameSeed = WordList.words.random().replaceFirstChar { it.uppercase() }
-            val body = (1..Random.nextInt(
-                2,
-                5
-            )).joinToString(separator = "\n\n") { loremSentences.random() }
+            val body = (
+                1..Random.nextInt(
+                    2,
+                    5,
+                )
+                ).joinToString(separator = "\n\n") { loremSentences.random() }
 
             itemsRepository.importItems(
                 listOf(
@@ -288,7 +290,7 @@ internal class DeveloperViewModel(
                             password = SecretField.ClearText("pass$id"),
                             securityType = WifiSecurityType.values().random(),
                             hidden = listOf(true, false).random(),
-                            notes = null
+                            notes = null,
                         ),
                     ).copy(id = Uuid.generate()),
                 ),

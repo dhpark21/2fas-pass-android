@@ -34,14 +34,14 @@ fun QrCode(
     size: Dp,
     modifier: Modifier = Modifier,
     colors: QrCodeColors = QrCodeDefaults.colors(),
-    characterSet: String = "UTF-8"
+    characterSet: String = "UTF-8",
 ) {
     val bitmap by rememberQrBitmap(
         content = content,
         size = size,
         backgroundColor = colors.backgroundColor,
         foregroundColor = colors.foregroundColor,
-        characterSet = characterSet
+        characterSet = characterSet,
     )
     Crossfade(modifier = modifier, targetState = bitmap) { qrBitmap ->
         if (qrBitmap != null) {
@@ -53,7 +53,7 @@ fun QrCode(
             Box(
                 modifier = Modifier
                     .size(size)
-                    .background(color = colors.backgroundColor)
+                    .background(color = colors.backgroundColor),
             )
         }
     }
@@ -65,7 +65,7 @@ private fun rememberQrBitmap(
     size: Dp,
     backgroundColor: Color,
     foregroundColor: Color,
-    characterSet: String
+    characterSet: String,
 ): State<Bitmap?> {
     val density = LocalDensity.current
     val sizePx = remember(size) { with(density) { size.roundToPx() } }
@@ -78,7 +78,7 @@ private fun rememberQrBitmap(
         sizePx,
         backgroundColorInt,
         foregroundColorInt,
-        characterSet
+        characterSet,
     ) {
         value = withContext(Dispatchers.Default) {
             generateQrBitmap(
@@ -86,7 +86,7 @@ private fun rememberQrBitmap(
                 sizePx = sizePx,
                 characterSet = characterSet,
                 backgroundColor = backgroundColorInt,
-                foregroundColor = foregroundColorInt
+                foregroundColor = foregroundColorInt,
             )
         }
     }
@@ -112,7 +112,7 @@ private fun generateQrBitmap(
             BarcodeFormat.QR_CODE,
             sizePx,
             sizePx,
-            encodeHints
+            encodeHints,
         )
 
         val width = bitmapMatrix.width
@@ -140,7 +140,7 @@ private fun generateQrBitmap(
 @Immutable
 data class QrCodeColors(
     val backgroundColor: Color,
-    val foregroundColor: Color
+    val foregroundColor: Color,
 )
 
 object QrCodeDefaults {

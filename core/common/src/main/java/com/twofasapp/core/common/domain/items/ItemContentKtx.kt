@@ -43,12 +43,11 @@ fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
         ItemContent.PaymentCard.Issuer.Jcb,
         ItemContent.PaymentCard.Issuer.UnionPay,
         null,
-            -> listOf(4, 4, 4, 4, 3)
+        -> listOf(4, 4, 4, 4, 3)
     }
 }
 
 fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
-
     fun String.escape(): String {
         return replace("\\", "\\\\")
             .replace(";", "\\;")
@@ -63,13 +62,15 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
         append(
             when (securityType) {
                 WifiSecurityType.None,
-                is WifiSecurityType.Unknown -> "nopass"
+                is WifiSecurityType.Unknown,
+                -> "nopass"
 
                 WifiSecurityType.Wep -> "WEP"
                 WifiSecurityType.Wpa,
                 WifiSecurityType.Wpa2,
-                WifiSecurityType.Wpa3 -> "WPA"
-            }
+                WifiSecurityType.Wpa3,
+                -> "WPA"
+            },
         )
         append(";")
         ssid?.let {
@@ -83,7 +84,6 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
 }
 
 fun ItemContent.Wifi.Companion.parseWifiQr(content: String): ItemContent.Wifi? {
-
     fun String.unescape(): String {
         val out = StringBuilder()
         var escape = false
@@ -154,6 +154,6 @@ fun ItemContent.Wifi.Companion.parseWifiQr(content: String): ItemContent.Wifi? {
         password = password,
         securityType = type,
         hidden = hidden,
-        notes = null
+        notes = null,
     )
 }

@@ -21,7 +21,7 @@ sealed interface ItemContentType {
                 Login,
                 PaymentCard,
                 SecureNote,
-                Wifi
+                Wifi,
             )
         }
     }

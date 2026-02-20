@@ -315,7 +315,7 @@ internal class EnpassImportSpec(
                 additionalFields.removeIf { (label, _) ->
                     label.equals(
                         other = "Password",
-                        ignoreCase = true
+                        ignoreCase = true,
                     )
                 }
             }
@@ -325,7 +325,7 @@ internal class EnpassImportSpec(
                 additionalFields.removeIf { (label, _) ->
                     label.equals(
                         other = "Network password",
-                        ignoreCase = true
+                        ignoreCase = true,
                     )
                 }
             }
@@ -335,7 +335,7 @@ internal class EnpassImportSpec(
                 additionalFields.removeIf { (label, _) ->
                     label.equals(
                         other = "Station password",
-                        ignoreCase = true
+                        ignoreCase = true,
                     )
                 }
             }
@@ -345,7 +345,7 @@ internal class EnpassImportSpec(
                 additionalFields.removeIf { (label, _) ->
                     label.equals(
                         other = "Storage password",
-                        ignoreCase = true
+                        ignoreCase = true,
                     )
                 }
             }
@@ -357,7 +357,7 @@ internal class EnpassImportSpec(
                 additionalFields.removeIf { (label, _) ->
                     label.equals(
                         other = "Network name",
-                        ignoreCase = true
+                        ignoreCase = true,
                     )
                 }
             }
@@ -367,7 +367,7 @@ internal class EnpassImportSpec(
                 additionalFields.removeIf { (label, _) ->
                     label.equals(
                         other = "Station name",
-                        ignoreCase = true
+                        ignoreCase = true,
                     )
                 }
             }
@@ -391,7 +391,7 @@ internal class EnpassImportSpec(
                 ssid = ssid,
                 password = wifiPassword?.let { SecretField.ClearText(it) },
                 securityType = securityType,
-                notes = mergedNotes
+                notes = mergedNotes,
             ),
             createdAt = createdAt,
             updatedAt = updatedAt,

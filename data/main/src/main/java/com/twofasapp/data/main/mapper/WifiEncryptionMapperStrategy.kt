@@ -20,7 +20,7 @@ class WifiEncryptionMapperStrategy(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent.Wifi {
         val contentEntity =
             json.decodeFromString(WifiContentEntityV1.serializer(), contentEntityJson)

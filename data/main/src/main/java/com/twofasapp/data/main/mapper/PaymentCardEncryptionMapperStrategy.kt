@@ -20,7 +20,7 @@ class PaymentCardEncryptionMapperStrategy(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent.PaymentCard {
         val contentEntity =
             json.decodeFromString(PaymentCardContentEntityV1.serializer(), contentEntityJson)
@@ -76,7 +76,7 @@ class PaymentCardEncryptionMapperStrategy(
     override fun encryptItem(
         item: Item,
         content: ItemContent.PaymentCard,
-        vaultCipher: VaultCipher
+        vaultCipher: VaultCipher,
     ): String {
         return json.encodeToString(
             PaymentCardContentEntityV1(
@@ -140,7 +140,7 @@ class PaymentCardEncryptionMapperStrategy(
     override fun decryptSecretFields(
         vaultCipher: VaultCipher,
         securityType: SecurityType,
-        content: ItemContent.PaymentCard
+        content: ItemContent.PaymentCard,
     ): ItemContent.PaymentCard {
         return content.copy(
             cardNumber = content.cardNumber?.let {
@@ -190,7 +190,7 @@ class PaymentCardEncryptionMapperStrategy(
 
     override fun encryptSecretFields(
         content: ItemContent.PaymentCard,
-        encryptionKey: ByteArray
+        encryptionKey: ByteArray,
     ): ItemContent.PaymentCard {
         return content.copy(
             cardNumber = content.cardNumber?.let {

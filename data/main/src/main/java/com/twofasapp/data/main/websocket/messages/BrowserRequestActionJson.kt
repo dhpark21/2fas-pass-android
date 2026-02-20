@@ -8,8 +8,6 @@
 
 package com.twofasapp.data.main.websocket.messages
 
-import com.twofasapp.core.common.domain.crypto.EncryptedBytes
-import com.twofasapp.core.common.serializers.EncryptedBytesSerializer
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName

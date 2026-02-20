@@ -136,13 +136,13 @@ internal abstract class ImportSpec() {
         return try {
             val bytes = date.decodeBase64()
             val secondsFromYearOne = (bytes[0].toLong() and 0xFF) or
-                    ((bytes[1].toLong() and 0xFF) shl 8) or
-                    ((bytes[2].toLong() and 0xFF) shl 16) or
-                    ((bytes[3].toLong() and 0xFF) shl 24) or
-                    ((bytes[4].toLong() and 0xFF) shl 32) or
-                    ((bytes[5].toLong() and 0xFF) shl 40) or
-                    ((bytes[6].toLong() and 0xFF) shl 48) or
-                    ((bytes[7].toLong() and 0xFF) shl 56)
+                ((bytes[1].toLong() and 0xFF) shl 8) or
+                ((bytes[2].toLong() and 0xFF) shl 16) or
+                ((bytes[3].toLong() and 0xFF) shl 24) or
+                ((bytes[4].toLong() and 0xFF) shl 32) or
+                ((bytes[5].toLong() and 0xFF) shl 40) or
+                ((bytes[6].toLong() and 0xFF) shl 48) or
+                ((bytes[7].toLong() and 0xFF) shl 56)
             val secondsBetweenYearOneAnd1970 = 62135596800L
             val secondsFromYear1970 = secondsFromYearOne - secondsBetweenYearOneAnd1970
             Instant.ofEpochSecond(secondsFromYear1970).toEpochMilli()

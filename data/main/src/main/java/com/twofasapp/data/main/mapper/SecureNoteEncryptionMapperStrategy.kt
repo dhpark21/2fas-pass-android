@@ -19,7 +19,7 @@ class SecureNoteEncryptionMapperStrategy(
         itemEncrypted: ItemEncrypted,
         vaultCipher: VaultCipher,
         decryptSecretFields: Boolean,
-        contentEntityJson: String
+        contentEntityJson: String,
     ): ItemContent.SecureNote {
         val contentEntity =
             json.decodeFromString(SecureNoteContentEntityV1.serializer(), contentEntityJson)
@@ -46,7 +46,7 @@ class SecureNoteEncryptionMapperStrategy(
     override fun encryptItem(
         item: Item,
         content: ItemContent.SecureNote,
-        vaultCipher: VaultCipher
+        vaultCipher: VaultCipher,
     ): String {
         return json.encodeToString(
             SecureNoteContentEntityV1(
@@ -75,7 +75,7 @@ class SecureNoteEncryptionMapperStrategy(
     override fun decryptSecretFields(
         vaultCipher: VaultCipher,
         securityType: SecurityType,
-        content: ItemContent.SecureNote
+        content: ItemContent.SecureNote,
     ): ItemContent.SecureNote {
         return content.copy(
             text = content.text?.let {
@@ -97,7 +97,7 @@ class SecureNoteEncryptionMapperStrategy(
 
     override fun encryptSecretFields(
         content: ItemContent.SecureNote,
-        encryptionKey: ByteArray
+        encryptionKey: ByteArray,
     ): ItemContent.SecureNote {
         return content.copy(
             text = content.text?.let {

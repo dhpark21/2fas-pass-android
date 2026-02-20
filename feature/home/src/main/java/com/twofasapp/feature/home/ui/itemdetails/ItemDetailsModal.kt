@@ -141,7 +141,7 @@ private fun Content(
                     decryptedFields = uiState.decryptedFields,
                     onToggleSecretField = viewModel::toggleSecretField,
                     onCopySecretField = viewModel::copySecretFieldToClipboard,
-                    onScrollToBottom = { scope.launch { scrollState.animateScrollTo(scrollState.maxValue) } }
+                    onScrollToBottom = { scope.launch { scrollState.animateScrollTo(scrollState.maxValue) } },
                 )
             }
         }

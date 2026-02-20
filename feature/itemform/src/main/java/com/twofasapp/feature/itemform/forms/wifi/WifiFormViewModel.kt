@@ -67,7 +67,7 @@ internal class WifiFormViewModel(
             content.copy(
                 ssid = scannedContent.ssid,
                 securityType = scannedContent.securityType,
-                password = scannedContent.password
+                password = scannedContent.password,
             )
         }
         return true

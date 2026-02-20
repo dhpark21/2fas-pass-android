@@ -455,7 +455,7 @@ class Strings(private val c: Context) {
     val secureNoteErrorCopy = c.getString(R.string.secure_note_error_copy)
     val secureNoteAdditionalInfoLabel = c.getString(R.string.secure_note_additional_info_label)
 
-    //Wifi
+    // Wifi
     val requestModalWifiRequestTitle = c.getString(R.string.request_modal_wifi_request_title)
     val requestModalWifiRequestSubtitle = c.getString(R.string.request_modal_wifi_request_subtitle)
     val contentTypeWifiName = c.getString(R.string.content_type_wifi_name)

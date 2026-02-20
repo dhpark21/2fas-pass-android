@@ -65,22 +65,25 @@ internal class DashlaneMobileImportSpec(
                             hasAll("username", "title", "password", "url") -> CsvType.Credentials
                             hasAll(
                                 "title",
-                                "note"
-                            ) && !h.contains("password") -> CsvType.SecureNotes
+                                "note",
+                            ) &&
+                                !h.contains("password") -> CsvType.SecureNotes
 
                             hasAll("type", "account_holder") -> CsvType.Payments
                             hasAll(
                                 "type",
                                 "number",
-                                "name"
-                            ) && h.contains("issue_date") -> CsvType.Ids
+                                "name",
+                            ) &&
+                                h.contains("issue_date") -> CsvType.Ids
 
-                            h.contains("type") && hasAny(
-                                "first_name",
-                                "email",
-                                "phone_number",
-                                "address"
-                            ) -> CsvType.PersonalInfo
+                            h.contains("type") &&
+                                hasAny(
+                                    "first_name",
+                                    "email",
+                                    "phone_number",
+                                    "address",
+                                ) -> CsvType.PersonalInfo
 
                             h.contains("ssid") -> CsvType.WiFi
                             else -> CsvType.Unknown
@@ -97,7 +100,7 @@ internal class DashlaneMobileImportSpec(
                         when (csvType) {
                             CsvType.Credentials -> {
                                 val username = row.get("username") ?: row.get("username2")
-                                ?: row.get("username3")
+                                    ?: row.get("username3")
                                 val note = row.get("note")
                                 val noteWithAdditionalInfo = TransferUtils.formatNote(
                                     note = note,
@@ -164,9 +167,13 @@ internal class DashlaneMobileImportSpec(
                                         if (expirationMonth != null && expirationYear != null) {
                                             val monthPadded = expirationMonth.padStart(2, '0')
                                             val yearSuffix =
-                                                if (expirationYear.length > 2) expirationYear.takeLast(
-                                                    2
-                                                ) else expirationYear.padStart(2, '0')
+                                                if (expirationYear.length > 2) {
+                                                    expirationYear.takeLast(
+                                                        2,
+                                                    )
+                                                } else {
+                                                    expirationYear.padStart(2, '0')
+                                                }
                                             "$monthPadded/$yearSuffix"
                                         } else {
                                             null
@@ -344,9 +351,9 @@ internal class DashlaneMobileImportSpec(
                                             hidden = row.get("hidden")?.toBooleanStrictOrNull()
                                                 ?: false,
                                             securityType = parseWifiSecurityType(
-                                                row.get("encription_type")
-                                            )
-                                        )
+                                                row.get("encription_type"),
+                                            ),
+                                        ),
                                     ),
                                 )
                             }
@@ -367,8 +374,8 @@ internal class DashlaneMobileImportSpec(
                                                     listOf(
                                                         "name",
                                                         "note",
-                                                        "type"
-                                                    )
+                                                        "type",
+                                                    ),
                                                 ),
                                             ),
                                         ),
