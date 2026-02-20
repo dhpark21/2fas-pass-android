@@ -1,5 +1,8 @@
 package com.twofasapp.core.common.domain.items
 
+import android.content.Intent
+import android.net.wifi.WifiNetworkSuggestion
+import android.provider.Settings
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.WifiSecurityType
 
@@ -43,7 +46,48 @@ fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
         ItemContent.PaymentCard.Issuer.Jcb,
         ItemContent.PaymentCard.Issuer.UnionPay,
         null,
-        -> listOf(4, 4, 4, 4, 3)
+            -> listOf(4, 4, 4, 4, 3)
+    }
+}
+
+fun ItemContent.Wifi.supportConnect(): Boolean {
+    return when (securityType) {
+        WifiSecurityType.None -> true
+        is WifiSecurityType.Unknown -> false
+        WifiSecurityType.Wep -> false
+        WifiSecurityType.Wpa -> true
+        WifiSecurityType.Wpa2 -> true
+        WifiSecurityType.Wpa3 -> true
+    }
+}
+
+fun ItemContent.Wifi.supportQrCodeContent(): Boolean {
+    return ssid.isNullOrBlank().not()
+}
+
+fun ItemContent.Wifi.createConnectIntent(decryptedPassword: String?): Intent {
+    val suggestion = WifiNetworkSuggestion.Builder()
+        .apply {
+            ssid?.let {
+                setSsid(it)
+            }
+            decryptedPassword?.let {
+                when (securityType) {
+                    WifiSecurityType.None,
+                    is WifiSecurityType.Unknown,
+                    WifiSecurityType.Wep -> Unit
+
+                    WifiSecurityType.Wpa,
+                    WifiSecurityType.Wpa2 -> setWpa2Passphrase(decryptedPassword)
+
+                    WifiSecurityType.Wpa3 -> setWpa3Passphrase(decryptedPassword)
+                }
+            }
+        }
+        .setIsHiddenSsid(hidden)
+        .build()
+    return Intent(Settings.ACTION_WIFI_ADD_NETWORKS).apply {
+        putExtra(Settings.EXTRA_WIFI_NETWORK_LIST, arrayListOf(suggestion))
     }
 }
 
@@ -63,13 +107,13 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
             when (securityType) {
                 WifiSecurityType.None,
                 is WifiSecurityType.Unknown,
-                -> "nopass"
+                    -> "nopass"
 
                 WifiSecurityType.Wep -> "WEP"
                 WifiSecurityType.Wpa,
                 WifiSecurityType.Wpa2,
                 WifiSecurityType.Wpa3,
-                -> "WPA"
+                    -> "WPA"
             },
         )
         append(";")
@@ -78,6 +122,9 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
         }
         decryptedPassword?.let {
             append("P:${it.escape()};")
+        }
+        if (hidden) {
+            append("H:true;")
         }
         append(";")
     }

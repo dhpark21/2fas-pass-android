@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,7 +31,10 @@ import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.createConnectIntent
 import com.twofasapp.core.common.domain.items.qrCodeContent
+import com.twofasapp.core.common.domain.items.supportConnect
+import com.twofasapp.core.common.domain.items.supportQrCodeContent
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.items.WifiItemContentPreview
@@ -70,6 +74,23 @@ internal fun ColumnScope.WifiContent(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showWifiQrCode by remember { mutableStateOf(false) }
+    var showConnectWifi by remember { mutableStateOf(false) }
+
+    LaunchedEffect(showConnectWifi, decryptedFields[SecretFieldType.WifiConnectPassword]) {
+        if (showConnectWifi.not()) {
+            return@LaunchedEffect
+        }
+
+        if (content.password == null) {
+            context.startActivity(content.createConnectIntent(null))
+            showConnectWifi = false
+        } else {
+            decryptedFields[SecretFieldType.WifiConnectPassword]?.let { password ->
+                context.startActivity(content.createConnectIntent(password))
+                showConnectWifi = false
+            }
+        }
+    }
 
     ItemDetailsHeader(
         item = item,
@@ -145,40 +166,65 @@ internal fun ColumnScope.WifiContent(
         }
     }
 
-    Spacer(modifier = Modifier.height(16.dp))
+    if (content.supportConnect()) {
+        Spacer(modifier = Modifier.height(16.dp))
 
-    QrCodeEntry(
-        qrCodeContent = if (content.password == null) {
-            content.qrCodeContent(null)
-        } else {
-            decryptedFields[SecretFieldType.WifiQrPassword]?.let {
-                content.qrCodeContent(it)
-            }
-        },
-        expanded = showWifiQrCode,
-        ssid = content.ssid,
-        onClick = {
-            if (showWifiQrCode) {
-                showWifiQrCode = false
+        OptionEntry(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedShape12)
+                .background(MdtTheme.color.surfaceContainerHigh)
+                .clickable(onClick = {
+                    content.password?.let { password ->
+                        if (decryptedFields[SecretFieldType.WifiConnectPassword] == null) {
+                            onToggleSecretField(SecretFieldType.WifiConnectPassword, password)
+                        }
+                        showConnectWifi = true
+                    }
+                })
+                .padding(horizontal = OptionEntryPaddingHorizontal),
+            external = true,
+            title = "Połącz się z siecią",
+            contentPadding = ZeroPadding,
+        )
+    }
+
+    if (content.supportQrCodeContent()) {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        QrCodeEntry(
+            qrCodeContent = if (content.password == null) {
+                content.qrCodeContent(null)
             } else {
-                content.password?.let { password ->
-                    if (decryptedFields[SecretFieldType.WifiQrPassword] == null) {
-                        onToggleSecretField(SecretFieldType.WifiQrPassword, password)
-                    }
+                decryptedFields[SecretFieldType.WifiQrPassword]?.let {
+                    content.qrCodeContent(it)
                 }
-                showWifiQrCode = true
-                scope.launch {
-                    onScrollToBottom()
-                    val animationDuration = 300
-                    val dt = 10
-                    repeat(animationDuration / dt + 1) {
-                        delay(dt.toLong())
+            },
+            expanded = showWifiQrCode,
+            ssid = content.ssid,
+            onClick = {
+                if (showWifiQrCode) {
+                    showWifiQrCode = false
+                } else {
+                    content.password?.let { password ->
+                        if (decryptedFields[SecretFieldType.WifiQrPassword] == null) {
+                            onToggleSecretField(SecretFieldType.WifiQrPassword, password)
+                        }
+                    }
+                    showWifiQrCode = true
+                    scope.launch {
                         onScrollToBottom()
+                        val animationDuration = 300
+                        val dt = 10
+                        repeat(animationDuration / dt + 1) {
+                            delay(dt.toLong())
+                            onScrollToBottom()
+                        }
                     }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }
 
 @Composable

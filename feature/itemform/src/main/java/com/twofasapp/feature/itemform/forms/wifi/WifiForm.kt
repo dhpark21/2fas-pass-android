@@ -65,6 +65,7 @@ import com.twofasapp.core.design.foundation.textfield.passwordColors
 import com.twofasapp.core.design.foundation.topbar.TopAppBarTitle
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.design.theme.RoundedShape24
+import com.twofasapp.core.design.theme.RoundedShape8
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemFormListener
@@ -343,6 +344,7 @@ private fun LazyListScope.wifiSecurityTypePicker(
             Box(
                 modifier = Modifier
                     .matchParentSize()
+                    .clip(RoundedShape8)
                     .clickable(onClick = onClick),
             )
             Box(modifier = Modifier.align(Alignment.TopEnd)) {
