@@ -314,7 +314,8 @@ internal class ProtonPassImportSpec(
         val additionalData = content.entries
             .filter { !usedKeys.contains(it.key) }
             .mapNotNull { (key, value) ->
-                val valueStr = value.toStringOrNull() ?: return@mapNotNull null
+                val valueStr =
+                    value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
                 formatFieldType(key) to valueStr
             }
         formatAdditionalFields(additionalData)?.let { noteComponents.add(it) }
