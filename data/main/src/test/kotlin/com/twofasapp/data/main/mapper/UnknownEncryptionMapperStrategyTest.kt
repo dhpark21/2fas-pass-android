@@ -1,7 +1,11 @@
 package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
+import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
+import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.data.main.FakeVaultCipher
 import io.kotest.matchers.shouldBe
@@ -23,8 +27,14 @@ class UnknownEncryptionMapperStrategyTest {
     @Test
     fun `encrypt only transforms top level secret string fields`() {
         val raw = """{"name":"Example","s_secret":"topSecret","s_null":null,"count":5}"""
+        val content = ItemContent.Unknown(raw)
+        val item = Item.Empty.copy(
+            securityType = SecurityType.Tier1,
+            contentType = ItemContentType.Unknown(""),
+            content = content,
+        )
 
-        val encrypted = mapper.encryptItem(raw, SecurityType.Tier1, vaultCipher)
+        val encrypted = mapper.encryptItem(item, content, vaultCipher)
 
         val element = json.parseToJsonElement(encrypted).jsonObject
         element["name"]!!.jsonPrimitive.content shouldBe "Example"
@@ -38,9 +48,33 @@ class UnknownEncryptionMapperStrategyTest {
     @Test
     fun `decrypt restores secret fields when decryption requested`() {
         val raw = """{"plain":"text","s_secret":"value"}"""
-        val encrypted = mapper.encryptItem(raw, SecurityType.Tier2, vaultCipher)
+        val content = ItemContent.Unknown(raw)
+        val contentType = ItemContentType.Unknown("")
+        val securityType = SecurityType.Tier2
+        val item = Item.Empty.copy(
+            securityType = securityType,
+            contentType = contentType,
+            content = content,
+        )
 
-        val decrypted = mapper.decryptItem(encrypted, SecurityType.Tier2, vaultCipher, decryptSecretFields = true) as ItemContent.Unknown
+        val encrypted = mapper.encryptItem(item, content, vaultCipher)
+        val decrypted = mapper.decryptItem(
+            ItemEncrypted(
+                id = "",
+                vaultId = "",
+                createdAt = 0,
+                updatedAt = 0,
+                deletedAt = null,
+                deleted = false,
+                securityType = securityType,
+                tagIds = emptyList(),
+                contentType = contentType,
+                content = EncryptedBytes(ByteArray(0)),
+            ),
+            vaultCipher,
+            true,
+            encrypted,
+        )
         val decryptedObject = json.parseToJsonElement(decrypted.rawJson).jsonObject
 
         decryptedObject["plain"]!!.jsonPrimitive.content shouldBe "text"
@@ -50,9 +84,33 @@ class UnknownEncryptionMapperStrategyTest {
     @Test
     fun `decrypt returns raw json when secret fields not requested`() {
         val raw = """{"s_secret":"value"}"""
-        val encrypted = mapper.encryptItem(raw, SecurityType.Tier3, vaultCipher)
+        val content = ItemContent.Unknown(raw)
+        val securityType = SecurityType.Tier3
+        val contentType = ItemContentType.Unknown("")
+        val item = Item.Empty.copy(
+            securityType = securityType,
+            contentType = contentType,
+            content = content,
+        )
 
-        val decrypted = mapper.decryptItem(encrypted, SecurityType.Tier3, vaultCipher, decryptSecretFields = false) as ItemContent.Unknown
+        val encrypted = mapper.encryptItem(item, content, vaultCipher)
+        val decrypted = mapper.decryptItem(
+            ItemEncrypted(
+                id = "",
+                vaultId = "",
+                createdAt = 0,
+                updatedAt = 0,
+                deletedAt = null,
+                deleted = false,
+                securityType = securityType,
+                tagIds = emptyList(),
+                contentType = contentType,
+                content = EncryptedBytes(ByteArray(0)),
+            ),
+            vaultCipher,
+            false,
+            encrypted,
+        )
 
         decrypted.rawJson shouldBe encrypted
     }
@@ -60,8 +118,16 @@ class UnknownEncryptionMapperStrategyTest {
     @Test
     fun `encrypt ignores non string secret fields`() {
         val raw = """{"s_object":{"inner":"value"},"s_list":[1,2,3],"s_string":"text"}"""
+        val content = ItemContent.Unknown(raw)
+        val securityType = SecurityType.Tier1
+        val contentType = ItemContentType.Unknown("")
+        val item = Item.Empty.copy(
+            securityType = securityType,
+            contentType = contentType,
+            content = content,
+        )
 
-        val encrypted = mapper.encryptItem(raw, SecurityType.Tier1, vaultCipher)
+        val encrypted = mapper.encryptItem(item, content, vaultCipher)
         val element = json.parseToJsonElement(encrypted).jsonObject
 
         element["s_object"]!!.jsonObject["inner"]!!.jsonPrimitive.content shouldBe "value"
@@ -75,7 +141,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"name":"Example","s_secret":"topSecret","count":5}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         element["name"]!!.jsonPrimitive.content shouldBe "Example"
@@ -90,7 +156,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"name":"Example","email":"test@example.com","s_password":"secret123"}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         element["name"]!!.jsonPrimitive.content shouldBe "Example"
@@ -106,7 +172,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"s_secret":null,"s_token":"value"}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         element["s_secret"] shouldBe JsonNull
@@ -120,7 +186,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"s_object":{"inner":"value"},"s_list":[1,2,3],"s_string":"text"}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         element["s_object"]!!.jsonObject["inner"]!!.jsonPrimitive.content shouldBe "value"
@@ -135,7 +201,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """not a valid json"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         result.rawJson shouldBe raw
     }
@@ -145,7 +211,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         result.rawJson shouldBe raw
     }
@@ -155,7 +221,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"name":"John","age":30,"email":"john@example.com"}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         element["name"]!!.jsonPrimitive.content shouldBe "John"
@@ -168,7 +234,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"s_password":"pass123","s_token":"abc456"}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         val encodedPassword = element["s_password"]!!.jsonPrimitive.content
@@ -185,7 +251,7 @@ class UnknownEncryptionMapperStrategyTest {
         val raw = """{"s_empty":"","s_value":"test"}"""
         val encryptionKey = ByteArray(32) { it.toByte() }
 
-        val result = mapper.encryptSecretFields(raw, encryptionKey)
+        val result = mapper.encryptSecretFields(ItemContent.Unknown(raw), encryptionKey)
 
         val element = json.parseToJsonElement(result.rawJson).jsonObject
         val encodedEmpty = element["s_empty"]!!.jsonPrimitive.content
