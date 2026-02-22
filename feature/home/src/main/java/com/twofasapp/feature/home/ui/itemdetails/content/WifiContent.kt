@@ -184,6 +184,7 @@ internal fun ColumnScope.WifiContent(
                 })
                 .padding(horizontal = OptionEntryPaddingHorizontal),
             external = true,
+            externalIcon = MdtIcons.Wifi4BarPlus,
             title = "Połącz się z siecią",
             contentPadding = ZeroPadding,
         )

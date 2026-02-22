@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtTheme
@@ -35,6 +36,7 @@ import com.twofasapp.core.design.MdtTheme
 fun DropdownMenu(
     modifier: Modifier = Modifier,
     visible: Boolean,
+    shape: Shape = RoundedCornerShape(12.dp),
     onDismissRequest: () -> Unit,
     anchor: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
@@ -42,7 +44,7 @@ fun DropdownMenu(
     Box {
         anchor()
         DropdownMenu(
-            shape = RoundedCornerShape(12.dp),
+            shape = shape,
             expanded = visible,
             onDismissRequest = onDismissRequest,
             modifier = modifier

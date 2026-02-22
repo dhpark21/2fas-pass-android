@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Thu, 19 Feb 2026 01:38:47 -0800
+ Exported at: Sun, 22 Feb 2026 03:32:36 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -638,7 +638,7 @@
     <string name="manage_subscription_title">2FAS Pass Unlimited</string>
     <string name="manage_subscription_items_title">Elementy</string>
     <string name="manage_subscription_browsers_title">Połączone rozszerzenia przeglądarki</string>
-    <string name="manage_subscription_price_prefix">Roczna subskrypcja</string>
+    <string name="manage_subscription_price_prefix">Roczna subskrypcja:\u0020</string>
     <string name="manage_subscription_renew_date_prefix">Twój plan zostanie automatycznie odnowiony\u0020</string>
     <string name="manage_subscription_apple_info">Zapłacono poprzez Apple</string>
     <string name="manage_subscription_end_date_prefix">Twój plan kończy się</string>
@@ -1090,7 +1090,7 @@
     <string name="request_modal_remove_wifi_title">Usuń Wi-Fi</string>
     <string name="wifi_network_header">Sieć</string>
     <string name="request_modal_update_wifi_title">Zaktualizuj Wi-Fi</string>
-    <string name="wifi_edit_title">Edycja WiFi</string>
+    <string name="wifi_edit_title">Edycja W-iFi</string>
     <string name="transfer_file_summary_wifi_counter_description">Wykrytych sieci Wi-Fi</string>
     <string name="wifi_notes_label">Notatki</string>
     <string name="wifi_security_type_none">Brak</string>
@@ -1100,11 +1100,17 @@
     <string name="credential_exchange_export_cta">Eksportuj</string>
     <string name="credential_exchange_import_title">Importuj dane logowania</string>
     <string name="credential_exchange_import_desciption">Twoje dane logowania są gotowe do importu.</string>
-    <string name="credential_exchange_import_error_title">Import nie powiódł się</string>
+    <string name="credential_exchange_import_error_title">Eksport nieudany</string>
     <string name="credential_exchange_importing_description">Importowanie danych logowania…</string>
     <string name="credential_exchange_import_cta">Importuj</string>
     <string name="backup_export_to_another_app">Eksportuj do innej aplikacji</string>
     <string name="backup_export_to_another_app_footer">Wyeksportuj swoje dane logowania do innego menedżera haseł.</string>
     <string name="credential_exchange_import_success_title">Import zakończony</string>
     <string name="credential_exchange_import_success_description">Twoje dane logowania zostały pomyślnie zaimportowane.</string>
+    <string name="settings_entry_screen_recording">Nagrywanie ekranu</string>
+    <string name="settings_entry_screen_recording_confirm_description">Ta opcja pozwala na nagrywanie zawartości aplikacji. Jednocześnie umożliwia zewnętrznym aplikacjom przechwytywanie ekranu. Aby zapewnić bezpieczeństwo, opcja ta wyłączy się automatycznie po 5 minutach.</string>
+    <string name="settings_entry_screen_recording_confirm_title">Pozwolić na nagrywanie ekranu?</string>
+    <string name="settings_entry_screen_recording_description">Pozwól na nagrywanie ekranu aplikacji przez 5 minut.</string>
+    <string name="block_screen_recording_title">Nagrywanie ekranu zablokowane</string>
+    <string name="block_screen_recording_description">Nagrywanie ekranu jest zablokowane podczas korzystania z aplikacji. Możesz tymczasowo je włączyć w Ustawienia → Bezpieczeństwo.</string>
 </resources>

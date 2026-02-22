@@ -4,7 +4,6 @@ import android.Manifest
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -50,12 +49,11 @@ import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.feature.settings.OptionEntryPaddingHorizontal
 import com.twofasapp.core.design.feature.settings.OptionSwitch
 import com.twofasapp.core.design.feature.wifi.formatName
-import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.checked.CheckIcon
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.layout.ZeroPadding
 import com.twofasapp.core.design.foundation.lazy.listItem
-import com.twofasapp.core.design.foundation.menu.DropdownMenu
+import com.twofasapp.core.design.foundation.menu.DropdownPicker
 import com.twofasapp.core.design.foundation.modal.Modal
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.textfield.SecretField
@@ -65,7 +63,6 @@ import com.twofasapp.core.design.foundation.textfield.passwordColors
 import com.twofasapp.core.design.foundation.topbar.TopAppBarTitle
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.design.theme.RoundedShape24
-import com.twofasapp.core.design.theme.RoundedShape8
 import com.twofasapp.core.design.theme.ScreenPadding
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.itemform.ItemFormListener
@@ -320,66 +317,28 @@ private fun LazyListScope.wifiSecurityTypePicker(
     onClick: () -> Unit,
 ) {
     listItem(FormListItem.Field("WifiSecurityType")) {
-        Box {
-            TextField(
-                readOnly = true,
-                value = uiState.itemContent?.securityType?.formatName() ?: "",
-                textStyle = LocalTextStyle.current.copy(fontFamily = FontFamily.Monospace),
-                labelText = MdtLocale.strings.wifiSecurityTypeLabel,
-                singleLine = true,
-                maxLines = 1,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .animateItem(),
-                trailingIcon = {
-                    ActionsRow(
-                        useHorizontalPadding = true,
-                    ) {
-                        IconButton(
-                            icon = MdtIcons.ChevronDown,
-                        )
-                    }
-                },
-            )
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .clip(RoundedShape8)
-                    .clickable(onClick = onClick),
-            )
-            Box(modifier = Modifier.align(Alignment.TopEnd)) {
-                WifiSecurityTypeDropdownMenu(
-                    selectedValue = uiState.itemContent?.securityType ?: WifiSecurityType.None,
-                    visible = dropdownVisible,
-                    onValueChange = onValueChange,
-                    onDismiss = onDropdownDismiss,
+        DropdownPicker(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateItem(),
+            value = uiState.itemContent?.securityType?.formatName() ?: "",
+            label = MdtLocale.strings.wifiSecurityTypeLabel,
+            dropdownVisible = dropdownVisible,
+            onShowDropdown = onClick,
+            onDismissDropdown = onDropdownDismiss,
+        ) {
+            WifiSecurityType.values().forEach { wifiSecurityType ->
+                WifiSecurityTypeMenuItem(
+                    text = wifiSecurityType.formatName(),
+                    checked = wifiSecurityType == (
+                        uiState.itemContent?.securityType
+                            ?: WifiSecurityType.None
+                        ),
+                    onClick = { onValueChange(wifiSecurityType) },
                 )
             }
         }
     }
-}
-
-@Composable
-private fun WifiSecurityTypeDropdownMenu(
-    selectedValue: WifiSecurityType,
-    visible: Boolean,
-    onValueChange: (WifiSecurityType) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    DropdownMenu(
-        visible = visible,
-        onDismissRequest = onDismiss,
-        anchor = {},
-        content = {
-            WifiSecurityType.values().forEach { wifiSecurityType ->
-                WifiSecurityTypeMenuItem(
-                    text = wifiSecurityType.formatName(),
-                    checked = wifiSecurityType == selectedValue,
-                    onClick = { onValueChange(wifiSecurityType) },
-                )
-            }
-        },
-    )
 }
 
 @Composable

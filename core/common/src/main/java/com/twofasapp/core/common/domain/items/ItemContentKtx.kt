@@ -46,11 +46,14 @@ fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
         ItemContent.PaymentCard.Issuer.Jcb,
         ItemContent.PaymentCard.Issuer.UnionPay,
         null,
-            -> listOf(4, 4, 4, 4, 3)
+        -> listOf(4, 4, 4, 4, 3)
     }
 }
 
 fun ItemContent.Wifi.supportConnect(): Boolean {
+    if (ssid == null) {
+        return false
+    }
     return when (securityType) {
         WifiSecurityType.None -> true
         is WifiSecurityType.Unknown -> false
@@ -75,10 +78,12 @@ fun ItemContent.Wifi.createConnectIntent(decryptedPassword: String?): Intent {
                 when (securityType) {
                     WifiSecurityType.None,
                     is WifiSecurityType.Unknown,
-                    WifiSecurityType.Wep -> Unit
+                    WifiSecurityType.Wep,
+                    -> Unit
 
                     WifiSecurityType.Wpa,
-                    WifiSecurityType.Wpa2 -> setWpa2Passphrase(decryptedPassword)
+                    WifiSecurityType.Wpa2,
+                    -> setWpa2Passphrase(decryptedPassword)
 
                     WifiSecurityType.Wpa3 -> setWpa3Passphrase(decryptedPassword)
                 }
@@ -107,13 +112,13 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
             when (securityType) {
                 WifiSecurityType.None,
                 is WifiSecurityType.Unknown,
-                    -> "nopass"
+                -> "nopass"
 
                 WifiSecurityType.Wep -> "WEP"
                 WifiSecurityType.Wpa,
                 WifiSecurityType.Wpa2,
                 WifiSecurityType.Wpa3,
-                    -> "WPA"
+                -> "WPA"
             },
         )
         append(";")
