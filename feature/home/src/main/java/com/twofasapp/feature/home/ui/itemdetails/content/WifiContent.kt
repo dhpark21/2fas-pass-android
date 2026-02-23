@@ -150,12 +150,6 @@ internal fun ColumnScope.WifiContent(
         ItemDetailsEntry(
             title = MdtLocale.strings.wifiSecurityTypeLabel,
             subtitle = content.securityType.formatName(),
-            actions = {
-                IconButton(
-                    icon = MdtIcons.Copy,
-                    onClick = { context.copyToClipboard(content.securityType.value) },
-                )
-            },
         )
 
         if (content.notes.isNullOrEmpty().not()) {
