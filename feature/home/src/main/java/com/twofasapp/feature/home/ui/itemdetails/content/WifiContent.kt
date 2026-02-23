@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
@@ -75,6 +76,12 @@ internal fun ColumnScope.WifiContent(
     val context = LocalContext.current
     var showWifiQrCode by remember { mutableStateOf(false) }
     var showConnectWifi by remember { mutableStateOf(false) }
+
+    LifecycleResumeEffect(Unit) {
+        onPauseOrDispose {
+            showWifiQrCode = false
+        }
+    }
 
     LaunchedEffect(showConnectWifi, decryptedFields[SecretFieldType.WifiConnectPassword]) {
         if (showConnectWifi.not()) {
@@ -218,8 +225,10 @@ internal fun ColumnScope.WifiContent(
                         val animationDuration = 300
                         val dt = 10
                         repeat(animationDuration / dt + 1) {
-                            delay(dt.toLong())
-                            onScrollToBottom()
+                            if (showWifiQrCode) {
+                                delay(dt.toLong())
+                                onScrollToBottom()
+                            }
                         }
                     }
                 }
@@ -267,7 +276,7 @@ private fun QrCodeEntry(
                         MdtLocale.strings.wifiQrJoinTitle(ssid)
                     },
                     style = MdtTheme.typo.labelSmall,
-                    color = MdtTheme.color.onPrimaryContainer,
+                    color = MdtTheme.color.onSurfaceVariant,
                 )
             }
         }
