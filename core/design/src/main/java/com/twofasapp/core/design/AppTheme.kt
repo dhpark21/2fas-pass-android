@@ -117,12 +117,12 @@ fun AppTheme(
         bottomBar = if (isInDarkTheme) colorScheme.background else colorScheme.background,
         itemLoginContent = if (isInDarkTheme) Color(0xFF0088FF) else Color(0xFF0088FF),
         itemLoginContainer = if (isInDarkTheme) Color(0xFF002B52) else Color(0xFFD4EBFF),
-        itemSecureNoteContent = if (isInDarkTheme) Color(0xFFEDAC00) else Color(0xFFEDAC00),
-        itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
+        itemSecureNoteContent = Color(0xFFEDAC00),
+        itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF312A19) else Color(0xFFFBF3DC),
         itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
         itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
-        itemWifiContent = if (isInDarkTheme) Color(0xFFFF8B00) else Color(0xFFFF8500),
-        itemWifiContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
+        itemWifiContent = Color(0xFFFF8600),
+        itemWifiContainer = if (isInDarkTheme) Color(0xFF332619) else Color(0xFFFAECDB),
         tagGray = if (isInDarkTheme) tagGrayDark else tagGrayLight,
         tagRed = if (isInDarkTheme) tagRedDark else tagRedLight,
         tagOrange = if (isInDarkTheme) tagOrangeDark else tagOrangeLight,
@@ -132,7 +132,6 @@ fun AppTheme(
         tagIndigo = if (isInDarkTheme) tagIndigoDark else tagIndigoLight,
         tagPurple = if (isInDarkTheme) tagPurpleDark else tagPurpleLight,
     )
-
     CompositionLocalProvider(
         LocalColorTokens provides colorTokens,
         LocalDarkMode provides isInDarkTheme,
