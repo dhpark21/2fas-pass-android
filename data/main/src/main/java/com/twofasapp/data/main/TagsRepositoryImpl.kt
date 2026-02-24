@@ -42,7 +42,7 @@ internal class TagsRepositoryImpl(
     private val deletedItemsRepository: DeletedItemsRepository,
 ) : TagsRepository {
 
-    private val selectedTag = MutableStateFlow<Map<String, Tag?>>(emptyMap())
+    private val selectedTag = MutableStateFlow<Map<String, String?>>(emptyMap())
 
     override fun observeTags(vaultId: String): Flow<List<Tag>> {
         return combine(
@@ -170,7 +170,7 @@ internal class TagsRepositoryImpl(
             tagsLocalSource.deleteTags(tags.map { it.id })
 
             tags.forEach { tag ->
-                if (selectedTag.value.values.map { it?.id }.contains(tag.id)) {
+                if (selectedTag.value.values.contains(tag.id)) {
                     clearSelectedTag(tag.vaultId)
                 }
             }
@@ -240,8 +240,9 @@ internal class TagsRepositoryImpl(
         return combine(
             selectedTag.map { it[vaultId] },
             itemsLocalSource.observe(vaultId).distinctUntilChanged(),
-            { a, b -> Pair(a, b) },
-        ).map { (tag, items) ->
+            observeTags(vaultId).distinctUntilChanged()
+        ) { tagId, items, tags ->
+            val tag = tags.firstOrNull { tag -> tag.id == tagId }
             tag?.copy(
                 assignedItemsCount = items.count { it.tagIds.orEmpty().contains(tag.id) },
             )
@@ -250,10 +251,10 @@ internal class TagsRepositoryImpl(
 
     override suspend fun toggleSelectedTag(vaultId: String, tag: Tag) {
         selectedTag.update {
-            if (it[vaultId] == tag) {
+            if (it[vaultId] == tag.id) {
                 emptyMap()
             } else {
-                it.plus(vaultId to tag)
+                it.plus(vaultId to tag.id)
             }
         }
     }
