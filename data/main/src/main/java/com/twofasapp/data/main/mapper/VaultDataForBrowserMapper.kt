@@ -68,7 +68,7 @@ internal class VaultDataForBrowserMapper(
                     .filter { it.securityType != SecurityType.Tier1 }
                     .filter { it.content !is ItemContent.Unknown }
                     .mapNotNull { item ->
-                        val itemJson = itemMapper.mapToJson(item) ?: return@mapNotNull null
+                        val itemJson = itemMapper.mapToBrowserJson(item) ?: return@mapNotNull null
 
                         val contentJson =
                             itemJson.content

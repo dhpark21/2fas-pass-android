@@ -22,6 +22,7 @@ import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.data.main.local.model.ItemEntity
+import com.twofasapp.data.main.remote.model.ItemContentJson.BrowserWifi
 import com.twofasapp.data.main.remote.model.ItemContentJson.Login
 import com.twofasapp.data.main.remote.model.ItemContentJson.PaymentCard
 import com.twofasapp.data.main.remote.model.ItemContentJson.SecureNote
@@ -102,6 +103,26 @@ internal class ItemMapper(
     }
 
     fun mapToJson(item: Item): ItemJson {
+        return mapToJson(
+            item = item,
+            content = mapItemContentToJson(
+                content = item.content,
+                wifiContentMapper = { mapToWifiJsonElement(it) }
+            )
+        )
+    }
+
+    fun mapToBrowserJson(item: Item): ItemJson {
+        return mapToJson(
+            item = item,
+            content = mapItemContentToJson(
+                content = item.content,
+                wifiContentMapper = { mapToBrowserWifiJsonElement(it) }
+            )
+        )
+    }
+
+    private fun mapToJson(item: Item, content: JsonElement): ItemJson {
         return ItemJson(
             id = item.id,
             vaultId = item.vaultId,
@@ -110,7 +131,7 @@ internal class ItemMapper(
             securityType = item.securityType.let(itemSecurityTypeMapper::mapToJson),
             contentType = item.contentType.key,
             contentVersion = item.contentType.version,
-            content = mapItemContentToJson(item.content),
+            content = content,
             tags = item.tagIds.ifEmpty { null },
         )
     }
@@ -236,6 +257,7 @@ internal class ItemMapper(
 
     private fun mapItemContentToJson(
         content: ItemContent,
+        wifiContentMapper: (ItemContent.Wifi) -> JsonElement
     ): JsonElement {
         return when (content) {
             is ItemContent.Login -> {
@@ -304,21 +326,42 @@ internal class ItemMapper(
                 jsonSerializer.parseToJsonElement(content.rawJson)
             }
 
-            is ItemContent.Wifi -> jsonSerializer.encodeToJsonElement(
-                Wifi(
-                    name = content.name,
-                    ssid = content.ssid,
-                    password = when (content.password) {
-                        is ClearText -> content.password.clearText
-                        is Encrypted -> content.password.encryptedText
-                        null -> null
-                    },
-                    securityType = content.securityType?.value,
-                    hidden = content.hidden,
-                    notes = content.notes,
-                ),
-            )
+            is ItemContent.Wifi -> wifiContentMapper(content)
         }
+    }
+
+    private fun mapToWifiJsonElement(content: ItemContent.Wifi): JsonElement {
+        return jsonSerializer.encodeToJsonElement(
+            Wifi(
+                name = content.name,
+                ssid = content.ssid,
+                password = when (content.password) {
+                    is ClearText -> content.password.clearText
+                    is Encrypted -> content.password.encryptedText
+                    null -> null
+                },
+                securityType = content.securityType.value,
+                hidden = content.hidden,
+                notes = content.notes,
+            ),
+        )
+    }
+
+    private fun mapToBrowserWifiJsonElement(content: ItemContent.Wifi): JsonElement {
+        return jsonSerializer.encodeToJsonElement(
+            BrowserWifi(
+                name = content.name,
+                ssid = content.ssid,
+                password = when (content.password) {
+                    is ClearText -> content.password.clearText
+                    is Encrypted -> content.password.encryptedText
+                    null -> null
+                },
+                securityType = content.securityType.value,
+                hidden = content.hidden,
+                notes = content.notes,
+            ),
+        )
     }
 
     fun mapToJsonV1(domain: Item, deviceId: String? = null): LoginJson {
