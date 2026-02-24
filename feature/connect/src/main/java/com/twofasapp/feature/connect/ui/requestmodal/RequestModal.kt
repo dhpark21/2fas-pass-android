@@ -320,7 +320,7 @@ private fun Content(
                                             is ItemContent.Unknown -> Unit
                                             is ItemContent.Wifi -> {
                                                 put(
-                                                    "s_password",
+                                                    "s_wifi_password",
                                                     content.password.clearTextOrNull.orEmpty(),
                                                 )
                                             }
