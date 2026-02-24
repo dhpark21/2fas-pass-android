@@ -1185,7 +1185,7 @@ internal class RequestWebSocketImpl(
         )
 
         return json.encodeToJsonElement(
-            itemMapper.mapToJson(updatedItem),
+            itemMapper.mapToBrowserJson(updatedItem),
         )
     }
 
