@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Sun, 22 Feb 2026 03:32:36 -0800
+ Exported at: Tue, 24 Feb 2026 14:48:23 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1108,9 +1108,10 @@
     <string name="credential_exchange_import_success_title">Import zakończony</string>
     <string name="credential_exchange_import_success_description">Twoje dane logowania zostały pomyślnie zaimportowane.</string>
     <string name="settings_entry_screen_recording">Nagrywanie ekranu</string>
-    <string name="settings_entry_screen_recording_confirm_description">Ta opcja pozwala na nagrywanie zawartości aplikacji. Jednocześnie umożliwia zewnętrznym aplikacjom przechwytywanie ekranu. Aby zapewnić bezpieczeństwo, opcja ta wyłączy się automatycznie po 5 minutach.</string>
+    <string name="settings_entry_screen_recording_confirm_description">Ta opcja pozwala na nagrywanie zawartości aplikacji. Jednocześnie umożliwia zewnętrznym aplikacjom przechwytywanie ekranu. Aby zapewnić bezpieczeństwo, opcja ta wyłączy się automatycznie po %d minutach.</string>
     <string name="settings_entry_screen_recording_confirm_title">Pozwolić na nagrywanie ekranu?</string>
-    <string name="settings_entry_screen_recording_description">Pozwól na nagrywanie ekranu aplikacji przez 5 minut.</string>
+    <string name="settings_entry_screen_recording_description">Pozwól na nagrywanie ekranu aplikacji przez %d minut.</string>
     <string name="block_screen_recording_title">Nagrywanie ekranu zablokowane</string>
     <string name="block_screen_recording_description">Nagrywanie ekranu jest zablokowane podczas korzystania z aplikacji. Możesz tymczasowo je włączyć w Ustawienia → Bezpieczeństwo.</string>
+    <string name="wifi_connect_label">Połącz z siecią</string>
 </resources>

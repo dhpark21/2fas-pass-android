@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sun, 22 Feb 2026 03:32:36 -0800
+ Exported at: Tue, 24 Feb 2026 14:48:23 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1104,9 +1104,10 @@
     <string name="credential_exchange_import_success_title">Import complete</string>
     <string name="credential_exchange_import_success_description">Your credentials have been imported successfully.</string>
     <string name="settings_entry_screen_recording">Screen Recording</string>
-    <string name="settings_entry_screen_recording_confirm_description">This option allows recording of app content. It will also enable any external attempts to capture the screen. To ensure safety, this option will automatically turn off after 5 minutes.</string>
+    <string name="settings_entry_screen_recording_confirm_description">This option allows recording of app content. It will also enable any external attempts to capture the screen. To ensure safety, this option will automatically turn off after %d minutes.</string>
     <string name="settings_entry_screen_recording_confirm_title">Allow Screen Recording?</string>
-    <string name="settings_entry_screen_recording_description">Allow screen recording of the app for 5 minutes.</string>
+    <string name="settings_entry_screen_recording_description">Allow screen recording of the app for %d minutes.</string>
     <string name="block_screen_recording_title">Screen Recording Blocked</string>
     <string name="block_screen_recording_description">Screen recording is not allowed while using the app. You can temporarily enable it in Settings → Security.</string>
+    <string name="wifi_connect_label">Connect with the network</string>
 </resources>

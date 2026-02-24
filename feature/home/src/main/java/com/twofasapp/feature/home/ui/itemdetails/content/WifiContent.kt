@@ -186,7 +186,7 @@ internal fun ColumnScope.WifiContent(
                 .padding(horizontal = OptionEntryPaddingHorizontal),
             external = true,
             externalIcon = MdtIcons.Wifi4BarPlus,
-            title = MdtLocale.strings.bottomBarConnect,
+            title = MdtLocale.strings.wifiConnectLabel,
             contentPadding = ZeroPadding,
         )
     }

@@ -481,6 +481,7 @@ class Strings(private val c: Context) {
     val transferFileSummaryWifiCounterDescription =
         c.getString(R.string.transfer_file_summary_wifi_counter_description)
     val wifiNotesLabel = c.getString(R.string.wifi_notes_label)
+    val wifiConnectLabel = c.getString(R.string.wifi_connect_label)
 
     // Credit Card
     val creditCardName = c.getString(R.string.credit_card_name_label)
