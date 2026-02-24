@@ -17,6 +17,7 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.cardNumberGrouping
+import com.twofasapp.core.common.domain.items.defaultCardNumberGrouping
 import com.twofasapp.core.common.domain.items.formatWithGrouping
 import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.data.main.VaultCryptoScope
@@ -96,13 +97,18 @@ internal class ItemDetailsModalViewModel(
                         SecretFieldType.PaymentCardNumber -> {
                             val content = uiState.value.item.content as? ItemContent.PaymentCard
                             decrypted.removeWhitespace()
-                                .formatWithGrouping(content?.cardIssuer?.cardNumberGrouping() ?: emptyList())
+                                .formatWithGrouping(
+                                    content?.cardIssuer?.cardNumberGrouping()
+                                        ?: defaultCardNumberGrouping
+                                )
                         }
+
                         SecretFieldType.PaymentCardExpiration,
                         SecretFieldType.PaymentCardSecurityCode,
-                        -> {
+                            -> {
                             decrypted.removeWhitespace()
                         }
+
                         else -> decrypted
                     }
 

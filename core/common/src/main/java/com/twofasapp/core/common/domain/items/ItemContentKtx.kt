@@ -36,6 +36,7 @@ fun String.formatWithGrouping(grouping: List<Int>): String {
     return result.toString()
 }
 
+val defaultCardNumberGrouping = listOf(4, 4, 4, 4, 3)
 fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
     return when (this) {
         ItemContent.PaymentCard.Issuer.AmericanExpress -> listOf(4, 6, 5)
@@ -46,7 +47,7 @@ fun ItemContent.PaymentCard.Issuer?.cardNumberGrouping(): List<Int> {
         ItemContent.PaymentCard.Issuer.Jcb,
         ItemContent.PaymentCard.Issuer.UnionPay,
         null,
-        -> listOf(4, 4, 4, 4, 3)
+            -> defaultCardNumberGrouping
     }
 }
 
@@ -79,11 +80,11 @@ fun ItemContent.Wifi.createConnectIntent(decryptedPassword: String?): Intent {
                     WifiSecurityType.None,
                     is WifiSecurityType.Unknown,
                     WifiSecurityType.Wep,
-                    -> Unit
+                        -> Unit
 
                     WifiSecurityType.Wpa,
                     WifiSecurityType.Wpa2,
-                    -> setWpa2Passphrase(decryptedPassword)
+                        -> setWpa2Passphrase(decryptedPassword)
 
                     WifiSecurityType.Wpa3 -> setWpa3Passphrase(decryptedPassword)
                 }
@@ -112,13 +113,13 @@ fun ItemContent.Wifi.qrCodeContent(decryptedPassword: String?): String {
             when (securityType) {
                 WifiSecurityType.None,
                 is WifiSecurityType.Unknown,
-                -> "nopass"
+                    -> "nopass"
 
                 WifiSecurityType.Wep -> "WEP"
                 WifiSecurityType.Wpa,
                 WifiSecurityType.Wpa2,
                 WifiSecurityType.Wpa3,
-                -> "WPA"
+                    -> "WPA"
             },
         )
         append(";")
