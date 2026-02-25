@@ -28,6 +28,7 @@ import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
 import com.tom_roush.pdfbox.pdmodel.font.PDType0Font
 import com.tom_roush.pdfbox.pdmodel.graphics.image.LosslessFactory
+import com.tom_roush.pdfbox.util.Matrix.getTranslateInstance
 import com.twofasapp.core.design.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -36,7 +37,6 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object DecryptionKitGenerator {
-    private const val templateFilename = "vault-decryption-kit-template.pdf"
 
     private val wordPaint = Paint().apply {
         color = Color.BLACK
@@ -47,7 +47,9 @@ object DecryptionKitGenerator {
     }
 
     fun generateFilename(): String {
-        return "2FAS_Pass_DecryptionKit_${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))}.pdf"
+        return "2FAS_Pass_DecryptionKit_${
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+        }.pdf"
     }
 
     suspend fun generate(
@@ -75,58 +77,65 @@ object DecryptionKitGenerator {
         includeMasterKey: Boolean,
     ) {
         withContext(Dispatchers.IO) {
-            context.assets.open(templateFilename).use { inputStream ->
-                PDDocument.load(inputStream).use { document ->
-                    val page = document.getPage(0)
+            context.resources.openRawResource(com.twofasapp.feature.decryptionkit.R.raw.vault_decryption_kit_template)
+                .use { inputStream ->
+                    PDDocument.load(inputStream).use { document ->
+                        val page = document.getPage(0)
 
-                    val contentStream = PDPageContentStream(
-                        document,
-                        page,
-                        PDPageContentStream.AppendMode.APPEND,
-                        true,
-                        true,
-                    )
+                        val contentStream = PDPageContentStream(
+                            document,
+                            page,
+                            PDPageContentStream.AppendMode.APPEND,
+                            true,
+                            true,
+                        )
 
-                    val fontStream = context.assets.open("fonts/Helvetica.ttf")
-                    val font = PDType0Font.load(document, fontStream)
+                        val fontStream = context.assets.open("fonts/Helvetica.ttf")
+                        val font = PDType0Font.load(document, fontStream)
 
-                    renderDate(
-                        contentStream = contentStream,
-                        font = font,
-                    )
+                        renderDate(
+                            contentStream = contentStream,
+                            font = font,
+                            context = context,
+                        )
 
-                    renderWords(
-                        document = document,
-                        contentStream = contentStream,
-                        words = kit.words,
-                    )
+                        renderWords(
+                            document = document,
+                            contentStream = contentStream,
+                            words = kit.words,
+                        )
 
-                    renderQrCode(
-                        document = document,
-                        context = context,
-                        contentStream = contentStream,
-                        font = font,
-                        content = kit.generateQrCodeContent(includeMasterKey),
-                    )
+                        renderQrCode(
+                            document = document,
+                            context = context,
+                            contentStream = contentStream,
+                            font = font,
+                            content = kit.generateQrCodeContent(includeMasterKey),
+                            includeMasterKey = includeMasterKey,
+                        )
 
-                    contentStream.close()
+                        contentStream.close()
 
-                    document.save(outputStream)
+                        document.save(outputStream)
 
-                    document.close()
+                        document.close()
+                    }
                 }
-            }
         }
     }
 
     private fun renderDate(
+        context: Context,
         contentStream: PDPageContentStream,
         font: PDType0Font,
     ) {
         val x = 580f
         val y = 1020f
 
-        val formattedDateTime = "Created on ${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))}"
+        val formattedDateTime = context.getString(
+            com.twofasapp.core.locale.R.string.decryption_kit_file_date,
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+        )
 
         contentStream.beginText()
         contentStream.setFont(font, 12f)
@@ -165,6 +174,7 @@ object DecryptionKitGenerator {
         contentStream: PDPageContentStream,
         font: PDType0Font,
         content: String,
+        includeMasterKey: Boolean,
     ) {
         val qrX = 415f
         val qrY = 330f
@@ -186,8 +196,12 @@ object DecryptionKitGenerator {
             }
         }
 
-        val logoBitmap = BitmapFactory.decodeResource(context.resources, R.drawable.brand_logo_border)
-        val logoScaled = logoBitmap.scale(logoSize, ((logoSize * logoBitmap.height) / logoBitmap.width.toFloat()).toInt())
+        val logoBitmap =
+            BitmapFactory.decodeResource(context.resources, R.drawable.brand_logo_border)
+        val logoScaled = logoBitmap.scale(
+            logoSize,
+            ((logoSize * logoBitmap.height) / logoBitmap.width.toFloat()).toInt(),
+        )
 
         val qrImage = LosslessFactory.createFromImage(document, qrBitmap)
         val logoImage = LosslessFactory.createFromImage(document, logoScaled)
@@ -203,11 +217,22 @@ object DecryptionKitGenerator {
         )
 
         contentStream.beginText()
-        contentStream.setFont(font, 13f)
-        contentStream.newLineAtOffset(qrX + 48, qrY - 20)
-        contentStream.showText("Scan this QR code instead of retyping your")
-        contentStream.newLineAtOffset(30f, -18f)
-        contentStream.showText("Secret Key and Master Password.")
+        val fontSize = 13f
+        val lineHeight = 1.2f * 13
+        contentStream.showText(
+            text = if (includeMasterKey) {
+                context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_master_key_description)
+            } else {
+                context.getString(com.twofasapp.core.locale.R.string.decryption_kit_file_qr_code_description)
+            },
+            center = true,
+            font = font,
+            width = qrSize.toFloat(),
+            fontSize = fontSize,
+            lineHeight = lineHeight,
+            x = qrX,
+            y = qrY - lineHeight,
+        )
         contentStream.endText()
     }
 
@@ -233,4 +258,58 @@ object DecryptionKitGenerator {
 
         return bitmap
     }
+
+    private fun PDPageContentStream.showText(
+        text: String,
+        center: Boolean,
+        font: PDType0Font,
+        width: Float,
+        x: Float,
+        y: Float,
+        fontSize: Float,
+        lineHeight: Float,
+    ) {
+        val lines = mutableListOf<String>()
+
+        text.split("\n").forEach { paragraph ->
+            var current = ""
+
+            paragraph.split(" ").forEach { word ->
+                val test = if (current.isEmpty()) word else "$current $word"
+
+                if (font.textWidth(test, fontSize) > width && current.isNotEmpty()) {
+                    lines.add(current)
+                    current = word
+                } else {
+                    current = test
+                }
+            }
+
+            if (current.isNotEmpty()) lines.add(current)
+        }
+
+        setFont(font, fontSize)
+
+        var currentY = y
+
+        for (line in lines) {
+            val lineWidth = font.textWidth(line, fontSize)
+
+            val drawX = if (center) {
+                x + (width - lineWidth) / 2f
+            } else {
+                x
+            }
+
+            setTextMatrix(
+                getTranslateInstance(drawX, currentY),
+            )
+
+            showText(line)
+            currentY -= lineHeight
+        }
+    }
+
+    private fun PDType0Font.textWidth(str: String, fontSize: Float): Float =
+        getStringWidth(str) / 1000f * fontSize
 }

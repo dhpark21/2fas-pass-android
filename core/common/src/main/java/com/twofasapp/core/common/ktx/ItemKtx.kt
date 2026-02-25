@@ -26,8 +26,12 @@ fun List<Item>.filterBySearchQuery(query: String): List<Item> {
 
                 is ItemContent.PaymentCard -> {
                     item.content.cardHolder.orEmpty().contains(query, ignoreCase = true) ||
-                        item.content.cardNumberMask.orEmpty().contains(query, ignoreCase = true)
+                        item.content.cardNumberMask.orEmpty()
+                            .contains(query, ignoreCase = true)
                 }
+
+                is ItemContent.Wifi -> item.content.ssid.orEmpty()
+                    .contains(query, ignoreCase = true)
             }
     }.distinctBy { it.id }
 }

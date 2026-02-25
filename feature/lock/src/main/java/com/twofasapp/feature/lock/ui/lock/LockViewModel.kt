@@ -147,7 +147,7 @@ internal class LockViewModel(
         }
     }
 
-    fun unlockWithBiometrics(masterKey: ByteArray) {
+    fun unlockWithMasterKey(masterKey: ByteArray) {
         uiState.update { it.copy(loading = true, passwordError = null) }
 
         launchScoped {
@@ -190,13 +190,17 @@ internal class LockViewModel(
         }
     }
 
-    private fun incrementFailedAttempt() {
+    fun incrementFailedAttempt(
+        onLocked: () -> Unit = {},
+    ) {
         launchScoped {
             val maxAttempts = uiState.value.appLockAttempts.maxAttempts ?: return@launchScoped
             val currentFailedAppUnlocks = uiState.value.failedAppUnlocks ?: FailedAppUnlocks.Empty
             val newFailedAttempts = minOf(currentFailedAppUnlocks.failedAttempts + 1, maxAttempts)
 
             val newFailedAppUnlocks = if (newFailedAttempts >= maxAttempts) {
+                onLocked()
+
                 currentFailedAppUnlocks.copy(
                     lockoutCount = currentFailedAppUnlocks.lockoutCount + 1,
                     failedAttempts = newFailedAttempts,

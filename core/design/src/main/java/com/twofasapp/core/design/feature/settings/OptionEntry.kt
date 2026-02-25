@@ -38,10 +38,11 @@ import com.twofasapp.core.design.foundation.preview.PreviewText
 import com.twofasapp.core.design.foundation.preview.PreviewTextLong
 import com.twofasapp.core.design.foundation.preview.PreviewTextMedium
 
+val OptionEntryPaddingHorizontal = 16.dp
 val OptionEntryPadding = PaddingValues(
-    start = 16.dp,
+    start = OptionEntryPaddingHorizontal,
     top = 14.dp,
-    end = 16.dp,
+    end = OptionEntryPaddingHorizontal,
     bottom = 14.dp,
 )
 
@@ -54,6 +55,7 @@ fun OptionEntry(
     subtitleAnnotated: AnnotatedString? = null,
     value: String? = null,
     icon: Painter? = null,
+    externalIcon: Painter = MdtIcons.Open,
     image: Painter? = null,
     iconTint: Color? = null,
     titleColor: Color = MdtTheme.color.onSurface,
@@ -66,7 +68,7 @@ fun OptionEntry(
     } else {
         {
             Icon(
-                painter = MdtIcons.Open,
+                painter = externalIcon,
                 contentDescription = null,
                 tint = MdtTheme.color.onSurfaceVariant,
                 modifier = Modifier.size(20.dp),

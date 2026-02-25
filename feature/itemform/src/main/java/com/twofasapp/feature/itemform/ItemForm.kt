@@ -10,6 +10,7 @@ import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.feature.itemform.forms.login.LoginForm
 import com.twofasapp.feature.itemform.forms.paymentcard.PaymentCardForm
 import com.twofasapp.feature.itemform.forms.securenote.SecureNoteForm
+import com.twofasapp.feature.itemform.forms.wifi.WifiForm
 
 @Composable
 fun ItemForm(
@@ -44,6 +45,16 @@ fun ItemForm(
 
             is ItemContent.PaymentCard -> {
                 PaymentCardForm(
+                    modifier = modifier,
+                    initialItem = initialItem,
+                    containerColor = containerColor,
+                    properties = properties,
+                    listener = listener,
+                )
+            }
+
+            is ItemContent.Wifi -> {
+                WifiForm(
                     modifier = modifier,
                     initialItem = initialItem,
                     containerColor = containerColor,

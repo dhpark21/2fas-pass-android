@@ -20,6 +20,7 @@ val RoundedShape12 = RoundedCornerShape(DimenTokens.radius_md)
 val RoundedShape16 = RoundedCornerShape(DimenTokens.radius_lg)
 val RoundedShape24 = RoundedCornerShape(DimenTokens.radius_xl)
 val RoundedShape32 = RoundedCornerShape(DimenTokens.radius_xl2)
+val RoundedShape40 = RoundedCornerShape(DimenTokens.radius_xl3)
 
 val RoundedTopShape = RoundedCornerShape(
     topStart = 12.dp,

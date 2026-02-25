@@ -225,9 +225,10 @@ private fun Content(
                                 positiveCta = strings.requestModalPasswordRequestCtaPositive,
                                 negativeCta = strings.requestModalPasswordRequestCtaNegative,
                                 onPositiveCta = {
-                                    ((passwordRequestState.item.content as? ItemContent.Login)?.password as? SecretField.ClearText)?.value.orEmpty().let {
-                                        passwordRequestState.onSendPasswordClick(it)
-                                    }
+                                    ((passwordRequestState.item.content as? ItemContent.Login)?.password as? SecretField.ClearText)?.value.orEmpty()
+                                        .let {
+                                            passwordRequestState.onSendPasswordClick(it)
+                                        }
                                 },
                                 onNegativeCta = {
                                     passwordRequestState.onCancelClick()
@@ -271,12 +272,14 @@ private fun Content(
                                     is ItemContentType.Login -> strings.requestModalPasswordRequestTitle
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalCardRequestTitle
+                                    is ItemContentType.Wifi -> strings.requestModalWifiRequestTitle
                                 },
                                 subtitle = when (secretFieldRequestState.item.contentType) {
                                     is ItemContentType.Unknown -> ""
                                     is ItemContentType.Login -> strings.requestModalPasswordRequestSubtitle
                                     is ItemContentType.SecureNote -> strings.requestModalSecureNoteRequestSubtitle
                                     is ItemContentType.PaymentCard -> strings.requestModalCardRequestSubtitle
+                                    is ItemContentType.Wifi -> strings.requestModalWifiRequestSubtitle
                                 },
                                 icon = MdtIcons.Downloading,
                                 iconTint = MdtTheme.color.primary,
@@ -286,20 +289,41 @@ private fun Content(
                                     val secretFieldsMap = buildMap {
                                         when (val content = secretFieldRequestState.item.content) {
                                             is ItemContent.Login -> {
-                                                put("s_password", content.password.clearTextOrNull.orEmpty())
+                                                put(
+                                                    "s_password",
+                                                    content.password.clearTextOrNull.orEmpty(),
+                                                )
                                             }
 
                                             is ItemContent.SecureNote -> {
-                                                put("s_text", content.text.clearTextOrNull.orEmpty())
+                                                put(
+                                                    "s_text",
+                                                    content.text.clearTextOrNull.orEmpty(),
+                                                )
                                             }
 
                                             is ItemContent.PaymentCard -> {
-                                                put("s_cardNumber", content.cardNumber.clearTextOrNull.orEmpty())
-                                                put("s_expirationDate", content.expirationDate.clearTextOrNull.orEmpty())
-                                                put("s_securityCode", content.securityCode.clearTextOrNull.orEmpty())
+                                                put(
+                                                    "s_cardNumber",
+                                                    content.cardNumber.clearTextOrNull.orEmpty(),
+                                                )
+                                                put(
+                                                    "s_expirationDate",
+                                                    content.expirationDate.clearTextOrNull.orEmpty(),
+                                                )
+                                                put(
+                                                    "s_securityCode",
+                                                    content.securityCode.clearTextOrNull.orEmpty(),
+                                                )
                                             }
 
                                             is ItemContent.Unknown -> Unit
+                                            is ItemContent.Wifi -> {
+                                                put(
+                                                    "s_wifi_password",
+                                                    content.password.clearTextOrNull.orEmpty(),
+                                                )
+                                            }
                                         }
                                     }
 
@@ -333,6 +357,7 @@ private fun Content(
                                     is ItemContentType.Login -> strings.requestModalNewLoginTitle
                                     is ItemContentType.SecureNote -> strings.requestModalNewSecureNoteTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalNewCardTitle
+                                    is ItemContentType.Wifi -> strings.requestModalNewWifiTitle
                                 },
                                 subtitle = strings.requestModalNewItemSubtitle,
                                 icon = MdtIcons.AddCircle,
@@ -352,6 +377,7 @@ private fun Content(
                                     is ItemContentType.Login -> strings.requestModalUpdateLoginTitle
                                     is ItemContentType.SecureNote -> strings.requestModalUpdateSecureNoteTitle
                                     is ItemContentType.PaymentCard -> strings.requestModalUpdateCardTitle
+                                    is ItemContentType.Wifi -> strings.requestModalUpdateWifiTitle
                                 },
                                 subtitle = strings.requestModalUpdateItemSubtitle,
                                 icon = MdtIcons.RotateLeft,
@@ -366,7 +392,9 @@ private fun Content(
                         is RequestState.InsideFrame.UpgradePlan -> {
                             ErrorState(
                                 title = strings.requestModalErrorItemsLimitTitle,
-                                subtitle = strings.requestModalErrorItemsLimitSubtitle.format(uiState.requestState.maxItems),
+                                subtitle = strings.requestModalErrorItemsLimitSubtitle.format(
+                                    uiState.requestState.maxItems,
+                                ),
                                 cta = MdtLocale.strings.requestModalErrorItemsLimitCta,
                                 onCta = { onUpgradePlan() },
                             )

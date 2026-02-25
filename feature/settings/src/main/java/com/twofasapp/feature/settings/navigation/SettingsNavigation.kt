@@ -11,7 +11,6 @@ package com.twofasapp.feature.settings.navigation
 import androidx.compose.runtime.Composable
 import com.twofasapp.feature.settings.ui.about.AboutScreen
 import com.twofasapp.feature.settings.ui.autofill.AutofillScreen
-import com.twofasapp.feature.settings.ui.changepassword.current.EnterCurrentPasswordScreen
 import com.twofasapp.feature.settings.ui.changepassword.processing.ProcessingNewPasswordScreen
 import com.twofasapp.feature.settings.ui.changepassword.set.SetNewPasswordScreen
 import com.twofasapp.feature.settings.ui.cloudsync.CloudSyncScreen
@@ -38,15 +37,6 @@ fun SettingsRoute() {
 @Composable
 fun SecurityRoute() {
     SecurityScreen()
-}
-
-@Composable
-fun ChangePasswordRoute(
-    openSetNewPassword: () -> Unit,
-) {
-    EnterCurrentPasswordScreen(
-        openSetNewPassword = openSetNewPassword,
-    )
 }
 
 @Composable

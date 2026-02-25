@@ -46,23 +46,35 @@ private fun Content(
             .fillMaxWidth()
             .animateContentSize(),
     ) {
-        OptionEntry(
-            title = strings.contentTypeLoginName,
-            icon = MdtIcons.Login,
-            onClick = { onSelect(ItemContentType.Login) },
-        )
+        ItemContentType.values().forEach { itemContentType ->
+            when (itemContentType) {
+                ItemContentType.Login -> OptionEntry(
+                    title = strings.contentTypeLoginName,
+                    icon = MdtIcons.Login,
+                    onClick = { onSelect(ItemContentType.Login) },
+                )
 
-        OptionEntry(
-            title = strings.contentTypeSecureNoteName,
-            icon = MdtIcons.SecureNote,
-            onClick = { onSelect(ItemContentType.SecureNote) },
-        )
+                ItemContentType.PaymentCard -> OptionEntry(
+                    title = strings.contentTypeCardName,
+                    icon = MdtIcons.PaymentCard,
+                    onClick = { onSelect(ItemContentType.PaymentCard) },
+                )
 
-        OptionEntry(
-            title = strings.contentTypeCardName,
-            icon = MdtIcons.PaymentCard,
-            onClick = { onSelect(ItemContentType.PaymentCard) },
-        )
+                ItemContentType.SecureNote -> OptionEntry(
+                    title = strings.contentTypeSecureNoteName,
+                    icon = MdtIcons.SecureNote,
+                    onClick = { onSelect(ItemContentType.SecureNote) },
+                )
+
+                is ItemContentType.Unknown -> Unit
+
+                ItemContentType.Wifi -> OptionEntry(
+                    title = strings.contentTypeWifiName,
+                    icon = MdtIcons.Wifi4Bar,
+                    onClick = { onSelect(ItemContentType.Wifi) },
+                )
+            }
+        }
     }
 }
 

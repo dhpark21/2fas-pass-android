@@ -23,11 +23,11 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtTheme
@@ -36,25 +36,22 @@ import com.twofasapp.core.design.MdtTheme
 fun DropdownMenu(
     modifier: Modifier = Modifier,
     visible: Boolean,
+    shape: Shape = RoundedCornerShape(12.dp),
     onDismissRequest: () -> Unit,
     anchor: @Composable () -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Box {
         anchor()
-
-        MaterialTheme(
-            shapes = MaterialTheme.shapes.copy(extraSmall = RoundedCornerShape(12.dp)),
-        ) {
-            DropdownMenu(
-                expanded = visible,
-                onDismissRequest = onDismissRequest,
-                modifier = modifier
-                    .widthIn(min = 160.dp)
-                    .background(MdtTheme.color.surfaceContainer),
-                content = content,
-            )
-        }
+        DropdownMenu(
+            shape = shape,
+            expanded = visible,
+            onDismissRequest = onDismissRequest,
+            modifier = modifier
+                .widthIn(min = 160.dp)
+                .background(MdtTheme.color.surfaceContainer),
+            content = content,
+        )
     }
 }
 
@@ -79,7 +76,12 @@ fun DropdownMenuItem(
             .padding(contentPadding),
     ) {
         if (icon != null) {
-            Icon(painter = icon, contentDescription = null, tint = contentColor, modifier = Modifier.size(22.dp))
+            Icon(
+                painter = icon,
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(22.dp),
+            )
             Spacer(modifier = Modifier.width(16.dp))
         }
 

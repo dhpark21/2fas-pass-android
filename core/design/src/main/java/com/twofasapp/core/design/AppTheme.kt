@@ -26,6 +26,22 @@ import com.twofasapp.core.design.theme.LightColors
 import com.twofasapp.core.design.theme.seed
 import com.twofasapp.core.design.theme.successDark
 import com.twofasapp.core.design.theme.successLight
+import com.twofasapp.core.design.theme.tagCyanDark
+import com.twofasapp.core.design.theme.tagCyanLight
+import com.twofasapp.core.design.theme.tagGrayDark
+import com.twofasapp.core.design.theme.tagGrayLight
+import com.twofasapp.core.design.theme.tagGreenDark
+import com.twofasapp.core.design.theme.tagGreenLight
+import com.twofasapp.core.design.theme.tagIndigoDark
+import com.twofasapp.core.design.theme.tagIndigoLight
+import com.twofasapp.core.design.theme.tagOrangeDark
+import com.twofasapp.core.design.theme.tagOrangeLight
+import com.twofasapp.core.design.theme.tagPurpleDark
+import com.twofasapp.core.design.theme.tagPurpleLight
+import com.twofasapp.core.design.theme.tagRedDark
+import com.twofasapp.core.design.theme.tagRedLight
+import com.twofasapp.core.design.theme.tagYellowDark
+import com.twofasapp.core.design.theme.tagYellowLight
 import com.twofasapp.core.design.window.ScreenOrientation
 
 val LocalAppTheme = staticCompositionLocalOf { AppTheme.Auto }
@@ -101,12 +117,21 @@ fun AppTheme(
         bottomBar = if (isInDarkTheme) colorScheme.background else colorScheme.background,
         itemLoginContent = if (isInDarkTheme) Color(0xFF0088FF) else Color(0xFF0088FF),
         itemLoginContainer = if (isInDarkTheme) Color(0xFF002B52) else Color(0xFFD4EBFF),
-        itemSecureNoteContent = if (isInDarkTheme) Color(0xFFFF8D28) else Color(0xFFFF8D28),
-        itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF482709) else Color(0xFFFFF1E4),
+        itemSecureNoteContent = Color(0xFFEDAC00),
+        itemSecureNoteContainer = if (isInDarkTheme) Color(0xFF322A17) else Color(0xFFFDF3D9),
         itemPaymentCardContent = if (isInDarkTheme) Color(0xFF34C759) else Color(0xFF34C759),
         itemPaymentCardContainer = if (isInDarkTheme) Color(0xFF043B12) else Color(0xFFD6FFE0),
+        itemWifiContent = Color(0xFFFF8D28),
+        itemWifiContainer = if (isInDarkTheme) Color(0xFF45270B) else Color(0xFFFFF0E6),
+        tagGray = if (isInDarkTheme) tagGrayDark else tagGrayLight,
+        tagRed = if (isInDarkTheme) tagRedDark else tagRedLight,
+        tagOrange = if (isInDarkTheme) tagOrangeDark else tagOrangeLight,
+        tagYellow = if (isInDarkTheme) tagYellowDark else tagYellowLight,
+        tagGreen = if (isInDarkTheme) tagGreenDark else tagGreenLight,
+        tagCyan = if (isInDarkTheme) tagCyanDark else tagCyanLight,
+        tagIndigo = if (isInDarkTheme) tagIndigoDark else tagIndigoLight,
+        tagPurple = if (isInDarkTheme) tagPurpleDark else tagPurpleLight,
     )
-
     CompositionLocalProvider(
         LocalColorTokens provides colorTokens,
         LocalDarkMode provides isInDarkTheme,

@@ -4,6 +4,7 @@ import com.twofasapp.core.common.domain.IconType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.clearTextOrNull
 
 sealed interface ItemContent {
@@ -121,7 +122,8 @@ sealed interface ItemContent {
             get() {
                 if (cardNumberMask == null) return ""
 
-                val expectedLength = cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
+                val expectedLength =
+                    cardNumber.clearTextOrNull?.length ?: cardIssuer?.cardLength ?: 16
                 val dotsCount = maxOf(0, expectedLength - 4)
                 val dots = "•".repeat(dotsCount)
                 val fullMasked = dots + cardNumberMask
@@ -162,6 +164,27 @@ sealed interface ItemContent {
                 expirationDate = null,
                 securityCode = null,
                 cardIssuer = null,
+                notes = null,
+            )
+        }
+    }
+
+    data class Wifi(
+        override val name: String,
+        val ssid: String?,
+        val password: SecretField?,
+        val securityType: WifiSecurityType,
+        val hidden: Boolean,
+        val notes: String?,
+    ) : ItemContent {
+        companion object {
+
+            val Empty = Wifi(
+                name = "",
+                ssid = null,
+                password = null,
+                securityType = WifiSecurityType.Wpa2,
+                hidden = false,
                 notes = null,
             )
         }

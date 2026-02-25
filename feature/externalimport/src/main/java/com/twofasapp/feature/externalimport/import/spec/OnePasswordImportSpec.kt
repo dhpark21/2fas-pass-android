@@ -15,6 +15,7 @@ import com.twofasapp.core.common.domain.ImportType
 import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
@@ -38,7 +39,8 @@ internal class OnePasswordImportSpec(
     override val name = "1Password"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_onepassword
     override val instructions = context.getString(R.string.transfer_instructions_onepassword)
-    override val additionalInfo = context.getString(R.string.transfer_instructions_additional_info_onepassword)
+    override val additionalInfo =
+        context.getString(R.string.transfer_instructions_additional_info_onepassword)
     override val cta: List<Cta> = listOf(
         Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_onepassword),
@@ -156,31 +158,39 @@ internal class OnePasswordImportSpec(
 
                         when (categoryUuid) {
                             CATEGORY_LOGIN, CATEGORY_PASSWORD -> {
-                                parseLogin(item, vaultId, itemTagIds)?.let { add(it) }
+                                add(parseLogin(item, vaultId, itemTagIds))
                             }
 
                             CATEGORY_SECURE_NOTE -> {
-                                parseSecureNote(item, vaultId, itemTagIds)?.let { add(it) }
+                                add(parseSecureNote(item, vaultId, itemTagIds))
                             }
 
                             CATEGORY_CREDIT_CARD -> {
-                                parseCreditCard(item, vaultId, itemTagIds)?.let { add(it) }
+                                add(parseCreditCard(item, vaultId, itemTagIds))
                             }
 
                             CATEGORY_IDENTITY -> {
                                 // Convert identity to secure note
                                 unknownItems++
-                                parseAsSecureNote(item, vaultId, "Identity", itemTagIds)?.let { add(it) }
+                                add(
+                                    parseAsSecureNote(item, vaultId, "Identity", itemTagIds),
+                                )
+                            }
+
+                            CATEGORY_WIFI -> {
+                                add(parseWifi(item, vaultId, itemTagIds))
                             }
 
                             else -> {
                                 // For unknown categories, try to import as login if it has login fields
                                 // Otherwise convert to secure note
                                 if (item.details?.loginFields?.isNotEmpty() == true) {
-                                    parseLogin(item, vaultId, itemTagIds)?.let { add(it) }
+                                    add(parseLogin(item, vaultId, itemTagIds))
                                 } else {
                                     unknownItems++
-                                    parseAsSecureNote(item, vaultId, "Item", itemTagIds)?.let { add(it) }
+                                    add(
+                                        parseAsSecureNote(item, vaultId, "Item", itemTagIds),
+                                    )
                                 }
                             }
                         }
@@ -196,7 +206,7 @@ internal class OnePasswordImportSpec(
         )
     }
 
-    private fun parseLogin(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
+    private fun parseLogin(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): Item {
         val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
         val notes = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
 
@@ -246,6 +256,8 @@ internal class OnePasswordImportSpec(
         return Item.create(
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
+            createdAt = item.createdAt?.let { parseSecondsFrom1970(it) },
+            updatedAt = item.updatedAt?.let { parseSecondsFrom1970(it) },
             contentType = ItemContentType.Login,
             content = ItemContent.Login.Empty.copy(
                 name = name.orEmpty(),
@@ -259,7 +271,69 @@ internal class OnePasswordImportSpec(
         )
     }
 
-    private fun parseSecureNote(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
+    private fun parseWifi(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): Item {
+        item.createdAt
+        val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
+        val notes = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
+
+        var ssid: String? = null
+        var password: String? = null
+        var securityType: WifiSecurityType = WifiSecurityType.Wpa2
+        val additionalFields = mutableListOf<String>()
+
+        item.details?.sections?.forEach { section ->
+            section.fields?.forEach { field ->
+                val fieldId = field.id?.lowercase() ?: ""
+
+                when (fieldId) {
+                    "wireless_password" -> {
+                        password = field.value?.concealed
+                    }
+
+                    "wireless_security" -> {
+                        securityType = parseWifiSecurityType(field.value?.menu)
+                    }
+
+                    "network_name" -> {
+                        ssid = field.value?.string
+                    }
+
+                    else -> {
+                        val value = field.value?.stringValue?.trim()?.takeIf { it.isNotBlank() }
+                        val title = field.title?.trim()?.takeIf { it.isNotBlank() }
+                        if (value != null && title != null) {
+                            additionalFields.add("$title: $value")
+                        }
+                    }
+                }
+            }
+        }
+
+        val additionalInfo = additionalFields.takeIf { it.isNotEmpty() }?.joinToString("\n")
+        val mergedNotes = mergeNotes(notes, additionalInfo)
+
+        return Item.create(
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            createdAt = item.createdAt?.let { parseSecondsFrom1970(it) },
+            updatedAt = item.updatedAt?.let { parseSecondsFrom1970(it) },
+            contentType = ItemContentType.Wifi,
+            content = ItemContent.Wifi.Empty.copy(
+                ssid = ssid,
+                password = password?.let { SecretField.ClearText(it) },
+                name = name.orEmpty(),
+                notes = mergedNotes,
+                hidden = false,
+                securityType = securityType,
+            ),
+        )
+    }
+
+    private fun parseSecureNote(
+        item: OnePasswordItem,
+        vaultId: String,
+        tagIds: List<String>?,
+    ): Item {
         val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
         val noteText = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
 
@@ -282,6 +356,8 @@ internal class OnePasswordImportSpec(
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
             contentType = ItemContentType.SecureNote,
+            createdAt = item.createdAt?.let { parseSecondsFrom1970(it) },
+            updatedAt = item.updatedAt?.let { parseSecondsFrom1970(it) },
             content = ItemContent.SecureNote(
                 name = name.orEmpty(),
                 text = fullText?.let { SecretField.ClearText(it) },
@@ -290,7 +366,11 @@ internal class OnePasswordImportSpec(
         )
     }
 
-    private fun parseCreditCard(item: OnePasswordItem, vaultId: String, tagIds: List<String>?): com.twofasapp.core.common.domain.items.Item? {
+    private fun parseCreditCard(
+        item: OnePasswordItem,
+        vaultId: String,
+        tagIds: List<String>?,
+    ): Item {
         val name = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
         val notes = item.details?.notesPlain?.trim()?.takeIf { it.isNotBlank() }
 
@@ -327,7 +407,11 @@ internal class OnePasswordImportSpec(
                         } ?: field.value?.stringValue
                     }
                     // Security code (CVV)
-                    fieldId == "cvv" || fieldTitle.contains("security code") || fieldTitle.contains("cvv") -> {
+                    fieldId == "cvv" ||
+                        fieldTitle.contains("security code") ||
+                        fieldTitle.contains(
+                            "cvv",
+                        ) -> {
                         securityCodeString = field.value?.concealed ?: field.value?.stringValue
                     }
                     // PIN code
@@ -346,9 +430,12 @@ internal class OnePasswordImportSpec(
             }
         }
 
-        val cardNumber = cardNumberString?.trim()?.removeWhitespace()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
-        val expirationDate = expirationDateString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
-        val securityCode = securityCodeString?.trim()?.takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val cardNumber = cardNumberString?.trim()?.removeWhitespace()?.takeIf { it.isNotBlank() }
+            ?.let { SecretField.ClearText(it) }
+        val expirationDate = expirationDateString?.trim()?.takeIf { it.isNotBlank() }
+            ?.let { SecretField.ClearText(it) }
+        val securityCode = securityCodeString?.trim()?.takeIf { it.isNotBlank() }
+            ?.let { SecretField.ClearText(it) }
         val cardNumberMask = cardNumberString?.removeWhitespace()?.let { detectCardNumberMask(it) }
         val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
@@ -363,6 +450,8 @@ internal class OnePasswordImportSpec(
         return Item.create(
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
+            createdAt = item.createdAt?.let { parseSecondsFrom1970(it) },
+            updatedAt = item.updatedAt?.let { parseSecondsFrom1970(it) },
             contentType = ItemContentType.PaymentCard,
             content = ItemContent.PaymentCard.Empty.copy(
                 name = name.orEmpty(),
@@ -382,7 +471,7 @@ internal class OnePasswordImportSpec(
         vaultId: String,
         typeName: String,
         tagIds: List<String>?,
-    ): Item? {
+    ): Item {
         val itemName = item.overview?.title?.trim()?.takeIf { it.isNotBlank() }
 
         val displayName = if (itemName != null) {
@@ -415,6 +504,8 @@ internal class OnePasswordImportSpec(
             vaultId = vaultId,
             tagIds = tagIds.orEmpty(),
             contentType = ItemContentType.SecureNote,
+            createdAt = item.createdAt?.let { parseSecondsFrom1970(it) },
+            updatedAt = item.updatedAt?.let { parseSecondsFrom1970(it) },
             content = ItemContent.SecureNote(
                 name = displayName,
                 text = fullText?.let { SecretField.ClearText(it) },
@@ -432,33 +523,13 @@ internal class OnePasswordImportSpec(
         }
     }
 
-    private fun detectCardNumberMask(cardNumber: String): String? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.length < 4) return null
-        return digitsOnly.takeLast(4)
-    }
-
-    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.isEmpty()) return null
-
-        return when {
-            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
-            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
-            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
-            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
-            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
-            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
-            else -> null
-        }
-    }
-
     companion object {
         private const val CATEGORY_LOGIN = "001"
         private const val CATEGORY_CREDIT_CARD = "002"
         private const val CATEGORY_SECURE_NOTE = "003"
         private const val CATEGORY_IDENTITY = "004"
         private const val CATEGORY_PASSWORD = "005"
+        private const val CATEGORY_WIFI = "109"
     }
 
     // 1Password 1PUX Format Models
@@ -500,8 +571,8 @@ internal class OnePasswordImportSpec(
     private data class OnePasswordItem(
         val uuid: String? = null,
         val favIndex: Int? = null,
-        val createdAt: Int? = null,
-        val updatedAt: Int? = null,
+        val createdAt: Long? = null,
+        val updatedAt: Long? = null,
         val trashed: Boolean? = null,
         val state: String? = null,
         val categoryUuid: String? = null,
@@ -550,9 +621,11 @@ internal class OnePasswordImportSpec(
         val creditCardNumber: String? = null,
         val phone: String? = null,
         val url: String? = null,
+        val menu: String? = null,
     ) {
         val stringValue: String?
-            get() = string ?: concealed ?: totp ?: phone ?: url ?: creditCardNumber ?: creditCardType
+            get() = string ?: concealed ?: totp ?: phone ?: url ?: creditCardNumber
+                ?: creditCardType ?: menu
     }
 
     @Serializable

@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecurityItem
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
@@ -72,6 +73,7 @@ import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
+import kotlinx.collections.immutable.toPersistentList
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -122,7 +124,10 @@ internal fun HomeScreen(
         onSelectAllClick = { viewModel.selectAllItems() },
         onDeselectClick = { viewModel.deselectItems() },
         onToggleTag = { viewModel.toggleTag(it) },
-        onClearFiltersClick = { viewModel.clearFilters() },
+        onToggleSecurityItem = { viewModel.toggleSecurityType(it) },
+        onClearFiltersClick = viewModel::clearFilters,
+        onClearTagFilterClick = viewModel::clearTagFilter,
+        onClearSecurityItemFilterClick = viewModel::clearSecurityItemFilter,
         onManageTagsClick = openManageTags,
         onDeveloperClick = openDeveloper,
         onDeleteSelectedItemsClick = { viewModel.trashSelectedItems() },
@@ -151,7 +156,10 @@ private fun Content(
     onSelectAllClick: () -> Unit = {},
     onDeselectClick: () -> Unit = {},
     onToggleTag: (Tag) -> Unit = {},
+    onToggleSecurityItem: (SecurityItem) -> Unit = {},
     onClearFiltersClick: () -> Unit = {},
+    onClearTagFilterClick: () -> Unit = {},
+    onClearSecurityItemFilterClick: () -> Unit = {},
     onManageTagsClick: () -> Unit = {},
     onDeveloperClick: () -> Unit = {},
     onDeleteSelectedItemsClick: () -> Unit = {},
@@ -198,7 +206,7 @@ private fun Content(
                 onChangeEditMode = { onChangeEditMode(it) },
                 onSortClick = { showSortModal = true },
                 onFilterClick = { showFilterModal = true },
-                onClearFiltersClick = { onClearFiltersClick() },
+                onClearFiltersClick = onClearFiltersClick,
                 onSelectAllClick = { onSelectAllClick() },
                 onDeselectClick = { onDeselectClick() },
                 onDeleteItemsConfirmed = { onDeleteSelectedItemsClick() },
@@ -250,11 +258,13 @@ private fun Content(
                             searchFocused = uiState.searchFocused,
                             selectedTag = uiState.selectedTag,
                             selectedItemType = uiState.selectedItemType,
+                            selectedSecurityItem = uiState.selectedSecurityItem,
                             filteredItemsCount = uiState.itemsFiltered.size,
                             onSearchQueryChange = onSearchQueryChange,
                             onSearchFocusChange = onSearchFocusChange,
                             onSelectedItemTypeChange = onSelectedItemTypeChange,
-                            onClearFilter = onClearFiltersClick,
+                            onClearTagFilter = onClearTagFilterClick,
+                            onClearSecurityItemFilter = onClearSecurityItemFilterClick,
                         )
                     }
 
@@ -270,7 +280,12 @@ private fun Content(
 
                     if (itemsPerRow > 1) {
                         uiState.itemsFiltered.chunked(itemsPerRow).forEachIndexed { index, items ->
-                            listItem(HomeListItem.HomeItemsRow(index = index, ids = items.map { it.id })) {
+                            listItem(
+                                HomeListItem.HomeItemsRow(
+                                    index = index,
+                                    ids = items.map { it.id },
+                                ),
+                            ) {
                                 Row(
                                     modifier = Modifier.animateItem(),
                                 ) {
@@ -283,7 +298,13 @@ private fun Content(
                                             editMode = uiState.editMode,
                                             selected = uiState.selectedItemIds.contains(item.id),
                                             modifier = Modifier.weight(1f),
-                                            onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
+                                            onEditClick = { itemId, vaultId ->
+                                                onEditItemClick(
+                                                    itemId,
+                                                    vaultId,
+                                                    item.contentType,
+                                                )
+                                            },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
                                             onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                             onEnabledEditMode = { onChangeEditMode(true) },
@@ -304,7 +325,13 @@ private fun Content(
                                     editMode = uiState.editMode,
                                     selected = uiState.selectedItemIds.contains(item.id),
                                     modifier = Modifier.animateItem(),
-                                    onEditClick = { itemId, vaultId -> onEditItemClick(itemId, vaultId, item.contentType) },
+                                    onEditClick = { itemId, vaultId ->
+                                        onEditItemClick(
+                                            itemId,
+                                            vaultId,
+                                            item.contentType,
+                                        )
+                                    },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
                                     onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                     onEnabledEditMode = { onChangeEditMode(true) },
@@ -354,8 +381,11 @@ private fun Content(
             onDismissRequest = { showFilterModal = false },
             tags = uiState.tags,
             selectedTag = uiState.selectedTag,
-            onToggle = { onToggleTag(it) },
+            selectedSecurityItem = uiState.selectedSecurityItem,
+            onToggleTag = { onToggleTag(it) },
+            onToggleSecurityItem = { onToggleSecurityItem(it) },
             onManageTagsClick = onManageTagsClick,
+            securityItems = uiState.securityItems,
         )
     }
 
@@ -440,7 +470,7 @@ private fun PreviewSuccess() {
                     repeat(3) {
                         add(LoginItemPreview.copy(id = it.toString()))
                     }
-                },
+                }.toPersistentList(),
             ),
             screenState = ScreenState.Success,
         )

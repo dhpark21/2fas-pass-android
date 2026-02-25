@@ -59,7 +59,7 @@ internal fun SyncStatus(
     Content(
         uiState = uiState,
         onReSync = { viewModel.sync() },
-        onChangePasswordClick = { deeplinks.openScreen(Screen.ChangePassword) },
+        onChangePasswordClick = { deeplinks.openScreen(Screen.Security) },
         onReplaceBackupClick = { viewModel.sync(forceReplace = true) },
     )
 }

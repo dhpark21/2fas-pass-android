@@ -35,7 +35,11 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,6 +80,33 @@ data class ModalHeaderProperties(
 )
 
 @Composable
+private fun AuthStatusMonitor(
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    setForceDismiss: (Boolean) -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    val authStatus = LocalAuthStatus.current
+
+    LaunchedEffect(authStatus) {
+        when (authStatus) {
+            AuthStatus.Invalid.AppBackgrounded -> Unit
+            AuthStatus.Invalid.NotAuthenticated,
+            AuthStatus.Invalid.SessionExpired,
+            -> {
+                setForceDismiss(true)
+                sheetState.hide()
+                if (sheetState.isVisible.not()) {
+                    onDismissRequest()
+                }
+            }
+
+            else -> Unit
+        }
+    }
+}
+
+@Composable
 fun Modal(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
@@ -107,8 +138,7 @@ fun Modal(
     content: @Composable ColumnScope.((onComplete: () -> Unit) -> Unit) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    val authStatus = LocalAuthStatus.current
-    var forceDismiss = false
+    var forceDismiss by remember { mutableStateOf(false) }
     val modalSheetState: SheetState = sheetState
         ?: rememberModalBottomSheetState(
             skipPartiallyExpanded = skipPartiallyExpanded,
@@ -122,25 +152,12 @@ fun Modal(
             },
         )
 
-    LaunchedEffect(authStatus) {
-        when (authStatus) {
-            AuthStatus.Invalid.AppBackgrounded -> Unit
-            AuthStatus.Invalid.NotAuthenticated,
-            AuthStatus.Invalid.SessionExpired,
-            -> {
-                scope.launch {
-                    forceDismiss = true
-                    modalSheetState.hide()
-                }.invokeOnCompletion {
-                    if (modalSheetState.isVisible.not()) {
-                        onDismissRequest()
-                    }
-                }
-            }
-
-            else -> Unit
-        }
-    }
+    // Monitor auth status in a separate composable to isolate recomposition
+    AuthStatusMonitor(
+        sheetState = modalSheetState,
+        onDismissRequest = onDismissRequest,
+        setForceDismiss = { forceDismiss = it },
+    )
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,

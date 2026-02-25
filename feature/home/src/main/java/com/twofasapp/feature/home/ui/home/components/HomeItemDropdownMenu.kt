@@ -85,16 +85,17 @@ internal fun HomeItemDropdownMenu(
                             )
                         }
 
-                        content.uris.firstOrNull()?.text.takeIf { it.isNullOrEmpty().not() }?.let { uri ->
-                            DropdownMenuItem(
-                                text = MdtLocale.strings.homeItemOpenUri,
-                                icon = MdtIcons.Open,
-                                onClick = {
-                                    showDropdown = false
-                                    uriHandler.openSafely(uri, context)
-                                },
-                            )
-                        }
+                        content.uris.firstOrNull()?.text.takeIf { it.isNullOrEmpty().not() }
+                            ?.let { uri ->
+                                DropdownMenuItem(
+                                    text = MdtLocale.strings.homeItemOpenUri,
+                                    icon = MdtIcons.Open,
+                                    onClick = {
+                                        showDropdown = false
+                                        uriHandler.openSafely(uri, context)
+                                    },
+                                )
+                            }
                     }
 
                     is ItemContent.SecureNote -> {
@@ -140,6 +141,29 @@ internal fun HomeItemDropdownMenu(
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.securityCode)
+                                },
+                            )
+                        }
+                    }
+
+                    is ItemContent.Wifi -> {
+                        content.ssid.takeIf { it.isNullOrEmpty().not() }?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.wifiViewActionCopySsid,
+                                icon = MdtIcons.Wifi4Bar,
+                                onClick = {
+                                    showDropdown = false
+                                    context.copyToClipboard(content.ssid.orEmpty())
+                                },
+                            )
+                        }
+                        content.password?.let {
+                            DropdownMenuItem(
+                                text = MdtLocale.strings.wifiViewActionCopyPassword,
+                                icon = MdtIcons.Key,
+                                onClick = {
+                                    showDropdown = false
+                                    onCopySecretFieldToClipboard(content.password)
                                 },
                             )
                         }

@@ -19,27 +19,35 @@ import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
 import com.twofasapp.feature.externalimport.import.ImportContent
-import com.twofasapp.feature.externalimport.import.ImportSpec
 
 internal class KeepassImportSpec(
-    private val vaultsRepository: VaultsRepository,
+    vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec() {
+) : AbstractKeepassImportSpec(vaultsRepository, context) {
+
+    companion object {
+        private const val CSV_ROW_ACCOUNT = "Account"
+        private const val CSV_ROW_LOGIN_NAME = "Login Name"
+        private const val CSV_ROW_PASSWORD = "Password"
+        private const val CSV_ROW_WEB_SITE = "Web Site"
+        private const val CSV_ROW_COMMENTS = "Comments"
+    }
+
     override val type = ImportType.KeePass
-    override val name = "KeePass"
+    override val name = ImportType.KeePass.displayName
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keepass
     override val instructions = context.getString(R.string.transfer_instructions_keepass)
     override val additionalInfo = null
     override val cta: List<Cta> = listOf(
         Cta.Primary(
-            text = context.getString(R.string.transfer_instructions_cta_csv),
+            text = context.getString(R.string.transfer_instructions_cta_keepass),
             action = CtaAction.ChooseFile,
         ),
     )
 
-    override suspend fun readContent(uri: Uri): ImportContent {
-        val vaultId = vaultsRepository.getVault().id
+    override val xmlTagSeparator = ";"
 
+    override fun parseCsv(uri: Uri, vaultId: String): ImportContent {
         val items = buildList {
             CsvParser.parse(
                 text = context.readTextFile(uri),
@@ -49,11 +57,11 @@ internal class KeepassImportSpec(
                         vaultId = vaultId,
                         contentType = ItemContentType.Login,
                         content = ItemContent.Login.create(
-                            name = row.get("Account"),
-                            username = row.get("Login Name"),
-                            password = row.get("Password"),
-                            url = row.get("Web Site"),
-                            notes = row.get("Comments"),
+                            name = row.get(CSV_ROW_ACCOUNT),
+                            username = row.get(CSV_ROW_LOGIN_NAME),
+                            password = row.get(CSV_ROW_PASSWORD),
+                            url = row.get(CSV_ROW_WEB_SITE),
+                            notes = row.get(CSV_ROW_COMMENTS),
                         ),
                     ),
                 )
@@ -65,5 +73,9 @@ internal class KeepassImportSpec(
             tags = emptyList(),
             unknownItems = 0,
         )
+    }
+
+    override fun parseXmlDate(date: String): Long? {
+        return parseIsoDate(date)
     }
 }

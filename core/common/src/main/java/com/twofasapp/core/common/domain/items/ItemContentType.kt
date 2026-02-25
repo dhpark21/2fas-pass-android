@@ -11,8 +11,18 @@ sealed interface ItemContentType {
                 Login.key -> Login
                 SecureNote.key -> SecureNote
                 PaymentCard.key -> PaymentCard
+                Wifi.key -> Wifi
                 else -> Unknown(key = key)
             }
+        }
+
+        fun values(): List<ItemContentType> {
+            return listOf(
+                Login,
+                PaymentCard,
+                SecureNote,
+                Wifi,
+            )
         }
     }
 
@@ -30,6 +40,12 @@ sealed interface ItemContentType {
 
     object PaymentCard : ItemContentType {
         override val key: String = "paymentCard"
+        override val version: Int = 1
+        override val fillable: Boolean = false
+    }
+
+    object Wifi : ItemContentType {
+        override val key: String = "wifi"
         override val version: Int = 1
         override val fillable: Boolean = false
     }

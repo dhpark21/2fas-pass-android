@@ -32,6 +32,9 @@ interface TagsDao {
     @Query("DELETE FROM tags WHERE vault_id = :vaultId")
     suspend fun deleteAll(vaultId: String)
 
+    @Query("DELETE FROM tags")
+    suspend fun deleteAll()
+
     @Query("SELECT * FROM tags WHERE vault_id = :vaultId")
     fun observe(vaultId: String): Flow<List<TagEntity>>
 

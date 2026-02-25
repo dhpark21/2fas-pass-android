@@ -22,7 +22,8 @@ import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.feature.settings.OptionEntry
-import com.twofasapp.core.design.feature.tags.TagDialog
+import com.twofasapp.core.design.feature.tags.ManageTagModal
+import com.twofasapp.core.design.feature.tags.iconTint
 import com.twofasapp.core.design.foundation.button.IconButton
 import com.twofasapp.core.design.foundation.dialog.ConfirmDialog
 import com.twofasapp.core.design.foundation.lazy.isScrollingUp
@@ -91,7 +92,8 @@ private fun Content(
                                 modifier = Modifier.animateItem(),
                                 title = tag.name,
                                 subtitle = strings.tagDescription.format(tag.assignedItemsCount),
-                                icon = MdtIcons.Tag,
+                                icon = MdtIcons.TagFilled,
+                                iconTint = tag.iconTint(),
                                 contentPadding = PaddingValues(
                                     top = 16.dp,
                                     bottom = 16.dp,
@@ -160,18 +162,20 @@ private fun Content(
     }
 
     if (showAddTagModal) {
-        TagDialog(
+        ManageTagModal(
             onDismissRequest = { showAddTagModal = false },
+            suggestedTagColor = uiState.suggestedTagColor,
             tag = Tag.Empty.copy(vaultId = uiState.vaultId),
-            onSaveClick = onAddTag,
+            onSave = onAddTag,
         )
     }
 
     if (showEditTagModal) {
-        TagDialog(
+        ManageTagModal(
             onDismissRequest = { showEditTagModal = false },
+            suggestedTagColor = uiState.suggestedTagColor,
             tag = clickedTag,
-            onSaveClick = onEditTag,
+            onSave = onEditTag,
         )
     }
 }

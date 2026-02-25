@@ -21,6 +21,8 @@ import com.twofasapp.data.main.DeletedItemsRepository
 import com.twofasapp.data.main.DeletedItemsRepositoryImpl
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.ItemsRepositoryImpl
+import com.twofasapp.data.main.SecurityItemRepository
+import com.twofasapp.data.main.SecurityItemRepositoryImpl
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.main.SecurityRepositoryImpl
 import com.twofasapp.data.main.TagsRepository
@@ -48,15 +50,21 @@ import com.twofasapp.data.main.mapper.ConnectedBrowserMapper
 import com.twofasapp.data.main.mapper.DeletedItemsMapper
 import com.twofasapp.data.main.mapper.IconTypeMapper
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
+import com.twofasapp.data.main.mapper.ItemEncryptionMapperDelegate
 import com.twofasapp.data.main.mapper.ItemMapper
 import com.twofasapp.data.main.mapper.ItemSecurityTypeMapper
 import com.twofasapp.data.main.mapper.ItemUriMapper
+import com.twofasapp.data.main.mapper.LoginEncryptionMapperStrategy
+import com.twofasapp.data.main.mapper.PaymentCardEncryptionMapperStrategy
+import com.twofasapp.data.main.mapper.SecureNoteEncryptionMapperStrategy
+import com.twofasapp.data.main.mapper.SecurityItemMapper
 import com.twofasapp.data.main.mapper.TagMapper
-import com.twofasapp.data.main.mapper.UnknownItemEncryptionMapper
+import com.twofasapp.data.main.mapper.UnknownEncryptionMapperStrategy
 import com.twofasapp.data.main.mapper.UriMatcherMapper
 import com.twofasapp.data.main.mapper.VaultBackupMapper
 import com.twofasapp.data.main.mapper.VaultDataForBrowserMapper
 import com.twofasapp.data.main.mapper.VaultMapper
+import com.twofasapp.data.main.mapper.WifiEncryptionMapperStrategy
 import com.twofasapp.data.main.remote.BrowserRequestsRemoteSource
 import com.twofasapp.data.main.websocket.ConnectWebSocket
 import com.twofasapp.data.main.websocket.ConnectWebSocketImpl
@@ -73,7 +81,12 @@ class MainDataModule : KoinModule {
         singleOf(::VaultMapper)
         singleOf(::ItemMapper)
         singleOf(::ItemEncryptionMapper)
-        singleOf(::UnknownItemEncryptionMapper)
+        singleOf(::ItemEncryptionMapperDelegate)
+        singleOf(::LoginEncryptionMapperStrategy)
+        singleOf(::PaymentCardEncryptionMapperStrategy)
+        singleOf(::SecureNoteEncryptionMapperStrategy)
+        singleOf(::WifiEncryptionMapperStrategy)
+        singleOf(::UnknownEncryptionMapperStrategy)
         singleOf(::CloudMapper)
         singleOf(::DeletedItemsMapper)
         singleOf(::ConnectedBrowserMapper)
@@ -84,6 +97,7 @@ class MainDataModule : KoinModule {
         singleOf(::TagMapper)
         singleOf(::VaultBackupMapper)
         singleOf(::VaultDataForBrowserMapper)
+        singleOf(::SecurityItemMapper)
 
         singleOf(::ItemsLocalSource)
         singleOf(::ItemsRepositoryImpl) { bind<ItemsRepository>() }
@@ -119,5 +133,7 @@ class MainDataModule : KoinModule {
 
         singleOf(::TagsLocalSource)
         singleOf(::TagsRepositoryImpl) { bind<TagsRepository>() }
+
+        singleOf(::SecurityItemRepositoryImpl) { bind<SecurityItemRepository>() }
     }
 }

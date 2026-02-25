@@ -18,7 +18,7 @@ internal data class LockUiState(
     val dynamicColors: Boolean = false,
     val appLockAttempts: AppLockAttempts = AppLockAttempts.Default,
     val loading: Boolean = false,
-    val biometricsEnabled: Boolean = false,
+    val biometricsEnabled: Boolean? = null,
     val biometricsPrompted: Boolean = false,
     val masterKeyEncryptedWithBiometrics: EncryptedBytes? = null,
     val passwordError: String? = null,

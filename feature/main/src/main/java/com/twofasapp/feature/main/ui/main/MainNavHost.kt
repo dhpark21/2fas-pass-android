@@ -31,7 +31,6 @@ import com.twofasapp.feature.home.navigation.HomeRoute
 import com.twofasapp.feature.quicksetup.ui.QuickSetupRoute
 import com.twofasapp.feature.settings.navigation.AboutRoute
 import com.twofasapp.feature.settings.navigation.AutofillRoute
-import com.twofasapp.feature.settings.navigation.ChangePasswordRoute
 import com.twofasapp.feature.settings.navigation.CloudSyncRoute
 import com.twofasapp.feature.settings.navigation.CustomizationRoute
 import com.twofasapp.feature.settings.navigation.ImportExportRoute
@@ -138,12 +137,6 @@ internal fun MainNavHost(
 
         composable<Screen.Security> {
             SecurityRoute()
-        }
-
-        composable<Screen.ChangePassword> {
-            ChangePasswordRoute(
-                openSetNewPassword = { navController.navigate(Screen.SetNewPassword) },
-            )
         }
 
         composable<Screen.SetNewPassword> {

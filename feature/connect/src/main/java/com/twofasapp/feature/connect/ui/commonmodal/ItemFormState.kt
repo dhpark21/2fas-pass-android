@@ -46,19 +46,21 @@ internal fun ItemFormState(
             title = when {
                 itemFormState.item.id.isBlank() -> {
                     when (itemFormState.item.contentType) {
-                        ItemContentType.Login -> strings.loginAddTitle
-                        ItemContentType.SecureNote -> strings.secureNoteAddTitle
-                        ItemContentType.PaymentCard -> strings.itemAddTitle
+                        is ItemContentType.Login -> strings.loginAddTitle
+                        is ItemContentType.SecureNote -> strings.secureNoteAddTitle
+                        is ItemContentType.PaymentCard -> strings.itemAddTitle
                         is ItemContentType.Unknown -> strings.itemAddTitle
+                        is ItemContentType.Wifi -> strings.wifiAddTitle
                     }
                 }
 
                 else -> {
                     when (itemFormState.item.contentType) {
-                        ItemContentType.Login -> strings.loginEditTitle
-                        ItemContentType.SecureNote -> strings.secureNoteEditTitle
-                        ItemContentType.PaymentCard -> strings.itemEditTitle
+                        is ItemContentType.Login -> strings.loginEditTitle
+                        is ItemContentType.SecureNote -> strings.secureNoteEditTitle
+                        is ItemContentType.PaymentCard -> strings.itemEditTitle
                         is ItemContentType.Unknown -> strings.itemEditTitle
+                        is ItemContentType.Wifi -> strings.wifiEditTitle
                     }
                 }
             },

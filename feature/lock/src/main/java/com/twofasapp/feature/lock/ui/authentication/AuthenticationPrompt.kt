@@ -36,9 +36,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.statusBarHeight
+import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -47,6 +49,7 @@ import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.lock.ui.composables.AuthenticationForm
 import com.twofasapp.feature.lock.ui.composables.BiometricsModal
+import com.twofasapp.feature.lock.ui.forgotpassword.ForgotPasswordModal
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -89,6 +92,7 @@ private fun AuthenticationPromptContent(
     onAuthenticated: (masterKey: ByteArray) -> Unit = {},
     onClose: () -> Unit,
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val strings = MdtLocale.strings
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -99,6 +103,7 @@ private fun AuthenticationPromptContent(
 
     var biometricsDismissed by remember { mutableStateOf(false) }
     var fullPageAuthenticationVisible by remember { mutableStateOf(false) }
+    var showForgotPasswordModal by remember { mutableStateOf(false) }
 
     if (uiState.biometricsEnabled && uiState.masterKeyEncryptedWithBiometrics != null && biometricsAllowed && biometricsDismissed.not()) {
         BiometricsModal(
@@ -152,6 +157,7 @@ private fun AuthenticationPromptContent(
                         }
                     }
                 },
+                onForgotPasswordClick = { showForgotPasswordModal = true },
                 onAuthenticated = { masterKey ->
                     scope.launch {
                         fullPageAuthenticationVisible = false
@@ -167,6 +173,20 @@ private fun AuthenticationPromptContent(
                     }
                 },
             )
+
+            if (showForgotPasswordModal) {
+                ProvidesViewModelStoreOwner {
+                    ForgotPasswordModal(
+                        onDismissRequest = { showForgotPasswordModal = false },
+                        onSuccess = { masterKey ->
+                            onAuthenticated(masterKey)
+                            showForgotPasswordModal = false
+                            context.toastShort(strings.forgotPasswordVerificationSuccessTitle)
+                        },
+                        onFailedAttempt = {},
+                    )
+                }
+            }
         }
     }
 }
@@ -180,6 +200,7 @@ private fun FullPageAuthenticationContent(
     icon: Painter = MdtIcons.Encrypted,
     onCheckPassword: (password: String) -> Unit = {},
     onAuthenticated: (masterKey: ByteArray) -> Unit = {},
+    onForgotPasswordClick: () -> Unit = {},
     onClose: () -> Unit,
 ) {
     Box(
@@ -224,6 +245,7 @@ private fun FullPageAuthenticationContent(
             masterKeyEncryptedWithBiometrics = null,
             passwordError = uiState.passwordError,
             loading = uiState.loading,
+            onForgotPasswordClick = onForgotPasswordClick,
             showBiometricsOnStart = false,
             onUnlockClick = { onCheckPassword(it) },
             onMasterKeyDecrypted = onAuthenticated,

@@ -46,7 +46,8 @@ internal class ProtonPassImportSpec(
     override val name = "Proton Pass"
     override val image = com.twofasapp.core.design.R.drawable.external_logo_protonpass
     override val instructions = context.getString(R.string.transfer_instructions_protonpass)
-    override val additionalInfo = context.getString(R.string.transfer_instructions_additional_info_proton_pass)
+    override val additionalInfo =
+        context.getString(R.string.transfer_instructions_additional_info_proton_pass)
     override val cta: List<Cta> = listOf(
         Cta.Primary(
             text = context.getString(R.string.transfer_instructions_cta_proton_pass),
@@ -110,9 +111,14 @@ internal class ProtonPassImportSpec(
                             item.parseSecureNoteFromJson(vaultId, sourceVaultName)?.let { add(it) }
                         }
 
+                        "wifi" -> {
+                            item.parseWifiFromJson(vaultId, sourceVaultName)?.let { add(it) }
+                        }
+
                         else -> {
                             unknownItems++
-                            item.parseAsSecureNoteFromJson(vaultId, sourceVaultName)?.let { add(it) }
+                            item.parseAsSecureNoteFromJson(vaultId, sourceVaultName)
+                                ?.let { add(it) }
                         }
                     }
                 }
@@ -126,16 +132,22 @@ internal class ProtonPassImportSpec(
         )
     }
 
-    private fun ProtonPassItem.parseLoginFromJson(vaultId: String, sourceVaultName: String?): Item? {
+    private fun ProtonPassItem.parseLoginFromJson(
+        vaultId: String,
+        sourceVaultName: String?,
+    ): Item? {
         val itemData = data ?: return null
         val metadata = itemData.metadata ?: return null
         val itemName = metadata.name?.trim()?.takeIf { it.isNotBlank() }
         val content = itemData.content ?: return null
 
-        val itemUsername = content["itemUsername"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-        val itemEmail = content["itemEmail"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+        val itemUsername = content["itemUsername"]?.jsonPrimitive?.contentOrNull?.trim()
+            ?.takeIf { it.isNotBlank() }
+        val itemEmail =
+            content["itemEmail"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
         val username = itemUsername ?: itemEmail
-        val password = content["password"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+        val password =
+            content["password"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
 
         val uris: List<ItemUri>? = content["urls"]?.jsonArray?.mapNotNull { urlElement ->
             urlElement.jsonPrimitive.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let {
@@ -182,30 +194,41 @@ internal class ProtonPassImportSpec(
                 iconUriIndex = if (uris == null) null else 0,
                 uris = uris.orEmpty(),
             ),
+            createdAt = createTime?.let { parseSecondsFrom1970(it) },
+            updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
         )
     }
 
-    private fun ProtonPassItem.parseCreditCardFromJson(vaultId: String, sourceVaultName: String?): Item? {
+    private fun ProtonPassItem.parseCreditCardFromJson(
+        vaultId: String,
+        sourceVaultName: String?,
+    ): Item? {
         if (data == null) return null
 
         val itemName = data.metadata?.name?.trim().takeIf { it.isNullOrBlank().not() }
         val content = data.content ?: return null
 
-        val cardHolder = content["cardholderName"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
-        val cardNumberString = content["number"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
-        val securityCodeString = content["verificationNumber"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
+        val cardHolder = content["cardholderName"]?.jsonPrimitive?.contentOrNull?.trim()
+            ?.takeIf { it.isNotBlank() }
+        val cardNumberString =
+            content["number"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+                ?.removeWhitespace()
+        val securityCodeString = content["verificationNumber"]?.jsonPrimitive?.contentOrNull?.trim()
+            ?.takeIf { it.isNotBlank() }?.removeWhitespace()
 
         // Parse expiration date from "YYYY-MM" format to "MM/YY"
-        val expirationDateString: String? = content["expirationDate"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
-            val parts = expDate.split("-")
-            if (parts.size == 2) {
-                val year = parts[0].takeLast(2).padStart(2, '0')
-                val month = parts[1].padStart(2, '0')
-                "$month/$year"
-            } else {
-                expDate
-            }
-        }
+        val expirationDateString: String? =
+            content["expirationDate"]?.jsonPrimitive?.contentOrNull?.trim()
+                ?.takeIf { it.isNotBlank() }?.let { expDate ->
+                    val parts = expDate.split("-")
+                    if (parts.size == 2) {
+                        val year = parts[0].takeLast(2).padStart(2, '0')
+                        val month = parts[1].padStart(2, '0')
+                        "$month/$year"
+                    } else {
+                        expDate
+                    }
+                }
 
         val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
         val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
@@ -215,14 +238,23 @@ internal class ProtonPassImportSpec(
 
         // Build notes
         val noteComponents = mutableListOf<String>()
-        data.metadata?.note.orEmpty().trim().takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
+        data.metadata?.note.orEmpty().trim().takeIf { it.isNotBlank() }
+            ?.let { noteComponents.add(it) }
 
         // Add unknown content fields
-        val usedKeys = setOf("cardholderName", "number", "verificationNumber", "expirationDate", "cardType", "pin")
+        val usedKeys = setOf(
+            "cardholderName",
+            "number",
+            "verificationNumber",
+            "expirationDate",
+            "cardType",
+            "pin",
+        )
         val additionalData = content.entries
             .filter { !usedKeys.contains(it.key) }
             .mapNotNull { (key, value) ->
-                val valueStr = value.jsonPrimitive.contentOrNull?.trim()?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
+                val valueStr = value.jsonPrimitive.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+                    ?: return@mapNotNull null
                 formatFieldType(key) to valueStr
             }
         formatAdditionalFields(additionalData)?.let { noteComponents.add(it) }
@@ -252,10 +284,75 @@ internal class ProtonPassImportSpec(
                 securityCode = securityCode,
                 notes = notes,
             ),
+            createdAt = createTime?.let { parseSecondsFrom1970(it) },
+            updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
         )
     }
 
-    private fun ProtonPassItem.parseSecureNoteFromJson(vaultId: String, sourceVaultName: String?): Item? {
+    private fun ProtonPassItem.parseWifiFromJson(
+        vaultId: String,
+        sourceVaultName: String?,
+    ): Item? {
+        val itemData = data ?: return null
+        val metadata = itemData.metadata ?: return null
+        val itemName = metadata.name?.trim()?.takeIf { it.isNotBlank() }
+        val content = itemData.content ?: return null
+
+        val ssid = content["ssid"]?.jsonPrimitive?.contentOrNull?.trim()
+            ?.takeIf { it.isNotBlank() }
+        val password =
+            content["password"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }
+        val security =
+            parseWifiSecurityType(content["security"]?.jsonPrimitive?.contentOrNull?.trim())
+
+        // Build notes
+        val noteComponents = mutableListOf<String>()
+        metadata.note?.trim()?.takeIf { it.isNotBlank() }?.let { noteComponents.add(it) }
+
+        // Add extra fields from content (excluding used keys)
+        val usedKeys = setOf("ssid", "password", "security")
+        val additionalData = content.entries
+            .filter { !usedKeys.contains(it.key) }
+            .mapNotNull { (key, value) ->
+                val valueStr =
+                    value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
+                formatFieldType(key) to valueStr
+            }
+        formatAdditionalFields(additionalData)?.let { noteComponents.add(it) }
+
+        // Add extra fields
+        formatExtraFields(itemData.extraFields)?.let { noteComponents.add(it) }
+
+        // Add TOTP if present
+        content["totpUri"]?.jsonPrimitive?.contentOrNull?.trim()?.takeIf { it.isNotBlank() }?.let {
+            noteComponents.add("TOTP: $it")
+        }
+
+        sourceVaultName?.let { noteComponents.add("Vault: $it") }
+
+        val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
+
+        return Item.create(
+            contentType = ItemContentType.Wifi,
+            vaultId = vaultId,
+            content = ItemContent.Wifi.Empty.copy(
+                ssid = ssid,
+                password = password
+                    ?.let { SecretField.ClearText(it) },
+                name = itemName.orEmpty(),
+                notes = notes,
+                hidden = false,
+                securityType = security,
+            ),
+            createdAt = createTime?.let { parseSecondsFrom1970(it) },
+            updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
+        )
+    }
+
+    private fun ProtonPassItem.parseSecureNoteFromJson(
+        vaultId: String,
+        sourceVaultName: String?,
+    ): Item? {
         val itemData = data ?: return null
         val metadata = itemData.metadata ?: return null
         val itemName = metadata.name?.trim()?.takeIf { it.isNotBlank() }
@@ -266,7 +363,8 @@ internal class ProtonPassImportSpec(
         // Add content fields
         itemData.content?.let { content ->
             val contentFields = content.entries.mapNotNull { (key, value) ->
-                val valueStr = value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
+                val valueStr =
+                    value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
                 formatFieldType(key) to valueStr
             }
             formatAdditionalFields(contentFields)?.let { additionalInfoComponents.add(it) }
@@ -279,7 +377,8 @@ internal class ProtonPassImportSpec(
 
         // Combine note text with additional info
         val noteText = metadata.note?.trim()?.takeIf { it.isNotBlank() }
-        val additionalInfo = additionalInfoComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
+        val additionalInfo =
+            additionalInfoComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
 
         val fullText = when {
             noteText != null && additionalInfo != null -> "$noteText\n\n$additionalInfo"
@@ -298,10 +397,15 @@ internal class ProtonPassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createTime?.let { parseSecondsFrom1970(it) },
+            updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
         )
     }
 
-    private fun ProtonPassItem.parseAsSecureNoteFromJson(vaultId: String, sourceVaultName: String?): Item? {
+    private fun ProtonPassItem.parseAsSecureNoteFromJson(
+        vaultId: String,
+        sourceVaultName: String?,
+    ): Item? {
         val itemData = data ?: return null
         val metadata = itemData.metadata ?: return null
         val typeName = formatTypeName(itemData.type ?: "unknown")
@@ -318,7 +422,8 @@ internal class ProtonPassImportSpec(
         // Add content fields
         itemData.content?.let { content ->
             val contentFields = content.entries.mapNotNull { (key, value) ->
-                val valueStr = value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
+                val valueStr =
+                    value.toStringOrNull().takeIf { it != "[]" } ?: return@mapNotNull null
                 formatFieldType(key) to valueStr
             }
             formatAdditionalFields(contentFields)?.let { noteComponents.add(it) }
@@ -332,7 +437,8 @@ internal class ProtonPassImportSpec(
 
         sourceVaultName?.let { noteComponents.add("Vault: $it") }
 
-        val text = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val text = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
+            ?.let { SecretField.ClearText(it) }
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
@@ -342,6 +448,8 @@ internal class ProtonPassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createTime?.let { parseSecondsFrom1970(it) },
+            updatedAt = modifyTime?.let { parseSecondsFrom1970(it) },
         )
     }
 
@@ -411,6 +519,13 @@ internal class ProtonPassImportSpec(
 
         val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
 
+        val createdAt = row.get("createTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
+        val updatedAt = row.get("modifyTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
+
         return Item.create(
             contentType = ItemContentType.Login,
             vaultId = vaultId,
@@ -423,6 +538,8 @@ internal class ProtonPassImportSpec(
                 iconUriIndex = if (uris == null) null else 0,
                 uris = uris.orEmpty(),
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -440,16 +557,17 @@ internal class ProtonPassImportSpec(
         val securityCodeString = cardData.verificationNumber?.trim()?.takeIf { it.isNotBlank() }
 
         // Parse expiration date from "YYYY-MM" format to "MM/YY"
-        val expirationDateString: String? = cardData.expirationDate?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
-            val parts = expDate.split("-")
-            if (parts.size == 2) {
-                val year = parts[0].takeLast(2)
-                val month = parts[1]
-                "$month/$year"
-            } else {
-                expDate
+        val expirationDateString: String? =
+            cardData.expirationDate?.trim()?.takeIf { it.isNotBlank() }?.let { expDate ->
+                val parts = expDate.split("-")
+                if (parts.size == 2) {
+                    val year = parts[0].takeLast(2)
+                    val month = parts[1]
+                    "$month/$year"
+                } else {
+                    expDate
+                }
             }
-        }
 
         val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
         val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
@@ -469,6 +587,13 @@ internal class ProtonPassImportSpec(
 
         val notes = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
 
+        val createdAt = row.get("createTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
+        val updatedAt = row.get("modifyTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
+
         return Item.create(
             contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
@@ -482,6 +607,8 @@ internal class ProtonPassImportSpec(
                 securityCode = securityCode,
                 notes = notes,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -495,13 +622,26 @@ internal class ProtonPassImportSpec(
         }
 
         val fullText = when {
-            noteContent != null && additionalComponents.isNotEmpty() -> "$noteContent\n\n${additionalComponents.joinToString("\n\n")}"
+            noteContent != null && additionalComponents.isNotEmpty() ->
+                "$noteContent\n\n${
+                    additionalComponents.joinToString(
+                        "\n\n",
+                    )
+                }"
+
             noteContent != null -> noteContent
             additionalComponents.isNotEmpty() -> additionalComponents.joinToString("\n\n")
             else -> null
         }
 
         val text = fullText?.let { SecretField.ClearText(it) }
+
+        val createdAt = row.get("createTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
+        val updatedAt = row.get("modifyTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
@@ -511,6 +651,8 @@ internal class ProtonPassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -557,7 +699,15 @@ internal class ProtonPassImportSpec(
             noteComponents.add("Vault: $it")
         }
 
-        val text = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }?.let { SecretField.ClearText(it) }
+        val text = noteComponents.joinToString("\n\n").takeIf { it.isNotBlank() }
+            ?.let { SecretField.ClearText(it) }
+
+        val createdAt = row.get("createTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
+        val updatedAt = row.get("modifyTime")?.trim()?.toLongOrNull()?.let {
+            parseSecondsFrom1970(it)
+        }
 
         return Item.create(
             contentType = ItemContentType.SecureNote,
@@ -567,6 +717,8 @@ internal class ProtonPassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -608,27 +760,6 @@ internal class ProtonPassImportSpec(
         return type.replaceFirstChar { it.uppercase() }
     }
 
-    private fun detectCardNumberMask(cardNumber: String): String? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.length < 4) return null
-        return digitsOnly.takeLast(4)
-    }
-
-    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.isEmpty()) return null
-
-        return when {
-            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
-            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
-            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
-            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
-            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
-            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
-            else -> null
-        }
-    }
-
     @Serializable
     private data class ProtonPassExport(
         val vaults: Map<String, ProtonPassVault>? = null,
@@ -646,8 +777,8 @@ internal class ProtonPassImportSpec(
         val itemId: String? = null,
         val data: ProtonPassItemData? = null,
         val state: Int? = null,
-        val createTime: Int? = null,
-        val modifyTime: Int? = null,
+        val createTime: Long? = null,
+        val modifyTime: Long? = null,
     )
 
     @Serializable

@@ -20,9 +20,11 @@ dependencies {
     implementation(project(":core:android"))
     implementation(project(":core:common"))
     implementation(project(":core:locale"))
+    implementation(project(":core:di"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
     implementation(libs.bundles.coil)
     implementation(libs.appcompat)
+    implementation(libs.zxing)
 }

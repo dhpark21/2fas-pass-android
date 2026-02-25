@@ -47,6 +47,7 @@ internal interface WebSocketDelegate {
                     supportedFeatures = listOf(
                         "items.secureNote",
                         "items.paymentCard",
+                        "items.wifi",
                     ),
                 ),
             ),

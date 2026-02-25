@@ -74,6 +74,8 @@ object MdtIcons {
     val Export @Composable get() = painterResource(R.drawable.ic_export)
     val Document @Composable get() = painterResource(R.drawable.ic_document)
     val SecureNote @Composable get() = painterResource(R.drawable.ic_document)
+    val Wifi4Bar @Composable get() = painterResource(R.drawable.ic_wifi_4_bar)
+    val Wifi4BarPlus @Composable get() = painterResource(R.drawable.ic_wifi_4_bar_plus)
     val PasswordGenerator @Composable get() = painterResource(R.drawable.ic_password_generator)
     val Filter @Composable get() = painterResource(R.drawable.ic_filter)
     val FilterAlt @Composable get() = painterResource(R.drawable.ic_filter_alt)
@@ -111,6 +113,7 @@ object MdtIcons {
     val MinusCircle @Composable get() = painterResource(R.drawable.ic_minus_circle)
     val RotateLeft @Composable get() = painterResource(R.drawable.ic_rotate_left)
     val Tag @Composable get() = painterResource(R.drawable.ic_tag)
+    val TagFilled @Composable get() = painterResource(R.drawable.ic_tag_filled)
     val AddTag @Composable get() = painterResource(R.drawable.ic_add_tag)
     val Hashtag @Composable get() = painterResource(R.drawable.ic_hashtag)
     val Rocket @Composable get() = painterResource(R.drawable.ic_rocket)
@@ -122,4 +125,5 @@ object MdtIcons {
     val SelectAll @Composable get() = painterResource(R.drawable.ic_select_all)
     val Deselect @Composable get() = painterResource(R.drawable.ic_deselect)
     val AllItems @Composable get() = painterResource(R.drawable.ic_all_items)
+    val Lightbulb @Composable get() = painterResource(R.drawable.ic_lightbulb)
 }

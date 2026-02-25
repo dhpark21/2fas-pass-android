@@ -17,6 +17,7 @@ import com.twofasapp.core.common.domain.ItemUri
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.UriMatcher
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
@@ -105,6 +106,7 @@ internal class EnpassImportSpec(
                     "login", "password" -> item.parseLogin(vaultId, tagIds)
                     "creditcard" -> item.parseCreditCard(vaultId, tagIds)
                     "note" -> item.parseSecureNote(vaultId, tagIds)
+                    "computer" -> item.parseWifi(vaultId, tagIds)
                     else -> {
                         // finance, identity, and other categories -> secure note
                         unknownItems++
@@ -146,8 +148,9 @@ internal class EnpassImportSpec(
         val category: String? = null,
         @SerialName("category_name") val categoryName: String? = null,
         val folders: List<String>? = null,
-        @SerialName("created_at") val createdAt: Long? = null,
+        @SerialName("createdAt") val createdAt: Long? = null,
         @SerialName("updated_at") val updatedAt: Long? = null,
+        @SerialName("field_updated_at") val fieldUpdatedAt: Long? = null,
     )
 
     @Serializable
@@ -231,6 +234,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.Login,
             vaultId = vaultId,
@@ -244,6 +251,150 @@ internal class EnpassImportSpec(
                 iconUriIndex = if (itemUri == null) null else 0,
                 uris = listOfNotNull(itemUri),
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+        )
+    }
+
+    private fun EnpassItem.parseWifi(vaultId: String, tagIds: List<String>?): Item? {
+        val name = title?.trim()?.takeIf { it.isNotBlank() } ?: return null
+        val noteText = note?.trim()?.takeIf { it.isNotBlank() }
+
+        var stationPassword: String? = null
+        var networkPassword: String? = null
+        var storagePassword: String? = null
+        var password: String? = null
+        var networkName: String? = null
+        var stationName: String? = null
+        var securityType: WifiSecurityType = WifiSecurityType.Wpa2
+        val additionalFields = mutableListOf<Pair<String, String>>()
+
+        fields.orEmpty()
+            .filter { field -> field.deleted != 1 }
+            .filterNot { field -> field.value?.trim().isNullOrEmpty() }
+            .forEach { field ->
+                val label = field.label.orEmpty().trim()
+                val value = field.value?.trim()
+                if (value != null) {
+                    when {
+                        label.equals(other = "Station name", ignoreCase = true) ->
+                            stationName = value
+
+                        label.equals(other = "Station password", ignoreCase = true) ->
+                            stationPassword = value
+
+                        label.equals(other = "Network name", ignoreCase = true) ->
+                            networkName = value
+
+                        label.equals(other = "Network password", ignoreCase = true) ->
+                            networkPassword = value
+
+                        label.equals(other = "Security", ignoreCase = true) ->
+                            securityType = parseWifiSecurityType(value)
+
+                        label.equals(other = "Password", ignoreCase = true) ->
+                            password = value
+
+                        label.equals(other = "Storage password", ignoreCase = true) ->
+                            storagePassword = value
+                    }
+
+                    if (label.equals(other = "Security", ignoreCase = true).not()) {
+                        val formattedLabel = field.label?.trim() ?: formatFieldType(value)
+                        additionalFields.add(formattedLabel to value)
+                    }
+                }
+            }
+
+        var ssid: String? = null
+        var wifiPassword: String? = null
+
+        when {
+            password.isNullOrBlank().not() -> {
+                wifiPassword = password
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Password",
+                        ignoreCase = true,
+                    )
+                }
+            }
+
+            networkPassword.isNullOrBlank().not() -> {
+                wifiPassword = networkPassword
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Network password",
+                        ignoreCase = true,
+                    )
+                }
+            }
+
+            stationPassword.isNullOrBlank().not() -> {
+                wifiPassword = stationPassword
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Station password",
+                        ignoreCase = true,
+                    )
+                }
+            }
+
+            storagePassword.isNullOrBlank().not() -> {
+                wifiPassword = storagePassword
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Storage password",
+                        ignoreCase = true,
+                    )
+                }
+            }
+        }
+
+        when {
+            networkName.isNullOrBlank().not() -> {
+                ssid = networkName
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Network name",
+                        ignoreCase = true,
+                    )
+                }
+            }
+
+            stationName.isNullOrBlank().not() -> {
+                ssid = stationName
+                additionalFields.removeIf { (label, _) ->
+                    label.equals(
+                        other = "Station name",
+                        ignoreCase = true,
+                    )
+                }
+            }
+        }
+
+        val mergedNotes = TransferUtils.formatNote(
+            note = noteText,
+            fields = additionalFields.toMap(),
+        )
+
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
+        return Item.create(
+            contentType = ItemContentType.Wifi,
+            vaultId = vaultId,
+            tagIds = tagIds.orEmpty(),
+            content = ItemContent.Wifi.Empty.copy(
+                name = name,
+                ssid = ssid,
+                password = wifiPassword?.let { SecretField.ClearText(it) },
+                securityType = securityType,
+                notes = mergedNotes,
+            ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -324,7 +475,15 @@ internal class EnpassImportSpec(
 
         val expirationDateString = if (expirationMonth != null && expirationYear != null) {
             val monthPadded = expirationMonth.padStart(2, '0')
-            val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
+            val yearSuffix =
+                if (expirationYear.length > 2) {
+                    expirationYear.takeLast(2)
+                } else {
+                    expirationYear.padStart(
+                        2,
+                        '0',
+                    )
+                }
             "$monthPadded/$yearSuffix"
         } else {
             null
@@ -346,6 +505,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.PaymentCard,
             vaultId = vaultId,
@@ -360,6 +523,8 @@ internal class EnpassImportSpec(
                 securityCode = securityCode,
                 notes = mergedNotes,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -381,6 +546,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )?.let { SecretField.ClearText(it) }
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.SecureNote,
             vaultId = vaultId,
@@ -390,6 +559,8 @@ internal class EnpassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -418,6 +589,10 @@ internal class EnpassImportSpec(
             fields = additionalFields.toMap(),
         )?.let { SecretField.ClearText(it) }
 
+        val createdAt = createdAt?.let { parseSecondsFrom1970(it) }
+        val updatedAt = fieldUpdatedAt?.let { parseSecondsFrom1970(it) }
+            ?: updatedAt?.let { parseSecondsFrom1970(it) }
+
         return Item.create(
             contentType = ItemContentType.SecureNote,
             vaultId = vaultId,
@@ -427,6 +602,8 @@ internal class EnpassImportSpec(
                 text = text,
                 additionalInfo = null,
             ),
+            createdAt = createdAt,
+            updatedAt = updatedAt,
         )
     }
 
@@ -437,26 +614,5 @@ internal class EnpassImportSpec(
             .replace("_", " ")
             .replace(Regex("([a-z])([A-Z])"), "$1 $2")
             .replaceFirstChar { it.uppercase() }
-    }
-
-    private fun detectCardNumberMask(cardNumber: String): String? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.length < 4) return null
-        return digitsOnly.takeLast(4)
-    }
-
-    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.isEmpty()) return null
-
-        return when {
-            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
-            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
-            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
-            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
-            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
-            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
-            else -> null
-        }
     }
 }

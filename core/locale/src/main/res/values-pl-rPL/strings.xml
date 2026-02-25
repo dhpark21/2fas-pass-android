@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Wed, 21 Jan 2026 15:36:18 -0800
+ Exported at: Tue, 24 Feb 2026 14:48:23 -0800
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -79,8 +79,8 @@
     <string name="decryption_kit_settings_description">Plik zawiera kod QR, który umożliwia odzyskanie dostępu do sejfu 2FAS Pass.</string>
     <string name="decryption_kit_settings_qr_label">Twój kod QR składa się z:</string>
     <string name="decryption_kit_settings_secret_words">Tajnych słów (15-wyrazowej frazy)</string>
-    <string name="decryption_kit_settings_master_key">Hasha hasła głównego</string>
-    <string name="decryption_kit_settings_toggle_title">Dodaj hash hasła głównego,</string>
+    <string name="decryption_kit_settings_master_key">Skrót hasła głównego</string>
+    <string name="decryption_kit_settings_toggle_title">Dodaj skrót hasła głównego,</string>
     <string name="decryption_kit_settings_toggle_msg">aby uniknąć konieczności wprowadzania hasła głównego podczas przywracania mojego sejfu.</string>
     <string name="decryption_kit_settings_cta">Gotowe</string>
     <string name="restore_vault_source_title">Wybierz plik kopii zapasowej</string>
@@ -178,7 +178,7 @@
     <string name="settings_entry_google_drive">Google Drive</string>
     <string name="settings_entry_google_drive_sync">Synchronizacja Google Drive</string>
     <string name="settings_entry_google_drive_sync_description">Automatycznie twórz kopie zapasowe i synchronizuj dane między urządzeniami.</string>
-    <string name="settings_entry_google_drive_sync_explanation">Plik kopii zapasowej jest przechowywany w ukrytym folderze na dysku Google Drive. Dostęp do tego folderu ma wyłącznie aplikacja 2FAS Pass. Plik kopii zapasowej jest szyfrowany hasłem głównym.</string>
+    <string name="settings_entry_google_drive_sync_explanation">Plik kopii zapasowej jest przechowywany w ukrytym folderze na dysku Google Drive, do którego dostęp ma wyłącznie aplikacja 2FAS Pass.\nJest on zaszyfrowany tajnymi słowami i hasłem głównym.</string>
     <string name="settings_entry_sync_info">Status synchronizacji</string>
     <string name="settings_entry_sync_account">Konto</string>
     <string name="settings_entry_sync_last">Ostatnia synchronizacja</string>
@@ -402,7 +402,7 @@
     <string name="connect_setup_push_step_title">Powiadomienia push</string>
     <string name="connect_setup_push_warning_ios__0025_0040">Korzystanie z powiadomień push ułatwia komunikację z rozszerzeniem przeglądarki. Przejdź do **[Ustawień systemowych](%s)**.</string>
     <string name="connect_setup_steps_header">Konfiguracja rozszerzenia przeglądarki 2FAS Pass</string>
-    <string name="decryption_kit_settings_secret_words_ios">**Tajne słowa** (15-wyrazowa fraza),</string>
+    <string name="decryption_kit_settings_secret_words_ios">**Tajnych słów** (15-wyrazowa fraza)</string>
     <string name="known_browsers_header">Zaufane rozszerzenia przeglądarki</string>
     <string name="lock_screen_too_many_attempts_description">Dostęp do 2FAS Pass został tymczasowo zablokowany z powodu nieudanych prób wpisania hasła głównego</string>
     <string name="lock_screen_try_again__0025_0040">Spróbuj ponownie za: %s</string>
@@ -609,7 +609,7 @@
     <string name="security_tiers_help_layers_section_title">3. Szyfrowanie wielowarstwowe</string>
     <string name="security_tiers_help_tiers_layers_e2ee_title">Szyfrowanie end-to-end (E2EE)</string>
     <string name="security_tiers_help_tiers_layers_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z hasłem głównym.\nSEED jest bezpiecznie przechowywany w Apple Secure Enclave, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
-    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszcą twojego urządzenia.</string>
+    <string name="security_tiers_help_tiers_layers_secure_enclave_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Secure Enclave, dedykowanym, odpornym na manipulacje czipie, który gwarantuje, że klucze szyfrujące nigdy nie opuszczą twojego urządzenia.</string>
     <string name="security_tiers_help_tiers_layers_secure_enclave_title">Apple Secure Enclave</string>
     <string name="security_tiers_help_tiers_layers_adp_title">Zaawansowana Ochrona Danych Apple</string>
     <string name="security_tiers_help_tiers_layers_adp_subtitle">Gdy włączysz ADP i synchronizację z iCloud, twoje dane są szyfrowane podwójnie, najpierw przy użyciu E2EE, a następnie za pomocą kluczy szyfrujących Apple. Nawet jeśli ktoś uzyska dostęp do twojego iClouda, znajdzie tam jedynie w pełni zaszyfrowane i bezpieczne dane.</string>
@@ -638,7 +638,7 @@
     <string name="manage_subscription_title">2FAS Pass Unlimited</string>
     <string name="manage_subscription_items_title">Elementy</string>
     <string name="manage_subscription_browsers_title">Połączone rozszerzenia przeglądarki</string>
-    <string name="manage_subscription_price_prefix">Roczna subskrypcja</string>
+    <string name="manage_subscription_price_prefix">Roczna subskrypcja:\u0020</string>
     <string name="manage_subscription_renew_date_prefix">Twój plan zostanie automatycznie odnowiony\u0020</string>
     <string name="manage_subscription_apple_info">Zapłacono poprzez Apple</string>
     <string name="manage_subscription_end_date_prefix">Twój plan kończy się</string>
@@ -1043,4 +1043,75 @@
     <string name="home_multiselect_tags_title">Tagi</string>
     <string name="home_multiselect_tags_subtitle">Edytuj zaznaczone elementy</string>
     <string name="transfer_instructions_nordpass">Otwórz NordPass na komputerze.\n\nPrzejdź do **Ustawień** i przewiń w dół do sekcji **Import i Eksport**.\n\nWybierz **Eksportuj elementy**, wpisz swoje hasło główne i potwierdź eksport.\n\nSkopiuj wyeksportowany plik na to urządzenie i kliknij **Wgraj plik CSV** poniżej.</string>
+    <string name="decryption_kit_file_date">Utworzono %s</string>
+    <string name="decryption_kit_file_qr_code_description">Zeskanuj ten kod QR zamiast wpisywać tajne słowa.</string>
+    <string name="decryption_kit_file_qr_code_master_key_description">Zeskanuj ten kod QR zamiast wpisywać tajne słowa i hasło główne.</string>
+    <string name="lock_screen_forgot_master_password_cta">Nie pamiętasz hasła głównego?</string>
+    <string name="forgot_master_password_title">Weryfikacja hasła głównego</string>
+    <string name="forgot_master_password_description">Aby zweryfikować hasło główne, potrzebujesz zestawu deszyfrującego, który zawiera skrót (hash) hasła głównego.</string>
+    <string name="camera_no_permissions_title">Brak dostępu do kamery</string>
+    <string name="camera_no_permissions_subtitle">Włącz dostęp do kamery w ustawieniach, aby zeskanować kod QR.</string>
+    <string name="camera_no_permissions_cta">Ustawienia</string>
+    <string name="forgot_master_password_no_master_key_title">Brakuje skrótu hasła głównego</string>
+    <string name="forgot_master_password_no_master_key_subtitle">Jest on wymagany do zweryfikowania zestawu deszyfrującego</string>
+    <string name="forgot_master_password_error_verification_title">Weryfikacja nieudana</string>
+    <string name="forgot_master_password_error_verification_subtitle">Spróbuj ponownie, używając innego zestawu deszyfrującego.</string>
+    <string name="forgot_master_password_verification_success_title">Weryfikacja udana</string>
+    <string name="camera_qr_code_unsupported_code">Nieznany kod QR</string>
+    <string name="forgot_master_password_error_app_locked_title">Weryfikacja zablokowana</string>
+    <string name="forgot_master_password_error_app_locked_subtitle">Dostęp został tymczasowo zablokowany z powodu nieudanych prób weryfikacji hasła głównego.</string>
+    <string name="security_tiers_help_local_first_section_figure_high">Wysokie</string>
+    <string name="security_tiers_help_local_first_section_figure_medium">Średnie</string>
+    <string name="security_tiers_help_local_first_section_figure_low">Niskie</string>
+    <string name="security_tiers_help_local_first_section_figure_high_description">2FAS Pass z poziomami bezpieczeństwa i szyfrowaniem wielowarstwowym\u0020</string>
+    <string name="security_tiers_help_local_first_section_figure_medium_description">Scentralizowane, serwerowe rozwiązania do zarządzania hasłami</string>
+    <string name="security_tiers_help_local_first_section_figure_low_description">Nieszyfrowane aplikacje z notatkami</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_title">Sprzętowe zabezpieczenia Androida</string>
+    <string name="security_tiers_help_tiers_layers_android_secure_subtitle">Podczas konfiguracji nowego urządzenia będziesz potrzebować 15-wyrazowej frazy, aby przywrócić swój SEED. Jest on bezpiecznie przechowywany w Apple Keystore i zabezpieczony poprzez TEE lub Strongbox, czyli dedykowanym, odpornym na manipulacje czipie. Gwarantuje to, że klucze szyfrujące nigdy nie opuszczą twojego urządzenia.</string>
+    <string name="security_tiers_help_tiers_layers_android_e2ee_subtitle">Twoje dane są chronione za pomocą unikalnego, losowo wygenerowanego SEED-u połączonego z hasłem głównym.\nSEED jest bezpiecznie przechowywany w Android KeyStore i zabezpieczony poprzez Trusted Execution Environment lub Strongbox, dzięki czemu potrzebujesz tylko hasła głównego, aby uzyskać dostęp do danych.</string>
+    <string name="request_modal_wifi_request_title">Prośba o dostęp do Wi-Fi</string>
+    <string name="request_modal_wifi_request_subtitle">Rozszerzenie przeglądaki prosi o dostęp do Wi-Fi</string>
+    <string name="content_type_wifi_name">Wi-Fi</string>
+    <string name="content_type_unknown_name">Nieznany</string>
+    <string name="wifi_view_action_copy_ssid">Kopiuj SSID</string>
+    <string name="wifi_view_action_copy_password">Kopiuj hasło</string>
+    <string name="wifi_qr_scan_action">Zeskanuj</string>
+    <string name="wifi_show_qr_code_action">Pokaż kod QR sieci</string>
+    <string name="request_modal_new_wifi_title">Dodaj Wi-Fi</string>
+    <string name="wifi_field_hidden_value">Ukryta</string>
+    <string name="wifi_add_title">Dodaj Wi-Fi</string>
+    <string name="wifi_hidden_network_label">Ukryta sieć</string>
+    <string name="wifi_security_type_label">Typ szyfrowania</string>
+    <string name="wifi_password_label">Hasło</string>
+    <string name="wifi_ssid_label">SSID</string>
+    <string name="wifi_name_label">Nazwa</string>
+    <string name="wifi_qr_join_title">Zeskanuj kod QR, aby dołączyć do \"%s\"</string>
+    <string name="wifi_qr_scan_title">Zeskanuj kod QR sieci</string>
+    <string name="request_modal_remove_wifi_title">Usuń Wi-Fi</string>
+    <string name="wifi_network_header">Sieć</string>
+    <string name="request_modal_update_wifi_title">Zaktualizuj Wi-Fi</string>
+    <string name="wifi_edit_title">Edycja W-iFi</string>
+    <string name="transfer_file_summary_wifi_counter_description">Wykrytych sieci Wi-Fi</string>
+    <string name="wifi_notes_label">Notatki</string>
+    <string name="wifi_security_type_none">Brak</string>
+    <string name="credential_exchange_export_error_title">Eksport nieudany</string>
+    <string name="credential_exchange_export_title">Eksportuj do innej aplikacji</string>
+    <string name="credential_exchange_export_description">Wyeksportuj swoje dane logowania do innego menedżera haseł.</string>
+    <string name="credential_exchange_export_cta">Eksportuj</string>
+    <string name="credential_exchange_import_title">Importuj dane logowania</string>
+    <string name="credential_exchange_import_desciption">Twoje dane logowania są gotowe do importu.</string>
+    <string name="credential_exchange_import_error_title">Eksport nieudany</string>
+    <string name="credential_exchange_importing_description">Importowanie danych logowania…</string>
+    <string name="credential_exchange_import_cta">Importuj</string>
+    <string name="backup_export_to_another_app">Eksportuj do innej aplikacji</string>
+    <string name="backup_export_to_another_app_footer">Wyeksportuj swoje dane logowania do innego menedżera haseł.</string>
+    <string name="credential_exchange_import_success_title">Import zakończony</string>
+    <string name="credential_exchange_import_success_description">Twoje dane logowania zostały pomyślnie zaimportowane.</string>
+    <string name="settings_entry_screen_recording">Nagrywanie ekranu</string>
+    <string name="settings_entry_screen_recording_confirm_description">Ta opcja pozwala na nagrywanie zawartości aplikacji. Jednocześnie umożliwia zewnętrznym aplikacjom przechwytywanie ekranu. Aby zapewnić bezpieczeństwo, opcja ta wyłączy się automatycznie po %d minutach.</string>
+    <string name="settings_entry_screen_recording_confirm_title">Pozwolić na nagrywanie ekranu?</string>
+    <string name="settings_entry_screen_recording_description">Pozwól na nagrywanie ekranu aplikacji przez %d minut.</string>
+    <string name="block_screen_recording_title">Nagrywanie ekranu zablokowane</string>
+    <string name="block_screen_recording_description">Nagrywanie ekranu jest zablokowane podczas korzystania z aplikacji. Możesz tymczasowo je włączyć w Ustawienia → Bezpieczeństwo.</string>
+    <string name="wifi_connect_label">Połącz z siecią</string>
 </resources>

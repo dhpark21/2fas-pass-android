@@ -168,6 +168,16 @@ internal sealed interface BrowserRequestActionJson {
             val s_expirationDate: String?,
             @SerialName("s_securityCode")
             val s_securityCode: String?,
+            @SerialName("ssid")
+            val ssid: String?,
+            @SerialName("s_wifi_password")
+            val s_wifi_password: String?,
+            @SerialName("securityType")
+            val securityType: String?,
+            @SerialName("hidden")
+            val hidden: Boolean?,
+            @SerialName("additionalInfo")
+            val additionalInfo: String?,
         )
     }
 
@@ -220,6 +230,16 @@ internal sealed interface BrowserRequestActionJson {
             val s_expirationDate: String?,
             @SerialName("s_securityCode")
             val s_securityCode: String?,
+            @SerialName("ssid")
+            val ssid: String?,
+            @SerialName("s_wifi_password")
+            val s_wifi_password: String?,
+            @SerialName("securityType")
+            val securityType: String?,
+            @SerialName("hidden")
+            val hidden: Boolean?,
+            @SerialName("additionalInfo")
+            val additionalInfo: String?,
         ) {
             @Serializable
             data class Uri(

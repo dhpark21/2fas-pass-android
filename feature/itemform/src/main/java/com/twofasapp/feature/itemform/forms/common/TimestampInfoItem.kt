@@ -31,12 +31,12 @@ internal fun LazyListScope.timestampInfoItem(
                 text = buildString {
                     append(" ")
                     append(strings.commonCreated)
-                    append(": ")
+                    append(" ")
                     append(item.createdAt.formatDateTime())
                     appendLine()
                     append(" ")
                     append(strings.commonModified)
-                    append(": ")
+                    append(" ")
                     append(item.updatedAt.formatDateTime())
                 },
                 style = MdtTheme.typo.bodySmall,

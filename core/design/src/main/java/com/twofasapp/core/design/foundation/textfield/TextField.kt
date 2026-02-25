@@ -113,7 +113,7 @@ fun TextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     minLines: Int = 1,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = RoundedShape8,
+    shape: Shape = TextFieldDefaults.shape,
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors().copy(
         unfocusedIndicatorColor = MdtTheme.color.outlineVariant,
     ),
@@ -143,6 +143,10 @@ fun TextField(
         shape = shape,
         colors = colors,
     )
+}
+
+object TextFieldDefaults {
+    val shape: Shape = RoundedShape8
 }
 
 @Preview

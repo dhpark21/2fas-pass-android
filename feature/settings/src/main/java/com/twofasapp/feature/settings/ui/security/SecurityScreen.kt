@@ -78,6 +78,7 @@ private fun Content(
     var showScreenCaptureConfirm by remember { mutableStateOf(false) }
     var showLockoutSettingsAuthenticationPrompt by remember { mutableStateOf(false) }
     var showDecryptionKitAuthenticationPrompt by remember { mutableStateOf(false) }
+    var showChangePasswordAuthenticationPrompt by remember { mutableStateOf(false) }
     var showBiometricsModal by remember { mutableStateOf(false) }
     var showBiometricsError by remember { mutableStateOf(false) }
     var biometricsError by remember { mutableStateOf("") }
@@ -101,7 +102,7 @@ private fun Content(
             OptionEntry(
                 title = strings.settingsEntryChangePassword,
                 icon = MdtIcons.Password,
-                onClick = { deeplinks.openScreen(Screen.ChangePassword) },
+                onClick = { showChangePasswordAuthenticationPrompt = true },
             )
 
             OptionSwitch(
@@ -230,6 +231,21 @@ private fun Content(
                 deeplinks.openScreen(Screen.SaveDecryptionKit(masterKeyHex = masterKey.encodeHex()))
             },
             onClose = { showDecryptionKitAuthenticationPrompt = false },
+        )
+    }
+
+    if (showChangePasswordAuthenticationPrompt) {
+        AuthenticationPrompt(
+            title = strings.enterCurrentPasswordTitle,
+            description = strings.enterCurrentPasswordDescription,
+            cta = strings.commonContinue,
+            icon = MdtIcons.Password,
+            biometricsAllowed = false,
+            onAuthenticated = {
+                showChangePasswordAuthenticationPrompt = false
+                deeplinks.openScreen(Screen.SetNewPassword)
+            },
+            onClose = { showChangePasswordAuthenticationPrompt = false },
         )
     }
 

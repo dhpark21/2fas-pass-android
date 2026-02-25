@@ -10,6 +10,7 @@ package com.twofasapp.feature.lock.di
 
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.feature.lock.ui.authentication.AuthenticationPromptViewModel
+import com.twofasapp.feature.lock.ui.forgotpassword.ForgotPasswordViewModel
 import com.twofasapp.feature.lock.ui.lock.LockViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -18,5 +19,6 @@ class LockModule : KoinModule {
     override fun provide() = module {
         viewModelOf(::LockViewModel)
         viewModelOf(::AuthenticationPromptViewModel)
+        viewModelOf(::ForgotPasswordViewModel)
     }
 }

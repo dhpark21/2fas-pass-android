@@ -85,8 +85,10 @@ internal class AutofillPickerViewModel(
 
                     uiState.update {
                         it.copy(
-                            suggestedItems = grouped.filterKeys { key -> key != null }.values.flatten().sortedBy { login -> login.updatedAt },
-                            otherItems = grouped[null].orEmpty().sortedBy { login -> login.updatedAt },
+                            suggestedItems = grouped.filterKeys { key -> key != null }.values.flatten()
+                                .sortedBy { login -> login.updatedAt },
+                            otherItems = grouped[null].orEmpty()
+                                .sortedBy { login -> login.updatedAt },
                         )
                     }
                 }
@@ -112,14 +114,18 @@ internal class AutofillPickerViewModel(
                                 content = (item.content as ItemContent.Login).copy(
                                     uris = (item.content as ItemContent.Login).uris.plus(
                                         buildList {
-                                            if (uiState.value.nodeStructure.webDomain.isNullOrBlank().not()) {
+                                            if (uiState.value.nodeStructure.webDomain.isNullOrBlank()
+                                                    .not()
+                                            ) {
                                                 add(
                                                     ItemUri(
                                                         text = "$uriPrefixWebsite${uiState.value.nodeStructure.webDomain}",
                                                     ),
                                                 )
                                             } else {
-                                                if (uiState.value.nodeStructure.packageName.isNullOrBlank().not()) {
+                                                if (uiState.value.nodeStructure.packageName.isNullOrBlank()
+                                                        .not()
+                                                ) {
                                                     add(
                                                         ItemUri(
                                                             text = "$uriPrefixAndroidApp${uiState.value.nodeStructure.packageName}",
@@ -142,6 +148,7 @@ internal class AutofillPickerViewModel(
 
                 is ItemContent.SecureNote -> Unit
                 is ItemContent.PaymentCard -> Unit
+                is ItemContent.Wifi -> Unit
             }
 
             item.asAutofillLogin()?.let { onSuccess(it) }

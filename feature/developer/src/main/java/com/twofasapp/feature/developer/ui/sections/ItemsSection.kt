@@ -33,11 +33,13 @@ internal fun ItemsSection(
     onGenerateItems: (SecurityType) -> Unit = {},
     onGenerateMultipleItems: (Int) -> Unit = {},
     onGenerateTopDomainItems: () -> Unit = {},
-    onDeleteAll: () -> Unit = {},
+    onDeleteAllItems: () -> Unit = {},
+    onDeleteAllTags: () -> Unit = {},
     onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
     onInsertRandomCreditCard: () -> Unit = {},
+    onInsertRandomWifi: () -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -110,9 +112,23 @@ internal fun ItemsSection(
         )
 
         OptionEntry(
+            title = "Generate wifi",
+            icon = MdtIcons.Wifi4Bar,
+            onClick = { onInsertRandomWifi() },
+        )
+
+        OptionEntry(
             title = "Insert random tag",
             icon = MdtIcons.Tag,
             onClick = { onInsertRandomTag() },
+        )
+
+        OptionEntry(
+            title = "Delete all tags",
+            icon = MdtIcons.DeleteForever,
+            iconTint = MdtTheme.color.error,
+            titleColor = MdtTheme.color.error,
+            onClick = { onDeleteAllTags() },
         )
 
         OptionEntry(
@@ -120,7 +136,7 @@ internal fun ItemsSection(
             icon = MdtIcons.DeleteForever,
             iconTint = MdtTheme.color.error,
             titleColor = MdtTheme.color.error,
-            onClick = { onDeleteAll() },
+            onClick = { onDeleteAllItems() },
         )
 
         OptionEntry(

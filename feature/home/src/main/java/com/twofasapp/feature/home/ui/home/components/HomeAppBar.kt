@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityType
+import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.ktx.uniform
 import com.twofasapp.core.design.MdtIcons
@@ -41,6 +42,7 @@ import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.home.HomeUiState
 import com.twofasapp.feature.itemform.modals.securitytype.SecurityTypeModal
 import com.twofasapp.feature.itemform.modals.tags.TagsPickerMultiModal
+import kotlinx.collections.immutable.persistentSetOf
 
 @Composable
 internal fun HomeAppBar(
@@ -151,6 +153,15 @@ internal fun HomeAppBar(
                                 showTagsPicker = true
                             },
                         )
+
+                        DropdownMenu(
+                            editVisible = false,
+                            selectedTag = uiState.selectedTag,
+                            onEditListClick = {},
+                            onSortClick = onSortClick,
+                            onFilterClick = onFilterClick,
+                            onClearFiltersClick = onClearFiltersClick,
+                        )
                     }
                 },
             )
@@ -181,24 +192,16 @@ internal fun HomeAppBar(
                         }
 
                         if (screenState.content is ScreenState.Content.Success && screenState.loading.not()) {
-                            HomeListDropdownMenu(
+                            DropdownMenu(
+                                editVisible = true,
                                 selectedTag = uiState.selectedTag,
                                 onEditListClick = {
                                     focusManager.clearFocus()
                                     onChangeEditMode(true)
                                 },
-                                onSortClick = {
-                                    focusManager.clearFocus()
-                                    onSortClick()
-                                },
-                                onFilterClick = {
-                                    focusManager.clearFocus()
-                                    onFilterClick()
-                                },
-                                onClearFiltersClick = {
-                                    focusManager.clearFocus()
-                                    onClearFiltersClick()
-                                },
+                                onSortClick = onSortClick,
+                                onFilterClick = onFilterClick,
+                                onClearFiltersClick = onClearFiltersClick,
                             )
                         }
                     }
@@ -253,6 +256,35 @@ internal fun HomeAppBar(
     }
 }
 
+@Composable
+private fun DropdownMenu(
+    selectedTag: Tag?,
+    editVisible: Boolean,
+    onEditListClick: () -> Unit,
+    onSortClick: () -> Unit,
+    onFilterClick: () -> Unit,
+    onClearFiltersClick: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+    HomeListDropdownMenu(
+        editVisible = editVisible,
+        selectedTag = selectedTag,
+        onEditListClick = onEditListClick,
+        onSortClick = {
+            focusManager.clearFocus()
+            onSortClick()
+        },
+        onFilterClick = {
+            focusManager.clearFocus()
+            onFilterClick()
+        },
+        onClearFiltersClick = {
+            focusManager.clearFocus()
+            onClearFiltersClick()
+        },
+    )
+}
+
 @Preview
 @Composable
 private fun Preview() {
@@ -269,7 +301,7 @@ private fun Preview() {
 private fun PreviewEditMode() {
     PreviewAllThemesInColumn {
         HomeAppBar(
-            uiState = HomeUiState(editMode = true, selectedItemIds = setOf("", "", "")),
+            uiState = HomeUiState(editMode = true, selectedItemIds = persistentSetOf("", "", "")),
             screenState = ScreenState.Success,
         )
     }

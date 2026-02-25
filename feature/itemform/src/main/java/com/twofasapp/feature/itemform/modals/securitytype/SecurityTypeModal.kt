@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.feature.securitytier.SecurityDisclaimer
 import com.twofasapp.core.design.foundation.checked.CheckIcon
 import com.twofasapp.core.design.foundation.lazy.forEachIndexed
 import com.twofasapp.core.design.foundation.modal.Modal
@@ -104,17 +105,12 @@ private fun Content(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = MdtLocale.strings.securityTypeModalDescription,
-            style = MdtTheme.typo.regular.xs,
-            color = MdtTheme.color.secondary,
-            modifier = Modifier.padding(horizontal = 8.dp),
-        )
+        SecurityDisclaimer()
     }
 }
 
 @Composable
-internal fun SecurityType.asIcon(): Painter {
+fun SecurityType.asIcon(): Painter {
     return when (this) {
         SecurityType.Tier1 -> MdtIcons.Tier1
         SecurityType.Tier2 -> MdtIcons.Tier2

@@ -24,7 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
+import com.twofasapp.core.design.feature.securitytier.SecurityDisclaimer
 import com.twofasapp.core.design.feature.settings.OptionEntry
+import com.twofasapp.core.design.feature.settings.OptionEntryPaddingHorizontal
 import com.twofasapp.core.design.feature.settings.OptionHeader
 import com.twofasapp.core.design.feature.settings.OptionHeaderContentPaddingFirst
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
@@ -98,6 +100,7 @@ private fun Content(
                     },
                 )
             }
+            SecurityDisclaimer(modifier = Modifier.padding(horizontal = OptionEntryPaddingHorizontal))
         }
     }
 }

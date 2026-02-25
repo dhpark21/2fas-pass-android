@@ -63,10 +63,28 @@ internal class DashlaneMobileImportSpec(
 
                         csvType = when {
                             hasAll("username", "title", "password", "url") -> CsvType.Credentials
-                            hasAll("title", "note") && !h.contains("password") -> CsvType.SecureNotes
+                            hasAll(
+                                "title",
+                                "note",
+                            ) &&
+                                !h.contains("password") -> CsvType.SecureNotes
+
                             hasAll("type", "account_holder") -> CsvType.Payments
-                            hasAll("type", "number", "name") && h.contains("issue_date") -> CsvType.Ids
-                            h.contains("type") && hasAny("first_name", "email", "phone_number", "address") -> CsvType.PersonalInfo
+                            hasAll(
+                                "type",
+                                "number",
+                                "name",
+                            ) &&
+                                h.contains("issue_date") -> CsvType.Ids
+
+                            h.contains("type") &&
+                                hasAny(
+                                    "first_name",
+                                    "email",
+                                    "phone_number",
+                                    "address",
+                                ) -> CsvType.PersonalInfo
+
                             h.contains("ssid") -> CsvType.WiFi
                             else -> CsvType.Unknown
                         }
@@ -81,13 +99,16 @@ internal class DashlaneMobileImportSpec(
 
                         when (csvType) {
                             CsvType.Credentials -> {
-                                val username = row.get("username") ?: row.get("username2") ?: row.get("username3")
+                                val username = row.get("username") ?: row.get("username2")
+                                    ?: row.get("username3")
                                 val note = row.get("note")
                                 val noteWithAdditionalInfo = TransferUtils.formatNote(
                                     note = note,
                                     fields = buildMap {
-                                        row.get("username2")?.takeIf { it != username }?.let { put("Username", it) }
-                                        row.get("username3")?.takeIf { it != username }?.let { put("Alternate username", it) }
+                                        row.get("username2")?.takeIf { it != username }
+                                            ?.let { put("Username", it) }
+                                        row.get("username3")?.takeIf { it != username }
+                                            ?.let { put("Alternate username", it) }
                                     },
                                 )
 
@@ -125,26 +146,47 @@ internal class DashlaneMobileImportSpec(
                                 val paymentType = row.get("type")
 
                                 if (paymentType == "payment_card") {
-                                    val itemName = row.get("name")?.trim()?.takeIf { it.isNotBlank() }
-                                    val noteText = row.get("note")?.trim()?.takeIf { it.isNotBlank() }
-                                    val cardHolder = row.get("account_holder")?.trim()?.takeIf { it.isNotBlank() }
-                                    val cardNumberString = row.get("cc_number")?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
-                                    val securityCodeString = row.get("code")?.trim()?.takeIf { it.isNotBlank() }?.removeWhitespace()
-                                    val expirationMonth = row.get("expiration_month")?.trim()?.takeIf { it.isNotBlank() }
-                                    val expirationYear = row.get("expiration_year")?.trim()?.takeIf { it.isNotBlank() }
+                                    val itemName =
+                                        row.get("name")?.trim()?.takeIf { it.isNotBlank() }
+                                    val noteText =
+                                        row.get("note")?.trim()?.takeIf { it.isNotBlank() }
+                                    val cardHolder = row.get("account_holder")?.trim()
+                                        ?.takeIf { it.isNotBlank() }
+                                    val cardNumberString =
+                                        row.get("cc_number")?.trim()?.takeIf { it.isNotBlank() }
+                                            ?.removeWhitespace()
+                                    val securityCodeString =
+                                        row.get("code")?.trim()?.takeIf { it.isNotBlank() }
+                                            ?.removeWhitespace()
+                                    val expirationMonth = row.get("expiration_month")?.trim()
+                                        ?.takeIf { it.isNotBlank() }
+                                    val expirationYear = row.get("expiration_year")?.trim()
+                                        ?.takeIf { it.isNotBlank() }
 
-                                    val expirationDateString = if (expirationMonth != null && expirationYear != null) {
-                                        val monthPadded = expirationMonth.padStart(2, '0')
-                                        val yearSuffix = if (expirationYear.length > 2) expirationYear.takeLast(2) else expirationYear.padStart(2, '0')
-                                        "$monthPadded/$yearSuffix"
-                                    } else {
-                                        null
-                                    }
+                                    val expirationDateString =
+                                        if (expirationMonth != null && expirationYear != null) {
+                                            val monthPadded = expirationMonth.padStart(2, '0')
+                                            val yearSuffix =
+                                                if (expirationYear.length > 2) {
+                                                    expirationYear.takeLast(
+                                                        2,
+                                                    )
+                                                } else {
+                                                    expirationYear.padStart(2, '0')
+                                                }
+                                            "$monthPadded/$yearSuffix"
+                                        } else {
+                                            null
+                                        }
 
-                                    val cardNumber = cardNumberString?.let { SecretField.ClearText(it) }
-                                    val expirationDate = expirationDateString?.let { SecretField.ClearText(it) }
-                                    val securityCode = securityCodeString?.let { SecretField.ClearText(it) }
-                                    val cardNumberMask = cardNumberString?.let { detectCardNumberMask(it) }
+                                    val cardNumber =
+                                        cardNumberString?.let { SecretField.ClearText(it) }
+                                    val expirationDate =
+                                        expirationDateString?.let { SecretField.ClearText(it) }
+                                    val securityCode =
+                                        securityCodeString?.let { SecretField.ClearText(it) }
+                                    val cardNumberMask =
+                                        cardNumberString?.let { detectCardNumberMask(it) }
                                     val cardIssuer = cardNumberString?.let { detectCardIssuer(it) }
 
                                     val additionalFields = buildMap<String, String> {
@@ -189,12 +231,18 @@ internal class DashlaneMobileImportSpec(
                                                     note = row.get("note"),
                                                     fields = buildMap {
                                                         row.get("type")?.let { put("Type", it) }
-                                                        row.get("account_name")?.let { put("Account name", it) }
-                                                        row.get("account_holder")?.let { put("Account holder", it) }
-                                                        row.get("routing_number")?.let { put("Routing number", it) }
-                                                        row.get("account_number")?.let { put("Account number", it) }
-                                                        row.get("country")?.let { put("Country", it) }
-                                                        row.get("issuing_bank")?.let { put("Issuing bank", it) }
+                                                        row.get("account_name")
+                                                            ?.let { put("Account name", it) }
+                                                        row.get("account_holder")
+                                                            ?.let { put("Account holder", it) }
+                                                        row.get("routing_number")
+                                                            ?.let { put("Routing number", it) }
+                                                        row.get("account_number")
+                                                            ?.let { put("Account number", it) }
+                                                        row.get("country")
+                                                            ?.let { put("Country", it) }
+                                                        row.get("issuing_bank")
+                                                            ?.let { put("Issuing bank", it) }
                                                     },
                                                 ),
                                             ),
@@ -289,34 +337,22 @@ internal class DashlaneMobileImportSpec(
                             }
 
                             CsvType.WiFi -> {
-                                unknownItems++
-
-                                val ssid = row.get("ssid")
-                                val wifiName = row.get("name")
-                                val displayName = wifiName ?: ssid
-
-                                val itemName = buildString {
-                                    if (!displayName.isNullOrBlank()) {
-                                        append(displayName)
-                                        append(" ")
-                                    }
-                                    append("(WiFi)")
-                                }
-
-                                val additionalInfo = row.map.minus(listOf("name", "note"))
-                                val noteText = TransferUtils.formatNote(
-                                    note = row.get("note"),
-                                    fields = additionalInfo,
-                                )
-
                                 add(
                                     Item.create(
                                         vaultId = vaultId,
                                         tagIds = tagIds,
-                                        contentType = ItemContentType.SecureNote,
-                                        content = ItemContent.SecureNote.create(
-                                            name = itemName,
-                                            text = noteText,
+                                        contentType = ItemContentType.Wifi,
+                                        content = ItemContent.Wifi.Empty.copy(
+                                            ssid = row.get("ssid"),
+                                            password = row.get("passphrase")
+                                                ?.let { SecretField.ClearText(it) },
+                                            name = row.get("name").orEmpty(),
+                                            notes = row.get("note"),
+                                            hidden = row.get("hidden")?.toBooleanStrictOrNull()
+                                                ?: false,
+                                            securityType = parseWifiSecurityType(
+                                                row.get("encription_type"),
+                                            ),
                                         ),
                                     ),
                                 )
@@ -334,7 +370,13 @@ internal class DashlaneMobileImportSpec(
                                             name = row.get("name"),
                                             text = TransferUtils.formatNote(
                                                 note = row.get("note"),
-                                                fields = row.map.minus(listOf("name", "note", "type")),
+                                                fields = row.map.minus(
+                                                    listOf(
+                                                        "name",
+                                                        "note",
+                                                        "type",
+                                                    ),
+                                                ),
                                             ),
                                         ),
                                     ),
@@ -355,26 +397,5 @@ internal class DashlaneMobileImportSpec(
 
     enum class CsvType {
         Credentials, SecureNotes, Payments, Ids, PersonalInfo, WiFi, Unknown
-    }
-
-    private fun detectCardNumberMask(cardNumber: String): String? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.length < 4) return null
-        return digitsOnly.takeLast(4)
-    }
-
-    private fun detectCardIssuer(cardNumber: String): ItemContent.PaymentCard.Issuer? {
-        val digitsOnly = cardNumber.filter { it.isDigit() }
-        if (digitsOnly.isEmpty()) return null
-
-        return when {
-            digitsOnly.startsWith("4") -> ItemContent.PaymentCard.Issuer.Visa
-            digitsOnly.startsWith("5") -> ItemContent.PaymentCard.Issuer.MasterCard
-            digitsOnly.startsWith("34") || digitsOnly.startsWith("37") -> ItemContent.PaymentCard.Issuer.AmericanExpress
-            digitsOnly.startsWith("6011") || digitsOnly.startsWith("65") -> ItemContent.PaymentCard.Issuer.Discover
-            digitsOnly.startsWith("35") -> ItemContent.PaymentCard.Issuer.Jcb
-            digitsOnly.startsWith("62") -> ItemContent.PaymentCard.Issuer.UnionPay
-            else -> null
-        }
     }
 }

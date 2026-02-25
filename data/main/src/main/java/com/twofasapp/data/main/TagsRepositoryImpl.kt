@@ -11,12 +11,15 @@ package com.twofasapp.data.main
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.Tag
+import com.twofasapp.core.common.domain.TagColor
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.domain.VaultKeys
 import com.twofasapp.data.main.local.ItemsLocalSource
 import com.twofasapp.data.main.local.TagsLocalSource
 import com.twofasapp.data.main.local.VaultsLocalSource
+import com.twofasapp.data.main.local.model.ItemEntity
+import com.twofasapp.data.main.local.model.TagEntity
 import com.twofasapp.data.main.mapper.TagMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +42,7 @@ internal class TagsRepositoryImpl(
     private val deletedItemsRepository: DeletedItemsRepository,
 ) : TagsRepository {
 
-    private val selectedTag = MutableStateFlow<Map<String, Tag?>>(emptyMap())
+    private val selectedTag = MutableStateFlow<Map<String, String?>>(emptyMap())
 
     override fun observeTags(vaultId: String): Flow<List<Tag>> {
         return combine(
@@ -47,15 +50,8 @@ internal class TagsRepositoryImpl(
             itemsLocalSource.observe(vaultId).distinctUntilChanged(),
             { a, b -> Pair(a, b) },
         )
-            .map { (tags, items) ->
-                vaultCryptoScope.withVaultCipher(vaultId) {
-                    tags.map { tag ->
-                        tagMapper
-                            .mapToDomain(entity = tag, vaultCipher = this)
-                            .copy(assignedItemsCount = items.count { it.tagIds.orEmpty().contains(tag.id) })
-                    }
-                }
-            }.catch {
+            .map { (tags, items) -> fetchTags(vaultId, tags, items) }
+            .catch {
                 // Temporarily emit empty list when tags are being reencrypted
                 emit(emptyList())
             }
@@ -64,17 +60,55 @@ internal class TagsRepositoryImpl(
     override suspend fun getTags(vaultId: String): List<Tag> {
         return withContext(dispatchers.io) {
             val items = itemsLocalSource.getItems()
+            val tagEntities = tagsLocalSource.getTags(vaultId)
+            fetchTags(vaultId, tagEntities, items)
+        }
+    }
 
-            tagsLocalSource.getTags(vaultId).let { tags ->
-                vaultCryptoScope.withVaultCipher(vaultId) {
-                    tags.map { tag ->
-                        tagMapper
-                            .mapToDomain(entity = tag, vaultCipher = this)
-                            .copy(assignedItemsCount = items.count { it.tagIds.orEmpty().contains(tag.id) })
-                    }
-                }
+    private suspend fun fetchTags(
+        vaultId: String,
+        tagEntities: List<TagEntity>,
+        items: List<ItemEntity>,
+    ): List<Tag> {
+        val tags = vaultCryptoScope.withVaultCipher(vaultId) {
+            tagEntities.map { tagEntity ->
+                tagMapper
+                    .mapToDomain(entity = tagEntity, vaultCipher = this)
+                    .copy(
+                        assignedItemsCount = items.count {
+                            it.tagIds.orEmpty().contains(tagEntity.id)
+                        },
+                    )
             }
         }
+
+        val tagsWithoutColor = tags.filter { tag -> tag.hasMissingColor() }
+
+        if (tagsWithoutColor.isEmpty()) {
+            return tags
+        }
+
+        // temporary solution, assign colors to tags without color and update existing tags in db
+        val colors = getColorsSortedByUsage(tags)
+        var tagColorIterator = colors.iterator()
+        val tagsWithColor =
+            tagsWithoutColor.map { tag ->
+                val color = if (tagColorIterator.hasNext()) {
+                    tagColorIterator.next()
+                } else {
+                    tagColorIterator = colors.iterator()
+                    if (tagColorIterator.hasNext()) {
+                        tagColorIterator.next()
+                    } else {
+                        TagColor.default
+                    }
+                }
+                tag.copy(color = color)
+            }
+        saveTags(*tagsWithColor.toTypedArray())
+
+        val newTagEntities = tagsLocalSource.getTags(vaultId)
+        return fetchTags(vaultId, newTagEntities, items)
     }
 
     override suspend fun saveTags(vararg tags: Tag) {
@@ -136,7 +170,7 @@ internal class TagsRepositoryImpl(
             tagsLocalSource.deleteTags(tags.map { it.id })
 
             tags.forEach { tag ->
-                if (selectedTag.value.values.map { it?.id }.contains(tag.id)) {
+                if (selectedTag.value.values.contains(tag.id)) {
                     clearSelectedTag(tag.vaultId)
                 }
             }
@@ -206,8 +240,9 @@ internal class TagsRepositoryImpl(
         return combine(
             selectedTag.map { it[vaultId] },
             itemsLocalSource.observe(vaultId).distinctUntilChanged(),
-            { a, b -> Pair(a, b) },
-        ).map { (tag, items) ->
+            observeTags(vaultId).distinctUntilChanged()
+        ) { tagId, items, tags ->
+            val tag = tags.firstOrNull { tag -> tag.id == tagId }
             tag?.copy(
                 assignedItemsCount = items.count { it.tagIds.orEmpty().contains(tag.id) },
             )
@@ -216,10 +251,10 @@ internal class TagsRepositoryImpl(
 
     override suspend fun toggleSelectedTag(vaultId: String, tag: Tag) {
         selectedTag.update {
-            if (it[vaultId] == tag) {
+            if (it[vaultId] == tag.id) {
                 emptyMap()
             } else {
-                it.plus(vaultId to tag)
+                it.plus(vaultId to tag.id)
             }
         }
     }
@@ -248,5 +283,37 @@ internal class TagsRepositoryImpl(
         if (mostRecentModificationTime > vault.updatedAt) {
             vaultsLocalSource.updateLastModificationTime(vault.id, mostRecentModificationTime)
         }
+    }
+
+    override suspend fun observeSuggestedTagColor(vaultId: String): Flow<TagColor> {
+        return observeTags(vaultId)
+            .map { tags ->
+                getColorsSortedByUsage(tags).firstOrNull() ?: TagColor.default
+            }
+    }
+
+    override suspend fun permanentlyDeleteAll() {
+        withContext(dispatchers.io) {
+            tagsLocalSource.deleteAll()
+        }
+    }
+
+    private fun Tag.hasMissingColor(): Boolean {
+        val currentColor = color ?: return true
+
+        if (currentColor.value.isBlank()) {
+            return true
+        }
+
+        if (currentColor.value.startsWith("#")) {
+            return true
+        }
+
+        return false
+    }
+
+    private fun getColorsSortedByUsage(tags: List<Tag>): List<TagColor> {
+        return TagColor.values()
+            .sortedBy { tagColor -> tags.count { tag -> tag.color == tagColor } }
     }
 }

@@ -34,6 +34,8 @@ data class Item(
             vaultId: String = "",
             securityType: SecurityType = SecurityType.Tier3,
             tagIds: List<String> = emptyList(),
+            createdAt: Long? = null,
+            updatedAt: Long? = null,
         ): Item {
             return Empty.copy(
                 contentType = contentType,
@@ -41,6 +43,8 @@ data class Item(
                 vaultId = vaultId,
                 securityType = securityType,
                 tagIds = tagIds,
+                createdAt = createdAt ?: 0,
+                updatedAt = updatedAt ?: 0,
             )
         }
     }

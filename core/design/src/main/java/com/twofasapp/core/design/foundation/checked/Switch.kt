@@ -13,13 +13,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchColors
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.design.MdtIcons
+import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.preview.PreviewAllThemesInRow
 
 @Composable
@@ -48,6 +49,18 @@ fun Switch(
         colors = colors,
         interactionSource = interactionSource,
     )
+}
+
+object SwitchDefaults {
+
+    @Composable
+    fun colors(
+        checkedIconColor: Color = MdtTheme.color.onTertiaryContainer,
+    ): SwitchColors {
+        return androidx.compose.material3.SwitchDefaults.colors(
+            checkedIconColor = checkedIconColor,
+        )
+    }
 }
 
 @Preview

@@ -14,7 +14,6 @@ import com.twofasapp.feature.settings.ui.autofill.AutofillViewModel
 import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManager
 import com.twofasapp.feature.settings.ui.autofill.browsers.BrowserAutofillManagerImpl
 import com.twofasapp.feature.settings.ui.backupdecryption.BackupDecryptionViewModel
-import com.twofasapp.feature.settings.ui.changepassword.current.EnterCurrentPasswordViewModel
 import com.twofasapp.feature.settings.ui.changepassword.processing.ProcessingNewPasswordViewModel
 import com.twofasapp.feature.settings.ui.changepassword.set.SetNewPasswordViewModel
 import com.twofasapp.feature.settings.ui.cloudsync.CloudSyncViewModel
@@ -50,7 +49,6 @@ class SettingsModule : KoinModule {
         viewModelOf(::SecurityViewModel)
         viewModelOf(::TrashViewModel)
         viewModelOf(::BackupDecryptionViewModel)
-        viewModelOf(::EnterCurrentPasswordViewModel)
         viewModelOf(::SetNewPasswordViewModel)
         viewModelOf(::ProcessingNewPasswordViewModel)
         viewModelOf(::KnownBrowsersViewModel)

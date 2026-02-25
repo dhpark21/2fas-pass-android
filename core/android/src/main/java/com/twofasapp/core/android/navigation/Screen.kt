@@ -90,9 +90,6 @@ sealed class Screen(
     data object Security : Screen()
 
     @Serializable
-    data object ChangePassword : Screen()
-
-    @Serializable
     data object SetNewPassword : Screen()
 
     @Serializable

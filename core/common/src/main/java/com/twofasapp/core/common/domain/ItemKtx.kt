@@ -9,6 +9,7 @@ fun Item.normalizeBeforeSaving(): Item {
         is ItemContent.Login -> content.filterAndNormalizeUris()
         is ItemContent.SecureNote -> content
         is ItemContent.PaymentCard -> content
+        is ItemContent.Wifi -> content
     }
 
     return copy(content = normalizedContent)

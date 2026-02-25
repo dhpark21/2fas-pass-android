@@ -9,7 +9,9 @@
 package com.twofasapp.data.main.mapper
 
 import com.twofasapp.core.common.domain.DeletedItem
-import com.twofasapp.core.common.domain.SecretField
+import com.twofasapp.core.common.domain.SecretField.ClearText
+import com.twofasapp.core.common.domain.SecretField.Encrypted
+import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.clearText
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.encryptedText
@@ -20,7 +22,11 @@ import com.twofasapp.core.common.domain.items.ItemEncrypted
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.removeWhitespace
 import com.twofasapp.data.main.local.model.ItemEntity
-import com.twofasapp.data.main.remote.model.ItemContentJson
+import com.twofasapp.data.main.remote.model.ItemContentJson.BrowserWifi
+import com.twofasapp.data.main.remote.model.ItemContentJson.Login
+import com.twofasapp.data.main.remote.model.ItemContentJson.PaymentCard
+import com.twofasapp.data.main.remote.model.ItemContentJson.SecureNote
+import com.twofasapp.data.main.remote.model.ItemContentJson.Wifi
 import com.twofasapp.data.main.remote.model.ItemJson
 import com.twofasapp.data.main.remote.model.vaultbackup.LoginJson
 import kotlinx.serialization.json.Json
@@ -69,8 +75,14 @@ internal class ItemMapper(
         }
     }
 
-    fun mapToDomain(json: ItemJson, vaultId: String, tagIds: List<String>?, hasSecretFieldsEncrypted: Boolean): Item {
+    fun mapToDomain(
+        json: ItemJson,
+        vaultId: String,
+        tagIds: List<String>?,
+        hasSecretFieldsEncrypted: Boolean,
+    ): Item {
         return with(json) {
+            val itemContentType = ItemContentType.fromKey(contentType)
             Item(
                 id = id,
                 vaultId = vaultId,
@@ -79,14 +91,38 @@ internal class ItemMapper(
                 deletedAt = null,
                 deleted = false,
                 securityType = securityTypeMapper.mapToDomainFromEntity(securityType),
-                contentType = ItemContentType.fromKey(contentType),
-                content = mapItemContentToDomain(contentType = contentType, contentJson = content, hasSecretFieldsEncrypted = hasSecretFieldsEncrypted),
+                contentType = itemContentType,
+                content = mapItemContentToDomain(
+                    contentType = itemContentType,
+                    contentJson = content,
+                    hasSecretFieldsEncrypted = hasSecretFieldsEncrypted,
+                ),
                 tagIds = tagIds.orEmpty(),
             )
         }
     }
 
     fun mapToJson(item: Item): ItemJson {
+        return mapToJson(
+            item = item,
+            content = mapItemContentToJson(
+                content = item.content,
+                wifiContentMapper = { mapToWifiJsonElement(it) }
+            )
+        )
+    }
+
+    fun mapToBrowserJson(item: Item): ItemJson {
+        return mapToJson(
+            item = item,
+            content = mapItemContentToJson(
+                content = item.content,
+                wifiContentMapper = { mapToBrowserWifiJsonElement(it) }
+            )
+        )
+    }
+
+    private fun mapToJson(item: Item, content: JsonElement): ItemJson {
         return ItemJson(
             id = item.id,
             vaultId = item.vaultId,
@@ -95,7 +131,7 @@ internal class ItemMapper(
             securityType = item.securityType.let(itemSecurityTypeMapper::mapToJson),
             contentType = item.contentType.key,
             contentVersion = item.contentType.version,
-            content = mapItemContentToJson(item.content),
+            content = content,
             tags = item.tagIds.ifEmpty { null },
         )
     }
@@ -112,22 +148,22 @@ internal class ItemMapper(
     }
 
     private fun mapItemContentToDomain(
-        contentType: String,
+        contentType: ItemContentType,
         contentJson: JsonElement,
         hasSecretFieldsEncrypted: Boolean,
     ): ItemContent {
         return when (contentType) {
-            ItemContentType.Login.key -> {
-                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.Login.serializer(), contentJson)
+            ItemContentType.Login -> {
+                val content = jsonSerializer.decodeFromJsonElement(Login.serializer(), contentJson)
 
                 ItemContent.Login(
                     name = content.name.orEmpty(),
                     username = content.username,
                     password = content.password?.let {
                         if (hasSecretFieldsEncrypted) {
-                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it)
+                            ClearText(it)
                         }
                     },
                     uris = content.uris.map { uriMapper.mapToDomain(it) },
@@ -140,47 +176,49 @@ internal class ItemMapper(
                 )
             }
 
-            ItemContentType.SecureNote.key -> {
-                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.SecureNote.serializer(), contentJson)
+            ItemContentType.SecureNote -> {
+                val content =
+                    jsonSerializer.decodeFromJsonElement(SecureNote.serializer(), contentJson)
 
                 ItemContent.SecureNote(
                     name = content.name.orEmpty(),
                     text = content.text?.let {
                         if (hasSecretFieldsEncrypted) {
-                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it)
+                            ClearText(it)
                         }
                     },
                     additionalInfo = content.additionalInfo,
                 )
             }
 
-            ItemContentType.PaymentCard.key -> {
-                val content = jsonSerializer.decodeFromJsonElement(ItemContentJson.PaymentCard.serializer(), contentJson)
+            ItemContentType.PaymentCard -> {
+                val content =
+                    jsonSerializer.decodeFromJsonElement(PaymentCard.serializer(), contentJson)
 
                 ItemContent.PaymentCard(
                     name = content.name.orEmpty(),
                     cardHolder = content.cardHolder,
                     cardNumber = content.cardNumber?.let {
                         if (hasSecretFieldsEncrypted) {
-                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it.removeWhitespace())
+                            ClearText(it.removeWhitespace())
                         }
                     },
                     expirationDate = content.expirationDate?.let {
                         if (hasSecretFieldsEncrypted) {
-                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it.removeWhitespace())
+                            ClearText(it.removeWhitespace())
                         }
                     },
                     securityCode = content.securityCode?.let {
                         if (hasSecretFieldsEncrypted) {
-                            SecretField.Encrypted(EncryptedBytes(it.decodeBase64()))
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
                         } else {
-                            SecretField.ClearText(it.removeWhitespace())
+                            ClearText(it.removeWhitespace())
                         }
                     },
                     cardNumberMask = content.cardNumberMask?.removeWhitespace(),
@@ -189,24 +227,47 @@ internal class ItemMapper(
                 )
             }
 
-            else -> {
-                ItemContent.Unknown(rawJson = jsonSerializer.encodeToString(contentJson))
+            is ItemContentType.Unknown -> ItemContent.Unknown(
+                rawJson = jsonSerializer.encodeToString(
+                    contentJson,
+                ),
+            )
+
+            ItemContentType.Wifi -> {
+                val content =
+                    jsonSerializer.decodeFromJsonElement(Wifi.serializer(), contentJson)
+
+                ItemContent.Wifi(
+                    name = content.name.orEmpty(),
+                    password = content.password?.let {
+                        if (hasSecretFieldsEncrypted) {
+                            Encrypted(EncryptedBytes(it.decodeBase64()))
+                        } else {
+                            ClearText(it)
+                        }
+                    },
+                    ssid = content.ssid,
+                    securityType = WifiSecurityType.fromValue(content.securityType),
+                    hidden = content.hidden ?: false,
+                    notes = content.notes,
+                )
             }
         }
     }
 
     private fun mapItemContentToJson(
         content: ItemContent,
+        wifiContentMapper: (ItemContent.Wifi) -> JsonElement
     ): JsonElement {
         return when (content) {
             is ItemContent.Login -> {
                 jsonSerializer.encodeToJsonElement(
-                    ItemContentJson.Login(
+                    Login(
                         name = content.name,
                         username = content.username,
                         password = when (content.password) {
-                            is SecretField.ClearText -> content.password.clearText
-                            is SecretField.Encrypted -> content.password.encryptedText
+                            is ClearText -> content.password.clearText
+                            is Encrypted -> content.password.encryptedText
                             null -> null
                         },
                         uris = content.uris.map { uriMapper.mapToItemContentJson(it) },
@@ -222,11 +283,11 @@ internal class ItemMapper(
 
             is ItemContent.SecureNote -> {
                 jsonSerializer.encodeToJsonElement(
-                    ItemContentJson.SecureNote(
+                    SecureNote(
                         name = content.name,
                         text = when (content.text) {
-                            is SecretField.ClearText -> content.text.clearText
-                            is SecretField.Encrypted -> content.text.encryptedText
+                            is ClearText -> content.text.clearText
+                            is Encrypted -> content.text.encryptedText
                             null -> null
                         },
                         additionalInfo = content.additionalInfo,
@@ -236,22 +297,22 @@ internal class ItemMapper(
 
             is ItemContent.PaymentCard -> {
                 jsonSerializer.encodeToJsonElement(
-                    ItemContentJson.PaymentCard(
+                    PaymentCard(
                         name = content.name,
                         cardHolder = content.cardHolder,
                         cardNumber = when (content.cardNumber) {
-                            is SecretField.ClearText -> content.cardNumber.clearText.removeWhitespace()
-                            is SecretField.Encrypted -> content.cardNumber.encryptedText
+                            is ClearText -> content.cardNumber.clearText.removeWhitespace()
+                            is Encrypted -> content.cardNumber.encryptedText
                             null -> null
                         },
                         expirationDate = when (content.expirationDate) {
-                            is SecretField.ClearText -> content.expirationDate.clearText.removeWhitespace()
-                            is SecretField.Encrypted -> content.expirationDate.encryptedText
+                            is ClearText -> content.expirationDate.clearText.removeWhitespace()
+                            is Encrypted -> content.expirationDate.encryptedText
                             null -> null
                         },
                         securityCode = when (content.securityCode) {
-                            is SecretField.ClearText -> content.securityCode.clearText.removeWhitespace()
-                            is SecretField.Encrypted -> content.securityCode.encryptedText
+                            is ClearText -> content.securityCode.clearText.removeWhitespace()
+                            is Encrypted -> content.securityCode.encryptedText
                             null -> null
                         },
                         cardNumberMask = content.cardNumberMask?.removeWhitespace(),
@@ -264,7 +325,43 @@ internal class ItemMapper(
             is ItemContent.Unknown -> {
                 jsonSerializer.parseToJsonElement(content.rawJson)
             }
+
+            is ItemContent.Wifi -> wifiContentMapper(content)
         }
+    }
+
+    private fun mapToWifiJsonElement(content: ItemContent.Wifi): JsonElement {
+        return jsonSerializer.encodeToJsonElement(
+            Wifi(
+                name = content.name,
+                ssid = content.ssid,
+                password = when (content.password) {
+                    is ClearText -> content.password.clearText
+                    is Encrypted -> content.password.encryptedText
+                    null -> null
+                },
+                securityType = content.securityType.value,
+                hidden = content.hidden,
+                notes = content.notes,
+            ),
+        )
+    }
+
+    private fun mapToBrowserWifiJsonElement(content: ItemContent.Wifi): JsonElement {
+        return jsonSerializer.encodeToJsonElement(
+            BrowserWifi(
+                name = content.name,
+                ssid = content.ssid,
+                password = when (content.password) {
+                    is ClearText -> content.password.clearText
+                    is Encrypted -> content.password.encryptedText
+                    null -> null
+                },
+                securityType = content.securityType.value,
+                hidden = content.hidden,
+                notes = content.notes,
+            ),
+        )
     }
 
     fun mapToJsonV1(domain: Item, deviceId: String? = null): LoginJson {
@@ -277,7 +374,7 @@ internal class ItemMapper(
             updatedAt = domain.updatedAt,
             name = content.name,
             username = content.username,
-            password = content.password?.let { (it as SecretField.ClearText).value },
+            password = content.password?.let { (it as ClearText).value },
             securityType = securityTypeMapper.mapToJson(domain.securityType),
             uris = content.uris.map { uriMapper.mapToJson(it) },
             iconType = iconTypeMapper.mapToJson(content.iconType),
@@ -302,7 +399,7 @@ internal class ItemMapper(
             content = ItemContent.Login(
                 name = json.name,
                 username = json.username,
-                password = json.password?.let { SecretField.ClearText(it) },
+                password = json.password?.let { ClearText(it) },
                 uris = json.uris.map { uriMapper.mapToDomain(it) },
                 iconType = iconTypeMapper.mapToDomainFromJson(json.iconType),
                 iconUriIndex = json.iconUriIndex,

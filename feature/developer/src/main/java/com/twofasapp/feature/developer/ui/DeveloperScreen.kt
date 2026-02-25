@@ -56,11 +56,13 @@ internal fun DeveloperScreen(
             }
         },
         onSetSubscriptionOverride = { viewModel.setSubscriptionOverride(it) },
-        onDeleteAll = { viewModel.deleteAll() },
+        onDeleteAllItems = { viewModel.deleteAllItems() },
+        onDeleteAllTags = { viewModel.deleteAllTags() },
         onDeleteAllBrowsers = { viewModel.deleteAllBrowsers() },
         onInsertRandomTag = { viewModel.insertRandomTag() },
         onInsertRandomSecureNote = { viewModel.insertRandomSecureNote() },
         onInsertRandomCreditCard = { viewModel.insertRandomCreditCard() },
+        onInsertRandomWifi = { viewModel.insertRandomWifi() },
     )
 }
 
@@ -71,11 +73,13 @@ private fun Content(
     onGenerateMultipleItems: (Int) -> Unit = {},
     onGenerateTopDomainItems: () -> Unit = {},
     onSetSubscriptionOverride: (String?) -> Unit = {},
-    onDeleteAll: () -> Unit = {},
+    onDeleteAllItems: () -> Unit = {},
+    onDeleteAllTags: () -> Unit = {},
     onDeleteAllBrowsers: () -> Unit = {},
     onInsertRandomTag: () -> Unit = {},
     onInsertRandomSecureNote: () -> Unit = {},
     onInsertRandomCreditCard: () -> Unit = {},
+    onInsertRandomWifi: () -> Unit = {},
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Items", "Subscription", "Other")
@@ -115,11 +119,13 @@ private fun Content(
                     onGenerateItems = onGenerateItems,
                     onGenerateMultipleItems = onGenerateMultipleItems,
                     onGenerateTopDomainItems = onGenerateTopDomainItems,
-                    onDeleteAll = onDeleteAll,
+                    onDeleteAllTags = onDeleteAllTags,
+                    onDeleteAllItems = onDeleteAllItems,
                     onDeleteAllBrowsers = onDeleteAllBrowsers,
                     onInsertRandomTag = onInsertRandomTag,
                     onInsertRandomSecureNote = onInsertRandomSecureNote,
                     onInsertRandomCreditCard = onInsertRandomCreditCard,
+                    onInsertRandomWifi = onInsertRandomWifi,
                 )
 
                 1 -> SubscriptionSection(

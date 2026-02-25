@@ -19,27 +19,37 @@ import com.twofasapp.core.locale.R
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.CsvParser
 import com.twofasapp.feature.externalimport.import.ImportContent
-import com.twofasapp.feature.externalimport.import.ImportSpec
 
 internal class KeepassXcImportSpec(
-    private val vaultsRepository: VaultsRepository,
+    vaultsRepository: VaultsRepository,
     private val context: Context,
-) : ImportSpec() {
+) : AbstractKeepassImportSpec(vaultsRepository, context) {
+
+    companion object {
+        private const val CSV_ROW_TITLE = "Title"
+        private const val CSV_ROW_USERNAME = "Username"
+        private const val CSV_ROW_PASSWORD = "Password"
+        private const val CSV_ROW_URL = "Url"
+        private const val CSV_ROW_NOTES = "Notes"
+        private const val CSV_ROW_LAST_MODIFIED = "Last Modified"
+        private const val CSV_ROW_CREATED = "Created"
+    }
+
     override val type = ImportType.KeePassXC
-    override val name = "KeePassXC"
+    override val name = ImportType.KeePassXC.displayName
     override val image = com.twofasapp.core.design.R.drawable.external_logo_keepassxc
     override val instructions = context.getString(R.string.transfer_instructions_keepassxc)
     override val additionalInfo = null
     override val cta: List<Cta> = listOf(
         Cta.Primary(
-            text = context.getString(R.string.transfer_instructions_cta_csv),
+            text = context.getString(R.string.transfer_instructions_cta_keepassxc),
             action = CtaAction.ChooseFile,
         ),
     )
 
-    override suspend fun readContent(uri: Uri): ImportContent {
-        val vaultId = vaultsRepository.getVault().id
+    override val xmlTagSeparator = ","
 
+    override fun parseCsv(uri: Uri, vaultId: String): ImportContent {
         val items = buildList {
             CsvParser.parse(
                 text = context.readTextFile(uri),
@@ -49,12 +59,14 @@ internal class KeepassXcImportSpec(
                         vaultId = vaultId,
                         contentType = ItemContentType.Login,
                         content = ItemContent.Login.create(
-                            name = row.get("Title"),
-                            username = row.get("Username"),
-                            password = row.get("Password"),
-                            url = row.get("Url"),
-                            notes = row.get("Notes"),
+                            name = row.get(CSV_ROW_TITLE),
+                            username = row.get(CSV_ROW_USERNAME),
+                            password = row.get(CSV_ROW_PASSWORD),
+                            url = row.get(CSV_ROW_URL),
+                            notes = row.get(CSV_ROW_NOTES),
                         ),
+                        createdAt = parseIsoDate(row.get(CSV_ROW_CREATED) ?: ""),
+                        updatedAt = parseIsoDate(row.get(CSV_ROW_LAST_MODIFIED) ?: ""),
                     ),
                 )
             }
@@ -65,5 +77,9 @@ internal class KeepassXcImportSpec(
             tags = emptyList(),
             unknownItems = 0,
         )
+    }
+
+    override fun parseXmlDate(date: String): Long? {
+        return parseNetDate(date)
     }
 }
