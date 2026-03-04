@@ -251,6 +251,8 @@ inline fun <reified T> Bundle?.getSafelyParcelable(key: String): T? {
             }
         }
     } else {
+        // Set classLoader for Android 12+ to fix cross-process Parcelable unmarshalling
+        this?.classLoader = T::class.java.classLoader
         @Suppress("DEPRECATION")
         this?.getParcelable(key)
     }
