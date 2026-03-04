@@ -14,4 +14,5 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 
 class TestDispatchers : Dispatchers {
     override val io: CoroutineDispatcher = UnconfinedTestDispatcher()
+    override val main: CoroutineDispatcher = UnconfinedTestDispatcher()
 }
