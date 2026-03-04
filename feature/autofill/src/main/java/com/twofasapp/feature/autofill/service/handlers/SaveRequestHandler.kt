@@ -37,8 +37,9 @@ internal class SaveRequestHandler(
 
         if (saveRequestSpec == null) {
             saveCallback.onFailure("Save request has no payload")
+            return
         }
-        if (saveRequestSpec!!.inputs.isEmpty()) {
+        if (saveRequestSpec.inputs.isEmpty()) {
             saveCallback.onFailure("No inputs found")
             return
         }

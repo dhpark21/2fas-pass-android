@@ -73,7 +73,9 @@ internal class ItemDetailsModalViewModel(
                     securityType = uiState.value.item.securityType,
                     vaultCipher = this,
                 )?.let { decrypted ->
-                    onDecrypted(decrypted)
+                    launchScoped(dispatchers.main) {
+                        onDecrypted(decrypted)
+                    }
                 }
             }
         }
