@@ -28,6 +28,7 @@ import com.twofasapp.feature.developer.navigation.DeveloperRoute
 import com.twofasapp.feature.externalimport.navigation.ExternalImportRoute
 import com.twofasapp.feature.home.navigation.EditItemRoute
 import com.twofasapp.feature.home.navigation.HomeRoute
+import com.twofasapp.feature.home.navigation.ItemDetailsRoute
 import com.twofasapp.feature.quicksetup.ui.QuickSetupRoute
 import com.twofasapp.feature.settings.navigation.AboutRoute
 import com.twofasapp.feature.settings.navigation.AutofillRoute
@@ -83,6 +84,9 @@ internal fun MainNavHost(
                         ),
                     )
                 },
+                openItemDetails = { itemId, vaultId ->
+                    navController.navigate(Screen.ItemDetails(itemId = itemId, vaultId = vaultId))
+                },
                 openManageTags = {
                     navController.navigateTopLevel(Screen.ManageTags)
                 },
@@ -131,6 +135,21 @@ internal fun MainNavHost(
 
         composable<Screen.EditItem> {
             EditItemRoute(
+                close = { navController.popBackStack() },
+            )
+        }
+
+        composable<Screen.ItemDetails> {
+            ItemDetailsRoute(
+                openEditItem = { itemId, vaultId, itemContentType ->
+                    navController.navigate(
+                        Screen.EditItem(
+                            itemId = itemId,
+                            vaultId = vaultId,
+                            itemContentTypeKey = itemContentType.key,
+                        ),
+                    )
+                },
                 close = { navController.popBackStack() },
             )
         }

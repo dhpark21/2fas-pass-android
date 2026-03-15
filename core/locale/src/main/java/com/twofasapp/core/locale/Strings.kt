@@ -430,6 +430,7 @@ class Strings(private val c: Context) {
     val passwordGeneratorCopyCta = c.getString(R.string.password_generator_copy_cta)
 
     // Item (Generic)
+    val itemDetailsTitle = c.getString(R.string.item_details_title)
     val itemAddTitle = c.getString(R.string.item_add_title)
     val itemEditTitle = c.getString(R.string.item_edit_title)
     val noteItemLengthError = c.getString(R.string.note_item_length_error)

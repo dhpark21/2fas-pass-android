@@ -8,71 +8,42 @@
 
 package com.twofasapp.feature.home.ui.itemdetails
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
-import com.twofasapp.core.common.domain.Tag
-import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.items.ItemContent
-import com.twofasapp.core.design.MdtTheme
-import com.twofasapp.core.design.foundation.button.Button
-import com.twofasapp.core.design.foundation.modal.Modal
-import com.twofasapp.core.design.theme.ButtonHeight
+import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.design.MdtIcons
+import com.twofasapp.core.design.foundation.button.IconButton
+import com.twofasapp.core.design.foundation.layout.ActionsRow
+import com.twofasapp.core.design.foundation.other.Space
+import com.twofasapp.core.design.foundation.topbar.TopAppBar
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.home.ui.itemdetails.content.LoginContent
 import com.twofasapp.feature.home.ui.itemdetails.content.PaymentCardContent
 import com.twofasapp.feature.home.ui.itemdetails.content.SecureNoteContent
 import com.twofasapp.feature.home.ui.itemdetails.content.WifiContent
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-internal fun ItemDetailsModal(
-    item: Item,
-    tags: ImmutableList<Tag>,
-    onDismissRequest: () -> Unit,
-    onEditClick: () -> Unit = {},
-) {
-    Modal(
-        onDismissRequest = onDismissRequest,
-    ) {
-        ProvidesViewModelStoreOwner {
-            ModalContent(
-                item = item,
-                tags = tags,
-                onEditClick = onEditClick,
-            )
-        }
-    }
-}
-
-@Composable
-private fun ModalContent(
-    viewModel: ItemDetailsModalViewModel = koinViewModel(),
-    item: Item,
-    tags: ImmutableList<Tag>,
-    onEditClick: () -> Unit,
+internal fun ItemDetailsScreen(
+    viewModel: ItemDetailsViewModel = koinViewModel(),
+    openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
+    close: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.initialize(item, tags)
-    }
 
     LifecycleResumeEffect(Unit) {
         onPauseOrDispose { viewModel.clearDecryptedFields() }
@@ -80,30 +51,59 @@ private fun ModalContent(
 
     Content(
         uiState = uiState,
-        onEditClick = onEditClick,
+        onToggleSecretField = viewModel::toggleSecretField,
+        onCopySecretField = viewModel::copySecretFieldToClipboard,
+        onEditClick = {
+            openEditItem(uiState.item.id, uiState.item.vaultId, uiState.item.contentType)
+        },
+        onBackClick = close,
     )
 }
 
 @Composable
 private fun Content(
-    viewModel: ItemDetailsModalViewModel = koinViewModel(),
-    uiState: ItemDetailsModalUiState,
-    onEditClick: () -> Unit,
+    uiState: ItemDetailsUiState,
+    onToggleSecretField: (SecretFieldType, SecretField?) -> Unit = { _, _ -> },
+    onCopySecretField: (SecretField?, (String) -> Unit) -> Unit = { _, _ -> },
+    onEditClick: () -> Unit = {},
+    onBackClick: () -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MdtTheme.color.surfaceContainerLow)
-            .padding(16.dp),
-    ) {
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = MdtLocale.strings.itemDetailsTitle,
+                onBackClick = onBackClick,
+                actions = {
+                    ActionsRow(
+                        useHorizontalPadding = true,
+                        spacing = 8.dp,
+                    ) {
+                        IconButton(
+                            icon = MdtIcons.Share,
+                            onClick = { },
+                        )
+
+                        IconButton(
+                            icon = MdtIcons.Edit,
+                            onClick = { onEditClick() },
+                        )
+                    }
+                },
+            )
+        },
+    ) { padding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = ButtonHeight + 16.dp)
+                .fillMaxSize()
+                .padding(padding)
+                .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState),
         ) {
+            Space(16.dp)
+
             when (val content = uiState.item.content) {
                 is ItemContent.Unknown -> Unit
 
@@ -112,8 +112,8 @@ private fun Content(
                     tags = uiState.tags,
                     content = content,
                     decryptedFields = uiState.decryptedFields,
-                    onToggleSecretField = viewModel::toggleSecretField,
-                    onCopySecretField = viewModel::copySecretFieldToClipboard,
+                    onToggleSecretField = onToggleSecretField,
+                    onCopySecretField = onCopySecretField,
                 )
 
                 is ItemContent.SecureNote -> SecureNoteContent(
@@ -121,8 +121,8 @@ private fun Content(
                     tags = uiState.tags,
                     content = content,
                     decryptedFields = uiState.decryptedFields,
-                    onToggleSecretField = viewModel::toggleSecretField,
-                    onCopySecretField = viewModel::copySecretFieldToClipboard,
+                    onToggleSecretField = onToggleSecretField,
+                    onCopySecretField = onCopySecretField,
                 )
 
                 is ItemContent.PaymentCard -> PaymentCardContent(
@@ -130,8 +130,8 @@ private fun Content(
                     tags = uiState.tags,
                     content = content,
                     decryptedFields = uiState.decryptedFields,
-                    onToggleSecretField = viewModel::toggleSecretField,
-                    onCopySecretField = viewModel::copySecretFieldToClipboard,
+                    onToggleSecretField = onToggleSecretField,
+                    onCopySecretField = onCopySecretField,
                 )
 
                 is ItemContent.Wifi -> WifiContent(
@@ -139,19 +139,13 @@ private fun Content(
                     tags = uiState.tags,
                     content = content,
                     decryptedFields = uiState.decryptedFields,
-                    onToggleSecretField = viewModel::toggleSecretField,
-                    onCopySecretField = viewModel::copySecretFieldToClipboard,
+                    onToggleSecretField = onToggleSecretField,
+                    onCopySecretField = onCopySecretField,
                     onScrollToBottom = { scope.launch { scrollState.animateScrollTo(scrollState.maxValue) } },
                 )
             }
-        }
 
-        Button(
-            text = MdtLocale.strings.commonEdit,
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            onClick = { onEditClick() },
-        )
+            Space(16.dp)
+        }
     }
 }

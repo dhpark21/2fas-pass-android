@@ -331,7 +331,7 @@ internal class RequestWebSocketImpl(
                 RequestWebSocketResult.Failure(
                     errorCode = (error as? WebSocketException)?.errorCode ?: 1000,
                     errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message
-                    ?: "Unknown error.",
+                        ?: "Unknown error.",
                 )
             } else {
                 RequestWebSocketResult.Success
@@ -507,9 +507,9 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
                             name = (
-                                    data.content.url.orEmpty().toUri().host
-                                        ?: data.content.url
-                                    ).orEmpty().removePrefix("www."),
+                                data.content.url.orEmpty().toUri().host
+                                    ?: data.content.url
+                                ).orEmpty().removePrefix("www."),
                             uris = listOf(ItemUri(text = data.content.url.orEmpty())),
                             username = when (data.content.username?.action) {
                                 "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull()
@@ -560,7 +560,7 @@ internal class RequestWebSocketImpl(
                                     SecretField.ClearText(text.decodeString())
                                 }
                             },
-                            additionalInfo = data.content.additionalInfo
+                            additionalInfo = data.content.additionalInfo,
                         )
                     }
 
@@ -727,7 +727,7 @@ internal class RequestWebSocketImpl(
                                 }
                             } ?: existingContent.text,
                             additionalInfo = data.content.additionalInfo
-                                ?: existingContent.additionalInfo
+                                ?: existingContent.additionalInfo,
                         )
                     }
 
@@ -906,7 +906,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val loginData = createLoginAcceptData(
                                 item = response.item,
                                 deviceId = deviceId,
@@ -923,7 +923,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val loginData = createLoginAcceptData(
                                 item = response.item,
                                 deviceId = deviceId,
@@ -1016,7 +1016,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = true,
@@ -1039,7 +1039,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = response.sifFetched,

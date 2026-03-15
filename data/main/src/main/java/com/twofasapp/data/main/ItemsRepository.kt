@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ItemsRepository {
     fun observeItems(vaultId: String): Flow<List<ItemEncrypted>>
+    fun observeItem(vaultId: String, itemId: String): Flow<ItemEncrypted>
     suspend fun getItem(id: String): ItemEncrypted
     suspend fun getItems(): List<ItemEncrypted>
     suspend fun getItemsDecrypted(): List<Item>

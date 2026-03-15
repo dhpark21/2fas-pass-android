@@ -107,8 +107,8 @@ internal class ItemMapper(
             item = item,
             content = mapItemContentToJson(
                 content = item.content,
-                wifiContentMapper = { mapToWifiJsonElement(it) }
-            )
+                wifiContentMapper = { mapToWifiJsonElement(it) },
+            ),
         )
     }
 
@@ -117,8 +117,8 @@ internal class ItemMapper(
             item = item,
             content = mapItemContentToJson(
                 content = item.content,
-                wifiContentMapper = { mapToBrowserWifiJsonElement(it) }
-            )
+                wifiContentMapper = { mapToBrowserWifiJsonElement(it) },
+            ),
         )
     }
 
@@ -257,7 +257,7 @@ internal class ItemMapper(
 
     private fun mapItemContentToJson(
         content: ItemContent,
-        wifiContentMapper: (ItemContent.Wifi) -> JsonElement
+        wifiContentMapper: (ItemContent.Wifi) -> JsonElement,
     ): JsonElement {
         return when (content) {
             is ItemContent.Login -> {

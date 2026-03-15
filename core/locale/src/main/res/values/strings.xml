@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Tue, 24 Feb 2026 14:48:23 -0800
+ Exported at: Sun, 15 Mar 2026 00:49:48 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -1110,4 +1110,5 @@
     <string name="block_screen_recording_title">Screen Recording Blocked</string>
     <string name="block_screen_recording_description">Screen recording is not allowed while using the app. You can temporarily enable it in Settings → Security.</string>
     <string name="wifi_connect_label">Connect with the network</string>
+    <string name="item_details_title">Item Details</string>
 </resources>

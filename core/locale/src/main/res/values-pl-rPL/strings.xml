@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Tue, 24 Feb 2026 14:48:23 -0800
+ Exported at: Sun, 15 Mar 2026 00:49:48 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -370,7 +370,7 @@
     <string name="about_version_ios__0025_0040">Wersja: **%s**</string>
     <string name="autofill_no_vault_message">Przejdź do aplikacji, aby skonfigurować sejf.</string>
     <string name="common_close">Zamknij</string>
-    <string name="common_confirm">Przypisz</string>
+    <string name="common_confirm">Potwierdź</string>
     <string name="common_disabled">Wył.</string>
     <string name="common_enabled">Wł.</string>
     <string name="common_help">Pomoc</string>
@@ -1114,4 +1114,5 @@
     <string name="block_screen_recording_title">Nagrywanie ekranu zablokowane</string>
     <string name="block_screen_recording_description">Nagrywanie ekranu jest zablokowane podczas korzystania z aplikacji. Możesz tymczasowo je włączyć w Ustawienia → Bezpieczeństwo.</string>
     <string name="wifi_connect_label">Połącz z siecią</string>
+    <string name="item_details_title">Item Details</string>
 </resources>

@@ -25,6 +25,9 @@ interface ItemsDao {
     @Query("SELECT * FROM items WhERE deleted == 1")
     fun observeDeleted(): Flow<List<ItemEntity>>
 
+    @Query("SELECT * FROM items WHERE id == :id AND deleted == 0")
+    fun observeById(id: String): Flow<ItemEntity?>
+
     @Query("SELECT * FROM items WHERE id == :id")
     suspend fun get(id: String): ItemEntity
 

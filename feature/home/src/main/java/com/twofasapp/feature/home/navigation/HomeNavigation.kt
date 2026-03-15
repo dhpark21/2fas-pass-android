@@ -12,11 +12,13 @@ import androidx.compose.runtime.Composable
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.feature.home.ui.editItem.EditItemScreen
 import com.twofasapp.feature.home.ui.home.HomeScreen
+import com.twofasapp.feature.home.ui.itemdetails.ItemDetailsScreen
 
 @Composable
 fun HomeRoute(
     openAddItem: (vaultId: String, itemContentType: ItemContentType) -> Unit,
     openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
+    openItemDetails: (itemId: String, vaultId: String) -> Unit,
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
@@ -26,6 +28,7 @@ fun HomeRoute(
     HomeScreen(
         openAddItem = openAddItem,
         openEditItem = openEditItem,
+        openItemDetails = openItemDetails,
         openManageTags = openManageTags,
         openQuickSetup = openQuickSetup,
         openDeveloper = openDeveloper,
@@ -41,4 +44,12 @@ fun EditItemRoute(
     EditItemScreen(
         close = close,
     )
+}
+
+@Composable
+fun ItemDetailsRoute(
+    openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
+    close: () -> Unit,
+) {
+    ItemDetailsScreen(openEditItem = openEditItem, close = close)
 }

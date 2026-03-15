@@ -40,7 +40,7 @@ internal fun ItemDetailsEntry(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MdtTheme.color.surfaceContainerHigh)
+            .background(MdtTheme.color.surfaceContainer)
             .padding(start = 16.dp, end = 0.dp, top = 16.dp, bottom = 16.dp)
             .animateContentSize(),
     ) {

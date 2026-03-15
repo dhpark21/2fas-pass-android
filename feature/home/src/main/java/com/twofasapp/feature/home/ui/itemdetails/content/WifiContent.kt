@@ -174,7 +174,7 @@ internal fun ColumnScope.WifiContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(RoundedShape12)
-                .background(MdtTheme.color.surfaceContainerHigh)
+                .background(MdtTheme.color.surfaceContainer)
                 .clickable(onClick = {
                     content.password?.let { password ->
                         if (decryptedFields[SecretFieldType.WifiConnectPassword] == null) {
@@ -242,7 +242,7 @@ private fun QrCodeEntry(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedShape12)
-            .background(MdtTheme.color.surfaceContainerHigh)
+            .background(MdtTheme.color.surfaceContainer)
             .clickable(onClick = onClick)
             .padding(horizontal = OptionEntryPaddingHorizontal),
     ) {
