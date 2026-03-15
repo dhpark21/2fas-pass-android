@@ -22,6 +22,7 @@ import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.core.locale.Strings
+import com.twofasapp.core.network.ApiConfig
 import com.twofasapp.data.push.notifications.NotificationsHandler
 import com.twofasapp.feature.settings.ui.opensource.OpenSourceLibrariesProvider
 import com.twofasapp.pass.auth.AuthStatusTrackerImpl
@@ -32,6 +33,7 @@ import com.twofasapp.pass.build.LocalConfigImpl
 import com.twofasapp.pass.coroutines.AppDispatchers
 import com.twofasapp.pass.deeplinks.DeeplinksHandler
 import com.twofasapp.pass.lifecycle.AppLifecycleObserver
+import com.twofasapp.pass.network.ApiConfigImpl
 import com.twofasapp.pass.notifications.SystemNotificationsHandler
 import com.twofasapp.pass.notifications.browserrequest.BrowserRequestNotification
 import com.twofasapp.pass.oss.OpenSourceLibrariesProviderImpl
@@ -69,5 +71,6 @@ class AppModule : KoinModule {
         singleOf(::CrashlyticsProviderFirebase) { bind<CrashlyticsProvider>() }
         singleOf(::DeviceImpl) { bind<Device>() }
         singleOf(::BrowserRequestNotification)
+        singleOf(::ApiConfigImpl) { bind<ApiConfig>() }
     }
 }

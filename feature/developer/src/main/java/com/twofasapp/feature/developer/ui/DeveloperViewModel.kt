@@ -22,6 +22,7 @@ import com.twofasapp.core.common.domain.WifiSecurityType
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.core.network.ApiEnvironment
 import com.twofasapp.data.main.ConnectedBrowsersRepository
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.SecurityRepository
@@ -30,6 +31,7 @@ import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.purchases.PurchasesOverrideRepository
 import com.twofasapp.data.purchases.PurchasesRepository
+import com.twofasapp.data.settings.DeveloperRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -45,6 +47,7 @@ internal class DeveloperViewModel(
     private val vaultCryptoScope: VaultCryptoScope,
     private val securityRepository: SecurityRepository,
     private val tagsRepository: TagsRepository,
+    private val developerRepository: DeveloperRepository,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(
@@ -77,6 +80,12 @@ internal class DeveloperViewModel(
         launchScoped {
             purchasesOverrideRepository.observeOverrideSubscriptionPlan().collect { plan ->
                 uiState.update { it.copy(overrideSubscriptionPlan = plan) }
+            }
+        }
+
+        launchScoped {
+            developerRepository.observeApiEnvironment().collect { environment ->
+                uiState.update { it.copy(selectedEnvironment = environment) }
             }
         }
     }
@@ -369,6 +378,17 @@ internal class DeveloperViewModel(
     fun deleteAllTags() {
         launchScoped {
             tagsRepository.permanentlyDeleteAll()
+        }
+    }
+
+    fun selectEnvironment(environment: ApiEnvironment) {
+        uiState.update { it.copy(selectedEnvironment = environment) }
+    }
+
+    fun saveEnvironmentAndRestart(onRestart: () -> Unit) {
+        launchScoped {
+            developerRepository.setApiEnvironment(uiState.value.selectedEnvironment)
+            onRestart()
         }
     }
 

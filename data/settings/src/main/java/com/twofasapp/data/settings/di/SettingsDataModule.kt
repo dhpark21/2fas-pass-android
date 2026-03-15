@@ -9,6 +9,8 @@
 package com.twofasapp.data.settings.di
 
 import com.twofasapp.core.di.KoinModule
+import com.twofasapp.data.settings.DeveloperRepository
+import com.twofasapp.data.settings.DeveloperRepositoryImpl
 import com.twofasapp.data.settings.SessionRepository
 import com.twofasapp.data.settings.SessionRepositoryImpl
 import com.twofasapp.data.settings.SettingsRepository
@@ -22,5 +24,6 @@ class SettingsDataModule : KoinModule {
     override fun provide(): Module = module {
         singleOf(::SessionRepositoryImpl) { bind<SessionRepository>() }
         singleOf(::SettingsRepositoryImpl) { bind<SettingsRepository>() }
+        singleOf(::DeveloperRepositoryImpl) { bind<DeveloperRepository>() }
     }
 }

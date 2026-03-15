@@ -19,6 +19,7 @@ android {
 dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:di"))
+    implementation(project(":core:network"))
 
     implementation(libs.kotlinCoroutines)
     implementation(libs.dataStore)

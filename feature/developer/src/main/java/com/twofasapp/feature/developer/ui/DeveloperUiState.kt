@@ -9,6 +9,7 @@
 package com.twofasapp.feature.developer.ui
 
 import com.twofasapp.core.common.build.AppBuild
+import com.twofasapp.core.network.ApiEnvironment
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import com.twofasapp.data.security.crypto.Seed
 
@@ -18,4 +19,5 @@ internal data class DeveloperUiState(
     val loginItemsCount: Int = 0,
     val subscriptionPlan: SubscriptionPlan = SubscriptionPlan.Free(),
     val overrideSubscriptionPlan: SubscriptionPlan? = null,
+    val selectedEnvironment: ApiEnvironment = ApiEnvironment.Production,
 )
