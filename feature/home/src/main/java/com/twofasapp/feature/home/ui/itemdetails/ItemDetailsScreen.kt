@@ -16,7 +16,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -34,6 +37,7 @@ import com.twofasapp.feature.home.ui.itemdetails.content.LoginContent
 import com.twofasapp.feature.home.ui.itemdetails.content.PaymentCardContent
 import com.twofasapp.feature.home.ui.itemdetails.content.SecureNoteContent
 import com.twofasapp.feature.home.ui.itemdetails.content.WifiContent
+import com.twofasapp.feature.share.ui.ShareItemModal
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,6 +74,14 @@ private fun Content(
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
+    var showShareModal by remember { mutableStateOf(false) }
+
+    if (showShareModal) {
+        ShareItemModal(
+            item = uiState.item,
+            onDismissRequest = { showShareModal = false },
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -83,7 +95,7 @@ private fun Content(
                     ) {
                         IconButton(
                             icon = MdtIcons.Share,
-                            onClick = { },
+                            onClick = { showShareModal = true },
                         )
 
                         IconButton(

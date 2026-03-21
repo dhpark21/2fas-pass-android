@@ -925,6 +925,24 @@ class Strings(private val c: Context) {
     val shareLinkMessage = c.getString(R.string.share_link_message)
     val shareLinkSubject = c.getString(R.string.share_link_subject)
 
+    // Share Modal
+    val shareTitle = c.getString(R.string.share_title)
+    val shareLinkExpirationTime = c.getString(R.string.share_link_expiration_time)
+    val shareOneTimeAccess = c.getString(R.string.share_one_time_access)
+    val shareOneTimeAccessDescription = c.getString(R.string.share_one_time_access_description)
+    val shareAccessPassword = c.getString(R.string.share_access_password)
+    val shareAccessPasswordDescription = c.getString(R.string.share_access_password_description)
+    val shareContinue = c.getString(R.string.share_continue)
+    val shareExpiration5Min = c.getString(R.string.share_expiration_5_min)
+    val shareExpiration30Min = c.getString(R.string.share_expiration_30_min)
+    val shareExpiration1Hour = c.getString(R.string.share_expiration_1_hour)
+    val shareExpiration1Day = c.getString(R.string.share_expiration_1_day)
+    val shareExpiration7Days = c.getString(R.string.share_expiration_7_days)
+    val shareExpiration30Days = c.getString(R.string.share_expiration_30_days)
+    val shareMenuItem = c.getString(R.string.share_menu_item)
+    val shareLinkGenerated = c.getString(R.string.share_link_generated)
+    val shareAction = c.getString(R.string.share_action)
+
     // Authentication Form Strings
     val authUseBiometrics = c.getString(R.string.auth_use_biometrics)
     val authBiometricsModalTitle = c.getString(R.string.auth_biometrics_modal_title)

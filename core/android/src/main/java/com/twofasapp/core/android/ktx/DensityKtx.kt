@@ -113,6 +113,15 @@ fun keyboardOffsetWithoutBottomBarAsState(): State<Int> {
     )
 }
 
+val dialogScreenMargin: Dp
+    @Composable
+    get() {
+        val width = screenWidth
+        val isTablet = width >= 600.dp
+        val dialogWidth = width * if (isTablet) 0.7f else 0.8f
+        return (width - dialogWidth) / 2
+    }
+
 enum class ScreenOrientation { Portrait, Landscape }
 
 val Configuration.screenOrientation: ScreenOrientation

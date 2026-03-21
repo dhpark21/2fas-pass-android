@@ -209,6 +209,16 @@ fun Context.showShareFilePicker(
     )
 }
 
+fun Context.showShareText(text: String) {
+    val shareIntent = Intent().apply {
+        type = "text/plain"
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, text)
+    }
+
+    startActivity(Intent.createChooser(shareIntent, null))
+}
+
 fun Context.restartApp() {
     val packageManager: PackageManager = packageManager
     val intent: Intent = packageManager.getLaunchIntentForPackage(packageName)!!

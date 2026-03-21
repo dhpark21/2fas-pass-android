@@ -51,6 +51,7 @@ internal fun HomeItem(
     selected: Boolean = false,
     onEditClick: (itemId: String, vaultId: String) -> Unit = { _, _ -> },
     onDetailsClick: (itemId: String, vaultId: String) -> Unit = { _, _ -> },
+    onShareClick: (itemId: String) -> Unit = {},
     onTrashConfirmed: (itemId: String) -> Unit = {},
     onCopySecretFieldToClipboard: (Item, SecretField?) -> Unit = { _, _ -> },
     onEnabledEditMode: () -> Unit = {},
@@ -147,6 +148,7 @@ internal fun HomeItem(
                 item = item,
                 onDetailsClick = { onDetailsClick(item.id, item.vaultId) },
                 onEditClick = { onEditClick(item.id, item.vaultId) },
+                onShareClick = { onShareClick(item.id) },
                 onCopySecretFieldToClipboard = { secretField ->
                     onCopySecretFieldToClipboard(
                         item,

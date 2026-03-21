@@ -60,10 +60,11 @@ fun DropdownMenuItem(
     text: String? = null,
     textContent: (@Composable () -> Unit)? = null,
     onClick: () -> Unit = {},
-    icon: Painter? = null,
+    leadingIcon: Painter? = null,
+    leadingContent: (@Composable () -> Unit)? = null,
     contentColor: Color = MdtTheme.color.onSurface,
     contentPadding: PaddingValues = PaddingValues(
-        start = if (icon != null) 16.dp else 24.dp,
+        start = if (leadingIcon != null) 16.dp else 24.dp,
         end = 24.dp,
         top = 12.dp,
         bottom = 12.dp,
@@ -75,13 +76,16 @@ fun DropdownMenuItem(
             .clickable { onClick() }
             .padding(contentPadding),
     ) {
-        if (icon != null) {
+        if (leadingContent != null) {
+            leadingContent()
+        } else if (leadingIcon != null) {
             Icon(
-                painter = icon,
+                painter = leadingIcon,
                 contentDescription = null,
                 tint = contentColor,
                 modifier = Modifier.size(22.dp),
             )
+
             Spacer(modifier = Modifier.width(16.dp))
         }
 

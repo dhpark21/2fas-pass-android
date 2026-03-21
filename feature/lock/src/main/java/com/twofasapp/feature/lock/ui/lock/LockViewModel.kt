@@ -13,6 +13,8 @@ import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.ktx.tickerFlow
 import com.twofasapp.core.common.auth.AuthStatusTracker
+import com.twofasapp.core.common.build.AppBuild
+import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.build.AppUpdateExecutor
 import com.twofasapp.core.common.build.AppUpdateResult
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
@@ -39,8 +41,9 @@ internal class LockViewModel(
     private val authStatusTracker: AuthStatusTracker,
     private val timeProvider: TimeProvider,
     private val appUpdateExecutor: AppUpdateExecutor,
+    private val appBuild: AppBuild,
 ) : ViewModel() {
-    val uiState = MutableStateFlow(LockUiState())
+    val uiState = MutableStateFlow(LockUiState(autoOpenKeyboard = appBuild.buildVariant != BuildVariant.Debug))
 
     init {
         launchScoped {

@@ -107,7 +107,7 @@ private fun Content(
                             content = {
                                 DropdownMenuItem(
                                     text = strings.cloudSyncActionSyncNow,
-                                    icon = MdtIcons.Refresh,
+                                    leadingIcon = MdtIcons.Refresh,
                                     onClick = {
                                         onSyncClick()
                                         showDropdown = false
@@ -116,7 +116,7 @@ private fun Content(
 
                                 DropdownMenuItem(
                                     text = strings.webdavDisconnect,
-                                    icon = MdtIcons.Logout,
+                                    leadingIcon = MdtIcons.Logout,
                                     onClick = {
                                         onDisconnectClick()
                                         showDropdown = false
