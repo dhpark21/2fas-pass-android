@@ -92,6 +92,7 @@ private fun Content(
     var browserRequestData by remember { mutableStateOf<BrowserRequestData?>(null) }
     var showPaywall by remember { mutableStateOf(false) }
     var showAppUpdateDialog by remember { mutableStateOf(false) }
+    var shareDeeplinkId by remember { mutableStateOf<String?>(null) }
 
     LifecycleResumeEffect(Unit) {
         onResume()
@@ -115,6 +116,11 @@ private fun Content(
                                     }
                                 }
                             }
+                        }
+
+                        is Deeplink.ShareLink -> {
+                            Timber.tag("NavController").d("[Deeplink.ShareLink] shareId=${deeplink.shareId}")
+                            shareDeeplinkId = deeplink.shareId
                         }
                     }
                 }
@@ -186,6 +192,16 @@ private fun Content(
     if (showPaywall) {
         PurchasesDialog(
             onDismissRequest = { showPaywall = false },
+        )
+    }
+
+    if (shareDeeplinkId != null) {
+        InfoDialog(
+            onDismissRequest = { shareDeeplinkId = null },
+            title = "Share Link",
+            body = "Incoming share link ID: $shareDeeplinkId",
+            positive = MdtLocale.strings.commonOk,
+            onPositive = { shareDeeplinkId = null },
         )
     }
 

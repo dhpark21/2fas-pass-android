@@ -181,6 +181,7 @@ internal class HomeViewModel(
                 }
             }
         }
+
     }
 
     fun search(query: String) {

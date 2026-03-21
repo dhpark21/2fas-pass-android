@@ -57,5 +57,12 @@ internal class DeeplinksHandler : Deeplinks {
         pendingDeeplinkFlow.tryEmit(deeplink)
     }
 
-    private fun handleIncomingIntent(activity: Activity, intent: Intent) = Unit
+    private fun handleIncomingIntent(activity: Activity, intent: Intent) {
+        val uri = intent.data ?: return
+
+        if (uri.scheme == "twofaspass" && uri.host == "share") {
+            val shareId = uri.pathSegments.firstOrNull() ?: return
+            publishDeeplink(Deeplink.ShareLink(shareId))
+        }
+    }
 }

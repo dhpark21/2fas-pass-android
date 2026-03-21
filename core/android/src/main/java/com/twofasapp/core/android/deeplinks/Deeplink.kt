@@ -20,4 +20,6 @@ sealed interface Deeplink {
             screen: Screen,
         ) : this(listOf(screen))
     }
+
+    data class ShareLink(val shareId: String) : Deeplink
 }
