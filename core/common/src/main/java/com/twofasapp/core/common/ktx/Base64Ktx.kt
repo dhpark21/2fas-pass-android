@@ -40,6 +40,15 @@ fun String.decodeBase64(): ByteArray {
     return Base64.decode(this)
 }
 
+fun String.decodeBase64UrlSafe(): ByteArray {
+    val padded = when (length % 4) {
+        2 -> "$this=="
+        3 -> "$this="
+        else -> this
+    }
+    return Base64.UrlSafe.decode(padded)
+}
+
 fun String.decodeBase64ToString(): String {
     return String(Base64.decode(this))
 }

@@ -70,6 +70,9 @@ internal fun MainContainer(
             viewModel.markAppUpdatePrompted()
         },
         onEventConsumed = { viewModel.consumeEvent(it) },
+        onDecryptShareLink = { shareId, version, nonce, key ->
+            viewModel.decryptShareLink(shareId, version, nonce, key)
+        },
     )
 }
 
@@ -80,6 +83,7 @@ private fun Content(
     onPause: () -> Unit = {},
     markAppUpdatePrompted: () -> Unit = {},
     onEventConsumed: (MainUiEvent) -> Unit = {},
+    onDecryptShareLink: (shareId: String, version: String, nonce: String, key: String) -> Unit = { _, _, _, _ -> },
 ) {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -92,7 +96,7 @@ private fun Content(
     var browserRequestData by remember { mutableStateOf<BrowserRequestData?>(null) }
     var showPaywall by remember { mutableStateOf(false) }
     var showAppUpdateDialog by remember { mutableStateOf(false) }
-    var shareDeeplinkId by remember { mutableStateOf<String?>(null) }
+
 
     LifecycleResumeEffect(Unit) {
         onResume()
@@ -120,7 +124,7 @@ private fun Content(
 
                         is Deeplink.ShareLink -> {
                             Timber.tag("NavController").d("[Deeplink.ShareLink] shareId=${deeplink.shareId}")
-                            shareDeeplinkId = deeplink.shareId
+                            onDecryptShareLink(deeplink.shareId, deeplink.version, deeplink.nonce, deeplink.key)
                         }
                     }
                 }
@@ -195,15 +199,7 @@ private fun Content(
         )
     }
 
-    if (shareDeeplinkId != null) {
-        InfoDialog(
-            onDismissRequest = { shareDeeplinkId = null },
-            title = "Share Link",
-            body = "Incoming share link ID: $shareDeeplinkId",
-            positive = MdtLocale.strings.commonOk,
-            onPositive = { shareDeeplinkId = null },
-        )
-    }
+
 
     if (showAppUpdateDialog) {
         InfoDialog(

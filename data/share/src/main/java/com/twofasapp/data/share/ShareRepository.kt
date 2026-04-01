@@ -10,4 +10,12 @@ interface ShareRepository {
         oneTimeAccess: Boolean,
         password: String?,
     ): ShareLink
+
+    suspend fun decryptShareLink(
+        shareId: String,
+        version: String,
+        nonce: String,
+        key: String,
+        password: String? = null,
+    ): Item
 }

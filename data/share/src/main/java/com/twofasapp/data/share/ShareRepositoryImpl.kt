@@ -3,8 +3,12 @@ package com.twofasapp.data.share
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.crypto.Pbkdf
 import com.twofasapp.core.common.crypto.RandomGenerator
+import com.twofasapp.core.common.crypto.decrypt
 import com.twofasapp.core.common.crypto.encrypt
+import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.Item
+import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.core.common.ktx.decodeBase64UrlSafe
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64UrlSafe
 import com.twofasapp.core.network.ApiConfig
@@ -69,6 +73,44 @@ internal class ShareRepositoryImpl(
                 id = response.id,
                 url = "${apiConfig.shareApiUrl}/#/$uuid/$version/$nonce/$key",
             )
+        }
+    }
+
+    override suspend fun decryptShareLink(
+        shareId: String,
+        version: String,
+        nonce: String,
+        key: String,
+        password: String?,
+    ): Item {
+        return withContext(dispatchers.io) {
+            val response = shareRemoteSource.getShareSecret(shareId)
+            val encryptedData = response.data.decodeBase64()
+            val iv = nonce.decodeBase64UrlSafe()
+
+            val decryptionKey = when (version) {
+                "v1k" -> key.decodeBase64UrlSafe()
+                "v1p" -> {
+                    requireNotNull(password) { "Password is required for v1p share links" }
+                    val salt = key.decodeBase64UrlSafe()
+                    Pbkdf.generate(
+                        input = password,
+                        salt = salt,
+                        iterations = 600_000,
+                        keyLength = 256,
+                    )
+                }
+                else -> throw IllegalArgumentException("Unsupported share link version: $version")
+            }
+
+            val encrypted = EncryptedBytes(iv = iv, data = encryptedData)
+            val decryptedBytes = decrypt(key = decryptionKey, data = encrypted)
+            val decryptedJson = decryptedBytes.toString(Charsets.UTF_8)
+
+            Timber.d("Decrypted share content: $decryptedJson")
+
+            val shareItem = json.decodeFromString(ShareItem.serializer(), decryptedJson)
+            shareMapper.map(shareItem)
         }
     }
 }
