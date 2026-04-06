@@ -22,7 +22,7 @@ internal data class ShareItemUiState(
     val screenState: ShareItemScreenState = ShareItemScreenState.Form,
     val item: Item = Item.Empty,
     val expirationTime: ExpirationTime = ExpirationTime.Min30,
-    val oneTimeAccess: Boolean = true,
+    val oneTimeAccess: Boolean = false,
     val password: String? = null,
     val link: String = "",
 )

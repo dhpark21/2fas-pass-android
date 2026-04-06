@@ -37,7 +37,6 @@ internal class ShareLinkHandlerViewModel(
     }
 
     fun submitPassword(password: String) {
-        uiState.update { it.copy(shouldShowPasswordDialog = false) }
         decrypt(password = password)
     }
 

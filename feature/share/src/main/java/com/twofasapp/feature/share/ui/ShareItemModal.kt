@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -39,16 +38,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.android.ktx.copyToClipboard
-import com.twofasapp.core.android.ktx.dialogScreenMargin
 import com.twofasapp.core.android.ktx.showShareText
 import com.twofasapp.core.android.viewmodel.ProvidesViewModelStoreOwner
 import com.twofasapp.core.common.domain.items.Item
@@ -61,8 +56,6 @@ import com.twofasapp.core.design.feature.settings.OptionEntry
 import com.twofasapp.core.design.feature.settings.OptionSwitch
 import com.twofasapp.core.design.foundation.button.Button
 import com.twofasapp.core.design.foundation.button.IconButton
-import com.twofasapp.core.design.foundation.dialog.InputDialog
-import com.twofasapp.core.design.foundation.dialog.InputValidation
 import com.twofasapp.core.design.foundation.layout.ActionsRow
 import com.twofasapp.core.design.foundation.menu.DropdownMenu
 import com.twofasapp.core.design.foundation.menu.DropdownMenuItem
@@ -317,10 +310,12 @@ private fun ColumnScope.ShareFormContent(
     )
 
     if (showPasswordDialog) {
-        PasswordDialog(
-            currentPassword = uiState.password,
+        SharePasswordDialog(
+            mode = SharePasswordDialogMode.SetPassword,
+            prefillPassword = uiState.password,
             onDismissRequest = { showPasswordDialog = false },
-            onPasswordChange = onPasswordChange,
+            onSubmit = { onPasswordChange(it) },
+            onRemove = { onPasswordChange(null) },
         )
     }
 
@@ -335,38 +330,6 @@ private fun ColumnScope.ShareFormContent(
     )
 
     Space(16.dp)
-}
-
-@Composable
-private fun PasswordDialog(
-    currentPassword: String?,
-    onDismissRequest: () -> Unit,
-    onPasswordChange: (String?) -> Unit,
-) {
-    InputDialog(
-        onDismissRequest = onDismissRequest,
-        modifier = Modifier.padding(horizontal = dialogScreenMargin),
-        title = MdtLocale.strings.shareAccessPassword,
-        body = MdtLocale.strings.shareAccessPasswordDescription,
-        positive = MdtLocale.strings.commonSave,
-        negative = MdtLocale.strings.commonCancel,
-        icon = MdtIcons.Lock,
-        label = MdtLocale.strings.masterPasswordLabel,
-        prefill = currentPassword,
-        neutral = if (currentPassword.isNullOrBlank()) null else "Remove",
-        validate = { input ->
-            if (input.length < 8) {
-                InputValidation.Invalid("Minimum 8 characters")
-            } else {
-                InputValidation.Valid
-            }
-        },
-        onPositive = { password -> onPasswordChange(password.trim()) },
-        onNeutral = { onPasswordChange(null) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
-        isSecret = true,
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-    )
 }
 
 @Composable
