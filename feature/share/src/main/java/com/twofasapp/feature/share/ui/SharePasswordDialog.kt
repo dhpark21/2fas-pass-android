@@ -56,6 +56,7 @@ import com.twofasapp.core.design.foundation.textfield.SecretField
 import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.design.theme.DialogShape
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.share.R
 import kotlinx.coroutines.android.awaitFrame
 
@@ -108,6 +109,7 @@ private fun SharePasswordDialogContent(
     onRemove: () -> Unit,
 ) {
     val shareColor = Color(0xFF8800FF)
+    val strings = MdtLocale.strings
     val initialPassword = remember { prefillPassword.orEmpty() }
     val focusRequester = remember { FocusRequester() }
     var secretVisible by remember { mutableStateOf(false) }
@@ -135,7 +137,7 @@ private fun SharePasswordDialogContent(
     val showError = showExternalError || showLocalError
     val supportingMessage = when {
         showExternalError -> errorText
-        showLocalError -> "Minimum $MinPasswordLength characters"
+        showLocalError -> strings.shareLinkItemPasswordMinLength.format(MinPasswordLength)
         else -> " "
     }
     val submitEnabled = if (loading) {
@@ -148,16 +150,16 @@ private fun SharePasswordDialogContent(
     }
 
     val title = when (mode) {
-        SharePasswordDialogMode.SetPassword -> "Set password"
-        SharePasswordDialogMode.EnterPassword -> "Enter password"
+        SharePasswordDialogMode.SetPassword -> strings.shareLinkItemSetPasswordTitle
+        SharePasswordDialogMode.EnterPassword -> strings.shareLinkImportPasswordTitle
     }
     val subtitle = when (mode) {
-        SharePasswordDialogMode.SetPassword -> "Add extra security layer"
-        SharePasswordDialogMode.EnterPassword -> "This share link is password protected"
+        SharePasswordDialogMode.SetPassword -> strings.shareLinkItemSetPasswordSubtitle
+        SharePasswordDialogMode.EnterPassword -> strings.shareLinkImportPasswordSubtitle
     }
     val submitText = when (mode) {
-        SharePasswordDialogMode.SetPassword -> "Save"
-        SharePasswordDialogMode.EnterPassword -> "Continue"
+        SharePasswordDialogMode.SetPassword -> strings.commonSave
+        SharePasswordDialogMode.EnterPassword -> strings.shareLinkImportUnlock
     }
 
     LaunchedEffect(Unit) {
@@ -243,7 +245,7 @@ private fun SharePasswordDialogContent(
                         startedTyping = true
                         textFieldValue = it
                     },
-                    labelText = "Password",
+                    labelText = strings.commonPassword,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
@@ -277,7 +279,7 @@ private fun SharePasswordDialogContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 24.dp),
-                        text = "Remove password",
+                        text = strings.shareLinkItemRemovePassword,
                         style = ButtonStyle.Text,
                         onClick = onRemove,
                     )

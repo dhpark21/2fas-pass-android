@@ -62,7 +62,7 @@ internal fun HomeItemDropdownMenu(
             )
 
             DropdownMenuItem(
-                text = MdtLocale.strings.shareMenuItem,
+                text = MdtLocale.strings.commonShare,
                 leadingIcon = MdtIcons.Share,
                 onClick = {
                     showDropdown = false

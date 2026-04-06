@@ -41,12 +41,12 @@ internal enum class ExpirationTime(val seconds: Int) {
         get() {
             val strings = MdtLocale.strings
             return when (this) {
-                Min5 -> strings.shareExpiration5Min
-                Min30 -> strings.shareExpiration30Min
-                Hour1 -> strings.shareExpiration1Hour
-                Day1 -> strings.shareExpiration1Day
-                Days7 -> strings.shareExpiration7Days
-                Days30 -> strings.shareExpiration30Days
+                Min5 -> strings.shareLinkItemExpiration5Min
+                Min30 -> strings.shareLinkItemExpiration30Min
+                Hour1 -> strings.shareLinkItemExpiration1Hour
+                Day1 -> strings.shareLinkItemExpiration1Day
+                Days7 -> strings.shareLinkItemExpiration7Days
+                Days30 -> strings.shareLinkItemExpiration30Days
             }
         }
 }

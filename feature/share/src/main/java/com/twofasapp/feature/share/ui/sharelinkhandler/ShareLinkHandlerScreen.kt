@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
 import com.twofasapp.core.design.foundation.progress.CircularProgress
+import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.feature.share.ui.SharePasswordDialog
 import com.twofasapp.feature.share.ui.SharePasswordDialogMode
 import org.koin.androidx.compose.koinViewModel
@@ -59,6 +60,8 @@ private fun Content(
     onPasswordSubmit: (String) -> Unit = {},
     onClose: () -> Unit = {},
 ) {
+    val strings = MdtLocale.strings
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -72,7 +75,7 @@ private fun Content(
         SharePasswordDialog(
             mode = SharePasswordDialogMode.EnterPassword,
             loading = uiState.loading,
-            errorText = if (uiState.error) "Incorrect password" else null,
+            errorText = if (uiState.error) strings.shareLinkImportIncorrectPassword else null,
             dismissOnSubmit = false,
             onDismissRequest = onClose,
             onSubmit = { password -> onPasswordSubmit(password) },
@@ -83,8 +86,8 @@ private fun Content(
         InfoDialog(
             onDismissRequest = onClose,
             icon = MdtIcons.Warning,
-            title = "Failed to open share link",
-            body = "We couldn't decrypt the share link. It may have expired or the password is incorrect.",
+            title = strings.shareLinkImportErrorTitle,
+            body = strings.shareLinkImportErrorDescription,
             onPositive = onClose,
         )
     }

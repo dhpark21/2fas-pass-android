@@ -113,6 +113,7 @@ internal fun ShareModalContent(
     onContinue: () -> Unit = {},
 ) {
     val shareColor = Color(0xFF8800FF)
+    val strings = MdtLocale.strings
 
     Box(
         modifier = Modifier.fillMaxWidth(),
@@ -146,7 +147,7 @@ internal fun ShareModalContent(
             Space(16.dp)
 
             Text(
-                text = "2FAS Share",
+                text = strings.shareLinkItemTitle,
                 style = MdtTheme.typo.semiBold.xl,
                 color = MdtTheme.color.onSurface,
             )
@@ -212,7 +213,7 @@ private fun ColumnScope.ShareFormContent(
     Space(32.dp)
 
     Text(
-        text = "Settings",
+        text = strings.shareLinkItemShareSettings,
         style = MdtTheme.typo.semiBold.sm,
         color = MdtTheme.color.primary,
         textAlign = TextAlign.Start,
@@ -228,7 +229,7 @@ private fun ColumnScope.ShareFormContent(
             .padding(horizontal = 16.dp)
             .clip(RoundedShape12)
             .background(MdtTheme.color.surfaceContainerHigh),
-        title = strings.shareLinkExpirationTime,
+        title = strings.shareLinkItemExpirationTime,
         subtitle = uiState.expirationTime.label,
         subtitleColor = MdtTheme.color.primary,
         icon = MdtIcons.Timer,
@@ -278,8 +279,8 @@ private fun ColumnScope.ShareFormContent(
             .clip(RoundedShape12)
             .background(MdtTheme.color.surfaceContainerHigh),
         checked = uiState.oneTimeAccess,
-        title = strings.shareOneTimeAccess,
-        subtitle = strings.shareOneTimeAccessDescription,
+        title = strings.shareLinkItemOneTimeAccess,
+        subtitle = strings.shareLinkItemOneTimeAccessDescription,
         icon = MdtIcons.Refresh,
         iconTint = MdtTheme.color.onSurface,
         onToggle = { onOneTimeAccessToggle() },
@@ -292,9 +293,9 @@ private fun ColumnScope.ShareFormContent(
             .padding(horizontal = 16.dp)
             .clip(RoundedShape12)
             .background(MdtTheme.color.surfaceContainerHigh),
-        title = strings.shareAccessPassword,
+        title = strings.shareLinkItemAccessPassword,
         subtitle = if (uiState.password.isNullOrBlank()) {
-            strings.shareAccessPasswordDescription
+            strings.shareLinkItemAccessPasswordDescription
         } else {
             uiState.password.map { "•" }.joinToString("")
         },
@@ -352,7 +353,7 @@ private fun ColumnScope.ShareLoadingContent() {
         Space(16.dp)
 
         Text(
-            text = "Generating link...",
+            text = MdtLocale.strings.shareLinkItemGeneratingLink,
             style = MdtTheme.typo.medium.sm,
             color = MdtTheme.color.primary,
         )
@@ -366,6 +367,7 @@ private fun ColumnScope.ShareSuccessContent(
     uiState: ShareItemUiState,
 ) {
     val context = LocalContext.current
+    val strings = MdtLocale.strings
 
     Space(32.dp)
 
@@ -399,7 +401,7 @@ private fun ColumnScope.ShareSuccessContent(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = "Link generated!",
+                    text = strings.shareLinkItemLinkGenerated,
                     style = MdtTheme.typo.semiBold.lg,
                     color = MdtTheme.color.onSurface,
                     modifier = Modifier.offset(x = 1.dp),
@@ -408,7 +410,7 @@ private fun ColumnScope.ShareSuccessContent(
                 Space(6.dp)
 
                 TextIcon(
-                    text = "Expires in ${uiState.expirationTime.label}",
+                    text = strings.shareLinkItemExpiresIn.format(uiState.expirationTime.label),
                     leadingIcon = MdtIcons.Timer,
                     leadingIconSize = 12.dp,
                     leadingIconTint = MdtTheme.color.onSurfaceVariant,
@@ -421,7 +423,7 @@ private fun ColumnScope.ShareSuccessContent(
                     Space(3.dp)
 
                     TextIcon(
-                        text = "One time access",
+                        text = strings.shareLinkItemOneTimeAccess,
                         leadingIcon = MdtIcons.Refresh,
                         leadingIconSize = 12.dp,
                         leadingIconTint = MdtTheme.color.onSurfaceVariant,
@@ -455,7 +457,7 @@ private fun ColumnScope.ShareSuccessContent(
                 .padding(top = 12.dp, bottom = 16.dp),
         ) {
             Text(
-                text = "Link",
+                text = strings.shareLinkItemLinkLabel,
                 style = MdtTheme.typo.regular.xs,
                 color = MdtTheme.color.onSurfaceVariant,
             )
@@ -488,7 +490,7 @@ private fun ColumnScope.ShareSuccessContent(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = "Password",
+                    text = strings.commonPassword,
                     style = MdtTheme.typo.regular.xs,
                     color = MdtTheme.color.onSurfaceVariant,
                 )
@@ -520,7 +522,7 @@ private fun ColumnScope.ShareSuccessContent(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(),
-        text = "Share link",
+        text = strings.itemViewActionShareLink,
         onClick = { context.showShareText(uiState.link) },
     )
 

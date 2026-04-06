@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: en-US, English (USA)
  Exported by: rafakob
- Exported at: Sun, 15 Mar 2026 00:49:48 -0700
+ Exported at: Mon, 06 Apr 2026 09:49:23 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -460,22 +460,6 @@
     <string name="settings_push_notifications_status_label">Status</string>
     <string name="share_link_message">Check this out!</string>
     <string name="share_link_subject">Amazing app!</string>
-    <string name="share_title">2FAS Share</string>
-    <string name="share_link_expiration_time">Link expiration time</string>
-    <string name="share_one_time_access">One time access</string>
-    <string name="share_one_time_access_description">Link will expire after one use</string>
-    <string name="share_access_password">Access password</string>
-    <string name="share_access_password_description">Add extra security layer</string>
-    <string name="share_continue">Continue</string>
-    <string name="share_expiration_5_min">5 min</string>
-    <string name="share_expiration_30_min">30 min</string>
-    <string name="share_expiration_1_hour">1 hour</string>
-    <string name="share_expiration_1_day">1 day</string>
-    <string name="share_expiration_7_days">7 days</string>
-    <string name="share_expiration_30_days">30 days</string>
-    <string name="share_menu_item">Share</string>
-    <string name="share_link_generated">Link generated!</string>
-    <string name="share_action">Share</string>
     <string name="subscription_free_plan">Free Plan</string>
     <string name="trash_deleted_at__0025_0040">Deleted: %s</string>
     <string name="trash_empty">Trash is empty</string>
@@ -830,7 +814,7 @@
     <string name="connect_modal_error_browser_extension_update_required_title">Browser extension update required</string>
     <string name="connect_modal_error_browser_extension_update_required_subtitle">Update browser extension</string>
     <string name="cloud_sync_invalid_schema_error_cta">Update app</string>
-    <string name="cloud_sync_invalid_schema_error_msg">Cloud sync failed. The Vault you’re trying to synchronize was created in a newer version %d, which is not supported in your current version. Please update your app to synchronize it.</string>
+    <string name="cloud_sync_invalid_schema_error_msg">Cloud sync failed. The Vault you’re trying to synchronize is not supported, as it was created in a newer app version. Please update your app to synchronize it.</string>
     <string name="import_invalid_schema_error_msg">The backup you’re trying to import was created in a newer version %d, which is not supported in your current version. Please update your app to import it.</string>
     <string name="import_invalid_schema_error_cta">Update app</string>
     <string name="connect_modal_error_app_update_required_cta_android">Update app</string>
@@ -1127,4 +1111,36 @@
     <string name="block_screen_recording_description">Screen recording is not allowed while using the app. You can temporarily enable it in Settings → Security.</string>
     <string name="wifi_connect_label">Connect with the network</string>
     <string name="item_details_title">Item Details</string>
+    <string name="share_link_item_title">2FAS Share</string>
+    <string name="share_link_item_link_generated">Link generated</string>
+    <string name="share_link_item_expiration_time">Link expiration time</string>
+    <string name="share_link_item_one_time_access">One time access</string>
+    <string name="share_link_item_one_time_access_description">Link will expire after one use</string>
+    <string name="share_link_item_access_password">Set access password</string>
+    <string name="share_link_item_access_password_description">Add extra security layer</string>
+    <string name="share_link_item_share_settings">Share settings</string>
+    <string name="share_link_item_set_password_title">Set link password</string>
+    <string name="share_link_item_set_password_subtitle">Secure your 2FAS Share link</string>
+    <string name="common_password">Password</string>
+    <string name="share_link_item_password_min_length__0025d">Password must be at least %d characters</string>
+    <string name="common_share">Share</string>
+    <string name="item_view_action_share_link">Share link</string>
+    <string name="share_link_import_error_title">Failed to load shared Item</string>
+    <string name="share_link_import_password_title">Enter Password</string>
+    <string name="share_link_import_password_subtitle">2FAS Share link password</string>
+    <string name="share_link_import_unlock">Unlock</string>
+    <string name="share_link_import_network_error_description">Check your internet connection and try again.</string>
+    <string name="share_link_error_data_too_large">This Item is too large to share via link. Please reduce the content and try again.</string>
+    <string name="share_link_item_expiration_5_min">5 min</string>
+    <string name="share_link_item_expiration_30_min">30 min</string>
+    <string name="share_link_item_expiration_1_hour">1 hour</string>
+    <string name="share_link_item_expiration_1_day">1 day</string>
+    <string name="share_link_item_expiration_7_days">7 days</string>
+    <string name="share_link_item_expiration_30_days">30 days</string>
+    <string name="share_link_item_generating_link">Generating link…</string>
+    <string name="share_link_item_expires_in">Expires in %s</string>
+    <string name="share_link_item_link_label">Link</string>
+    <string name="share_link_item_remove_password">Remove password</string>
+    <string name="share_link_import_incorrect_password">Incorrect password</string>
+    <string name="share_link_import_error_description">We couldn\'t decrypt the share link. It may have expired or the password is incorrect.</string>
 </resources>
