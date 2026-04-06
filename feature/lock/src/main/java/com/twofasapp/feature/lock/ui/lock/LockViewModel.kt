@@ -14,9 +14,9 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.ktx.tickerFlow
 import com.twofasapp.core.common.auth.AuthStatusTracker
 import com.twofasapp.core.common.build.AppBuild
-import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.build.AppUpdateExecutor
 import com.twofasapp.core.common.build.AppUpdateResult
+import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.ktx.encodeHex

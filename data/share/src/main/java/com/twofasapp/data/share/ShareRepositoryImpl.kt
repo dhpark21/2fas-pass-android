@@ -28,6 +28,8 @@ internal class ShareRepositoryImpl(
     private val json: Json,
 ) : ShareRepository {
 
+    private val decryptedShareItems = mutableMapOf<String, Item>()
+
     override suspend fun createShareLink(
         item: Item,
         expirationTimeSeconds: Int,
@@ -112,5 +114,17 @@ internal class ShareRepositoryImpl(
             val shareItem = json.decodeFromString(ShareItem.serializer(), decryptedJson)
             shareMapper.map(shareItem)
         }
+    }
+
+    override fun cacheDecryptedShareItem(shareId: String, item: Item) {
+        decryptedShareItems[shareId] = item
+    }
+
+    override fun getDecryptedShareItem(shareId: String): Item? {
+        return decryptedShareItems[shareId]
+    }
+
+    override fun removeDecryptedShareItem(shareId: String) {
+        decryptedShareItems.remove(shareId)
     }
 }

@@ -9,6 +9,7 @@ import com.twofasapp.core.common.domain.clearTextOrNull
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
+import com.twofasapp.data.main.mapper.PaymentCardValidator
 import com.twofasapp.data.share.domain.ShareItem
 import com.twofasapp.data.share.domain.ShareItemContent
 import kotlinx.serialization.json.Json
@@ -112,18 +113,13 @@ internal class ShareMapper(
     }
 
     fun map(shareItem: ShareItem): Item {
-        val contentType = ItemContentType.fromKey(shareItem.contentType)
-        val content = when (contentType) {
-            is ItemContentType.Login -> mapLogin(shareItem)
-            is ItemContentType.SecureNote -> mapSecureNote(shareItem)
-            is ItemContentType.PaymentCard -> mapPaymentCard(shareItem)
-            is ItemContentType.Wifi -> mapWifi(shareItem)
-            is ItemContentType.Unknown -> mapCustom(shareItem)
+        return when (val contentType = ItemContentType.fromKey(shareItem.contentType)) {
+            is ItemContentType.Login -> Item.create(contentType, mapLogin(shareItem))
+            is ItemContentType.SecureNote -> Item.create(contentType, mapSecureNote(shareItem))
+            is ItemContentType.PaymentCard -> Item.create(contentType, mapPaymentCard(shareItem))
+            is ItemContentType.Wifi -> Item.create(contentType, mapWifi(shareItem))
+            is ItemContentType.Unknown -> Item.create(ItemContentType.SecureNote, mapCustomToSecureNote(shareItem))
         }
-        return Item.create(
-            contentType = contentType,
-            content = content,
-        )
     }
 
     private fun mapLogin(shareItem: ShareItem): ItemContent.Login {
@@ -162,10 +158,10 @@ internal class ShareMapper(
             name = content.name,
             cardHolder = content.cardHolder,
             cardNumber = content.cardNumber?.let { SecretField.ClearText(it) },
-            cardNumberMask = null,
+            cardNumberMask = content.cardNumber?.filter { it.isDigit() }?.takeLast(4),
             expirationDate = content.expirationDate?.let { SecretField.ClearText(it) },
             securityCode = content.securityCode?.let { SecretField.ClearText(it) },
-            cardIssuer = null,
+            cardIssuer = PaymentCardValidator.detectCardIssuer(content.cardNumber),
             notes = content.notes,
         )
     }
@@ -182,9 +178,13 @@ internal class ShareMapper(
         )
     }
 
-    private fun mapCustom(shareItem: ShareItem): ItemContent.Unknown {
+    private fun mapCustomToSecureNote(shareItem: ShareItem): ItemContent.SecureNote {
         val content = json.decodeFromJsonElement(ShareItemContent.Custom.serializer(), shareItem.content)
-        return ItemContent.Unknown(rawJson = content.text)
+        return ItemContent.SecureNote(
+            name = "",
+            text = SecretField.ClearText(content.text),
+            additionalInfo = null,
+        )
     }
 
     private fun mapUriMatcher(matcher: UriMatcher): String {

@@ -26,11 +26,11 @@ import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.push.PushRepository
 import com.twofasapp.data.push.domain.Push
 import com.twofasapp.data.settings.SessionRepository
-import com.twofasapp.data.share.ShareRepository
-import timber.log.Timber
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 
 internal class MainViewModel(
@@ -43,7 +43,6 @@ internal class MainViewModel(
     private val browserExtensionRepository: BrowserExtensionRepository,
     private val purchasesRepository: PurchasesRepository,
     private val sessionRepository: SessionRepository,
-    private val shareRepository: ShareRepository,
 ) : ViewModel() {
 
     val uiState = MutableStateFlow(MainUiState())
@@ -54,10 +53,14 @@ internal class MainViewModel(
 
     init {
         launchScoped {
-            deeplinks.observePendingDeeplink().collect {
-                publishEvent(MainUiEvent.OpenDeeplink(it))
-                deeplinks.clearPendingDeeplink()
-            }
+            authStatusTracker.observeIsAuthenticated()
+                .flatMapLatest { isAuthenticated ->
+                    if (isAuthenticated) deeplinks.observePendingDeeplink() else emptyFlow()
+                }
+                .collect { deeplink ->
+                    publishEvent(MainUiEvent.OpenDeeplink(deeplink))
+                    deeplinks.clearPendingDeeplink()
+                }
         }
 
         launchScoped {
@@ -156,26 +159,6 @@ internal class MainViewModel(
     fun markAppUpdatePrompted() {
         launchScoped {
             sessionRepository.markAppUpdatePrompted()
-        }
-    }
-
-    fun decryptShareLink(
-        shareId: String,
-        version: String,
-        nonce: String,
-        key: String,
-    ) {
-        launchScoped {
-            runSafely {
-                shareRepository.decryptShareLink(
-                    shareId = shareId,
-                    version = version,
-                    nonce = nonce,
-                    key = key,
-                )
-            }
-                .onSuccess { item -> Timber.d("Decrypted share link: $item") }
-                .onFailure { e -> Timber.e(e, "Failed to decrypt share link") }
         }
     }
 

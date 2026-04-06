@@ -90,6 +90,15 @@ sealed class Screen(
         val vaultId: String,
         val itemId: String,
         val itemContentTypeKey: String,
+        val shareId: String? = null,
+    ) : Screen()
+
+    @Serializable
+    data class ShareLinkHandler(
+        val shareId: String,
+        val version: String,
+        val nonce: String,
+        val key: String,
     ) : Screen()
 
     @Serializable

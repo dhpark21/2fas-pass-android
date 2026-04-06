@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.twofasapp.core.android.deeplinks.Deeplink
 import com.twofasapp.core.android.ktx.navigateTopLevel
 import com.twofasapp.core.android.ktx.openSafely
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.android.navigation.ScreenType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -70,9 +71,6 @@ internal fun MainContainer(
             viewModel.markAppUpdatePrompted()
         },
         onEventConsumed = { viewModel.consumeEvent(it) },
-        onDecryptShareLink = { shareId, version, nonce, key ->
-            viewModel.decryptShareLink(shareId, version, nonce, key)
-        },
     )
 }
 
@@ -83,7 +81,6 @@ private fun Content(
     onPause: () -> Unit = {},
     markAppUpdatePrompted: () -> Unit = {},
     onEventConsumed: (MainUiEvent) -> Unit = {},
-    onDecryptShareLink: (shareId: String, version: String, nonce: String, key: String) -> Unit = { _, _, _, _ -> },
 ) {
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -96,7 +93,6 @@ private fun Content(
     var browserRequestData by remember { mutableStateOf<BrowserRequestData?>(null) }
     var showPaywall by remember { mutableStateOf(false) }
     var showAppUpdateDialog by remember { mutableStateOf(false) }
-
 
     LifecycleResumeEffect(Unit) {
         onResume()
@@ -123,8 +119,15 @@ private fun Content(
                         }
 
                         is Deeplink.ShareLink -> {
-                            Timber.tag("NavController").d("[Deeplink.ShareLink] shareId=${deeplink.shareId}")
-                            onDecryptShareLink(deeplink.shareId, deeplink.version, deeplink.nonce, deeplink.key)
+                            Timber.tag("NavController").d("[Deeplink.ShareLink] $deeplink")
+                            navController.navigate(
+                                Screen.ShareLinkHandler(
+                                    shareId = deeplink.shareId,
+                                    version = deeplink.version,
+                                    nonce = deeplink.nonce,
+                                    key = deeplink.key,
+                                ),
+                            )
                         }
                     }
                 }
@@ -198,8 +201,6 @@ private fun Content(
             onDismissRequest = { showPaywall = false },
         )
     }
-
-
 
     if (showAppUpdateDialog) {
         InfoDialog(

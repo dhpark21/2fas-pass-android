@@ -10,11 +10,13 @@ package com.twofasapp.feature.share.di
 
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.feature.share.ui.ShareItemViewModel
+import com.twofasapp.feature.share.ui.sharelinkhandler.ShareLinkHandlerViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 class ShareModule : KoinModule {
     override fun provide() = module {
         viewModelOf(::ShareItemViewModel)
+        viewModelOf(::ShareLinkHandlerViewModel)
     }
 }

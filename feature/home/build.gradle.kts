@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":data:settings"))
     implementation(project(":data:cloud"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:share"))
     implementation(project(":feature:itemform"))
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))

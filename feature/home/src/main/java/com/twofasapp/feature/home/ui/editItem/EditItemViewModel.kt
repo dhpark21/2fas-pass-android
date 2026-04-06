@@ -20,7 +20,9 @@ import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.domain.normalizeBeforeSaving
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
+import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.data.main.mapper.ItemEncryptionMapper
+import com.twofasapp.data.share.ShareRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
@@ -31,55 +33,76 @@ internal class EditItemViewModel(
     private val itemsRepository: ItemsRepository,
     private val vaultCryptoScope: VaultCryptoScope,
     private val itemEncryptionMapper: ItemEncryptionMapper,
+    private val shareRepository: ShareRepository,
+    private val vaultsRepository: VaultsRepository,
 ) : ViewModel() {
 
-    private val id: String = savedStateHandle.toRoute<Screen.EditItem>().itemId
-    private val vaultId: String = savedStateHandle.toRoute<Screen.EditItem>().vaultId
-    private val itemContentType: ItemContentType =
-        ItemContentType.fromKey(savedStateHandle.toRoute<Screen.EditItem>().itemContentTypeKey)
+    private val route: Screen.EditItem = savedStateHandle.toRoute<Screen.EditItem>()
+    private val id: String = route.itemId
+    private val vaultId: String = route.vaultId
+    private val itemContentType: ItemContentType = ItemContentType.fromKey(route.itemContentTypeKey)
 
-    private val isNewItem = id.isBlank()
-    val uiState = MutableStateFlow(EditItemUiState())
+    private val isShareLink = route.shareId != null
+    private val isNewItem = id.isBlank() && !isShareLink
+    val uiState = MutableStateFlow(EditItemUiState(isShareLink = isShareLink))
 
     init {
-        if (isNewItem) {
-            launchScoped {
-                val initialItem = Item.create(
-                    contentType = itemContentType,
-                    content = when (itemContentType) {
-                        is ItemContentType.Login -> ItemContent.Login.Empty
-                        is ItemContentType.SecureNote -> ItemContent.SecureNote.Empty
-                        is ItemContentType.PaymentCard -> ItemContent.PaymentCard.Empty
-                        is ItemContentType.Unknown -> ItemContent.Unknown("")
-                        is ItemContentType.Wifi -> ItemContent.Wifi.Empty
-                    },
-                )
+        when {
+            isShareLink -> {
+                val sharedItem = shareRepository.getDecryptedShareItem(route.shareId!!)
+                shareRepository.removeDecryptedShareItem(route.shareId!!)
 
-                uiState.update { state ->
-                    state.copy(
-                        initialItem = initialItem,
-                        item = initialItem,
-                    )
+                if (sharedItem != null) {
+                    uiState.update { state ->
+                        state.copy(
+                            initialItem = sharedItem,
+                            item = sharedItem,
+                        )
+                    }
                 }
             }
-        } else {
-            launchScoped(dispatchers.io) {
-                vaultCryptoScope.withVaultCipher(vaultId) {
-                    val item = itemsRepository.getItem(id)
-                    val initialItem = item
-                        .let {
-                            itemEncryptionMapper.decryptItem(
-                                itemEncrypted = it,
-                                vaultCipher = this,
-                                decryptSecretFields = true,
-                            )
-                        } ?: return@withVaultCipher
+
+            isNewItem -> {
+                launchScoped {
+                    val initialItem = Item.create(
+                        contentType = itemContentType,
+                        content = when (itemContentType) {
+                            is ItemContentType.Login -> ItemContent.Login.Empty
+                            is ItemContentType.SecureNote -> ItemContent.SecureNote.Empty
+                            is ItemContentType.PaymentCard -> ItemContent.PaymentCard.Empty
+                            is ItemContentType.Wifi -> ItemContent.Wifi.Empty
+                            is ItemContentType.Unknown -> ItemContent.Unknown("")
+                        },
+                    )
 
                     uiState.update { state ->
                         state.copy(
                             initialItem = initialItem,
                             item = initialItem,
                         )
+                    }
+                }
+            }
+
+            else -> {
+                launchScoped(dispatchers.io) {
+                    vaultCryptoScope.withVaultCipher(vaultId) {
+                        val item = itemsRepository.getItem(id)
+                        val initialItem = item
+                            .let {
+                                itemEncryptionMapper.decryptItem(
+                                    itemEncrypted = it,
+                                    vaultCipher = this,
+                                    decryptSecretFields = true,
+                                )
+                            } ?: return@withVaultCipher
+
+                        uiState.update { state ->
+                            state.copy(
+                                initialItem = initialItem,
+                                item = initialItem,
+                            )
+                        }
                     }
                 }
             }
@@ -100,12 +123,13 @@ internal class EditItemViewModel(
 
     fun save(onComplete: () -> Unit) {
         launchScoped {
+            val resolvedVaultId = vaultId.ifBlank { vaultsRepository.getVault().id }
             val item = withContext(dispatchers.io) {
                 itemEncryptionMapper.encryptItem(
                     item = uiState.value.item
-                        .copy(vaultId = vaultId)
+                        .copy(vaultId = resolvedVaultId)
                         .normalizeBeforeSaving(),
-                    vaultCipher = vaultCryptoScope.getVaultCipher(vaultId),
+                    vaultCipher = vaultCryptoScope.getVaultCipher(resolvedVaultId),
                 )
             }
 

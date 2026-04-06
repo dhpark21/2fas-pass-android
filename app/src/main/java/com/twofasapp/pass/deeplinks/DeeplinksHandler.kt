@@ -82,7 +82,7 @@ internal class DeeplinksHandler : Deeplinks {
                     version = version,
                     nonce = nonce,
                     key = key,
-                )
+                ),
             )
         }
     }

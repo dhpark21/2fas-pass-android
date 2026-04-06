@@ -49,6 +49,7 @@ import com.twofasapp.feature.settings.navigation.SetNewPasswordRoute
 import com.twofasapp.feature.settings.navigation.SettingsRoute
 import com.twofasapp.feature.settings.navigation.TransferFromOtherAppsRoute
 import com.twofasapp.feature.settings.navigation.TrashRoute
+import com.twofasapp.feature.share.navigation.ShareLinkHandlerRoute
 
 @Composable
 internal fun MainNavHost(
@@ -135,6 +136,24 @@ internal fun MainNavHost(
 
         composable<Screen.EditItem> {
             EditItemRoute(
+                close = { navController.popBackStack() },
+            )
+        }
+
+        composable<Screen.ShareLinkHandler> {
+            ShareLinkHandlerRoute(
+                onDecrypted = { shareId, itemContentTypeKey ->
+                    navController.navigate(
+                        Screen.EditItem(
+                            vaultId = "",
+                            itemId = "",
+                            itemContentTypeKey = itemContentTypeKey,
+                            shareId = shareId,
+                        ),
+                    ) {
+                        popUpTo<Screen.ShareLinkHandler> { inclusive = true }
+                    }
+                },
                 close = { navController.popBackStack() },
             )
         }

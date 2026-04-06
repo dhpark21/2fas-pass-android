@@ -439,11 +439,10 @@ private fun ColumnScope.ShareSuccessContent(
                     text = "Link generated!",
                     style = MdtTheme.typo.semiBold.lg,
                     color = MdtTheme.color.onSurface,
-                    modifier = Modifier.offset(x = 1.dp)
+                    modifier = Modifier.offset(x = 1.dp),
                 )
 
                 Space(6.dp)
-
 
                 TextIcon(
                     text = "Expires in ${uiState.expirationTime.label}",

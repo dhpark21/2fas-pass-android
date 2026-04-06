@@ -15,4 +15,8 @@ internal data class EditItemUiState(
     val item: Item = Item.Empty,
     val isValid: Boolean = false,
     val hasUnsavedChanges: Boolean = false,
-)
+    val isShareLink: Boolean = false,
+) {
+    val canSave: Boolean
+        get() = isValid && (hasUnsavedChanges || isShareLink)
+}

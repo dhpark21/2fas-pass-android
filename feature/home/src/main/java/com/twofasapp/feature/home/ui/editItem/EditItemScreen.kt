@@ -85,7 +85,7 @@ private fun Content(
                         text = strings.commonSave,
                         style = ButtonStyle.Text,
                         onClick = onSaveClick,
-                        enabled = uiState.isValid && uiState.hasUnsavedChanges,
+                        enabled = uiState.canSave,
                     )
                 },
             )

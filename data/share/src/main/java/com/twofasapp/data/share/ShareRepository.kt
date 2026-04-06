@@ -18,4 +18,10 @@ interface ShareRepository {
         key: String,
         password: String? = null,
     ): Item
+
+    fun cacheDecryptedShareItem(shareId: String, item: Item)
+
+    fun getDecryptedShareItem(shareId: String): Item?
+
+    fun removeDecryptedShareItem(shareId: String)
 }
