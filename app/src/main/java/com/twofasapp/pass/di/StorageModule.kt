@@ -19,6 +19,7 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.di.KoinModule
+import com.twofasapp.data.logs.local.dao.LogsDao
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
 import com.twofasapp.data.main.local.dao.ItemsDao
@@ -87,6 +88,7 @@ class StorageModule : KoinModule {
         single<DeletedItemsDao> { get<AppDatabase>().deletedItemsDao() }
         single<ConnectedBrowsersDao> { get<AppDatabase>().connectedBrowsersDao() }
         single<TagsDao> { get<AppDatabase>().tagsDao() }
+        single<LogsDao> { get<AppDatabase>().logsDao() }
 
         singleOf(::MigrateLoginsToItems)
     }

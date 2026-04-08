@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":core:locale"))
 
     implementation(project(":data:settings"))
+    implementation(project(":data:logs"))
     implementation(project(":data:main"))
     implementation(project(":data:security"))
     implementation(project(":data:push"))

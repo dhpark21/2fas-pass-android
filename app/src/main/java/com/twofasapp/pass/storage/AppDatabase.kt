@@ -8,9 +8,12 @@
 
 package com.twofasapp.pass.storage
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.twofasapp.data.logs.local.dao.LogsDao
+import com.twofasapp.data.logs.local.model.LogEntity
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
 import com.twofasapp.data.main.local.dao.ItemsDao
@@ -29,6 +32,7 @@ import com.twofasapp.pass.storage.converters.StringListConverter
 
 @Database(
     entities = [
+        LogEntity::class,
         VaultEntity::class,
         VaultKeysEntity::class,
         ItemEntity::class,
@@ -36,7 +40,10 @@ import com.twofasapp.pass.storage.converters.StringListConverter
         ConnectedBrowserEntity::class,
         TagEntity::class,
     ],
-    version = 2,
+    version = 3,
+    autoMigrations = [
+        AutoMigration(from = 2, to = 3),
+    ],
 )
 @TypeConverters(
     InstantConverter::class,
@@ -44,6 +51,7 @@ import com.twofasapp.pass.storage.converters.StringListConverter
     EncryptedBytesConverter::class,
 )
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun logsDao(): LogsDao
     abstract fun vaultsDao(): VaultsDao
     abstract fun vaultKeysDao(): VaultKeysDao
     abstract fun itemsDao(): ItemsDao

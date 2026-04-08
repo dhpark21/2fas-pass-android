@@ -13,10 +13,12 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.logger.FlogLevel
 import com.twofasapp.core.common.logger.FlogSink
+import com.twofasapp.data.logs.LogsRepository
 import timber.log.Timber
 
 class FlogSinkImpl(
     appBuild: AppBuild,
+    private val logsRepository: LogsRepository,
 ) : FlogSink {
 
     override val debug: Boolean = appBuild.buildVariant == BuildVariant.Debug
@@ -39,7 +41,7 @@ class FlogSinkImpl(
         Timber.tag(tag).log(priority, throwable, message)
 
         if (persist) {
-            // TODO: persist log
+            logsRepository.save(level, message)
         }
     }
 }

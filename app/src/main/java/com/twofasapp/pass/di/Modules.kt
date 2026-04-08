@@ -12,6 +12,7 @@ import com.twofasapp.core.crypto.di.CryptoModule
 import com.twofasapp.core.design.feature.tags.ManageTagModule
 import com.twofasapp.core.network.di.NetworkModule
 import com.twofasapp.data.cloud.di.CloudDataModule
+import com.twofasapp.data.logs.di.LogsDataModule
 import com.twofasapp.data.main.di.MainDataModule
 import com.twofasapp.data.purchases.di.PurchasesDataModule
 import com.twofasapp.data.push.di.PushDataModule
@@ -44,6 +45,7 @@ object Modules {
     )
 
     private val data = listOf(
+        LogsDataModule(),
         MainDataModule(),
         SettingsDataModule(),
         SecurityDataModule(),

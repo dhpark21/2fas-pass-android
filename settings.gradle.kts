@@ -37,6 +37,7 @@ include(":core:locale")
 include(":core:crypto")
 
 include(":data:settings")
+include(":data:logs")
 include(":data:main")
 include(":data:security")
 include(":data:push")
