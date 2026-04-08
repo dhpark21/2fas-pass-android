@@ -13,6 +13,7 @@ import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemEncrypted
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.local.ItemsLocalSource
@@ -36,7 +37,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 internal class ItemsRepositoryImpl(
     private val dispatchers: Dispatchers,
@@ -353,7 +353,7 @@ internal class ItemsRepositoryImpl(
 
     override suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Item>) {
         withContext(dispatchers.io) {
-            Timber.d("Execute cloud merge: $cloudMerge")
+            Flog.d("Execute cloud merge: $cloudMerge")
 
             val vault = vaultsLocalSource.get().first().let(vaultMapper::mapToDomain)
 

@@ -16,6 +16,7 @@ import androidx.room.Room
 import com.pluto.plugins.datastore.pref.PlutoDatastoreWatcher
 import com.pluto.plugins.rooms.db.PlutoRoomsDBWatcher
 import com.twofasapp.core.common.build.AppBuild
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.di.KoinModule
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
@@ -35,7 +36,6 @@ import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import timber.log.Timber
 
 class StorageModule : KoinModule {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app-datastore")
@@ -68,7 +68,7 @@ class StorageModule : KoinModule {
                                         sqlQuery.contains("deleted_logins") ||
                                         sqlQuery.contains("connected_browsers")
                                     ) {
-                                        Timber.tag("RoomDatabase").d(sqlQuery)
+                                        Flog.tag("RoomDatabase").d(sqlQuery)
                                     }
                                 }
                             },

@@ -24,9 +24,9 @@ import androidx.core.graphics.createBitmap
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import com.twofasapp.core.common.logger.Flog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 @Composable
 fun QrCode(
@@ -132,7 +132,7 @@ private fun generateQrBitmap(
 
         bitmap
     } catch (t: Throwable) {
-        Timber.e(t)
+        Flog.e(t)
         null
     }
 }

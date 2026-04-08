@@ -14,7 +14,7 @@ import com.twofasapp.core.common.ktx.encodeBinary
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.encodeHexCharToBinary
 import com.twofasapp.core.common.ktx.sha256
-import timber.log.Timber
+import com.twofasapp.core.common.logger.Flog
 
 class SeedGenerator {
 
@@ -43,7 +43,7 @@ class SeedGenerator {
         // Convert decimals to words
         val entropyWords = entropyDecimals.map { WordList.words[it].lowercase() }
 
-        Timber.i(
+        Flog.i(
             buildString {
                 appendLine("[GENERATE SEED]")
                 appendLine("entropyBinary4Bits = $entropyBinary4Bits")
@@ -76,7 +76,7 @@ class SeedGenerator {
             throw IllegalArgumentException("Invalid word list! (CRC error)")
         }
 
-        Timber.i(
+        Flog.i(
             buildString {
                 appendLine("[RESTORE SEED]")
                 appendLine("entropy = $entropyHex")

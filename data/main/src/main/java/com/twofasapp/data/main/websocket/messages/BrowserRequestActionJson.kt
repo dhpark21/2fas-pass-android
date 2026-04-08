@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.websocket.messages
 
+import com.twofasapp.core.common.logger.Flog
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
@@ -17,7 +18,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNames
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import timber.log.Timber
 
 @Serializable(with = BrowserRequestActionJson.Serializer::class)
 internal sealed interface BrowserRequestActionJson {
@@ -270,7 +270,7 @@ internal sealed interface BrowserRequestActionJson {
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                Flog.e(e)
                 Unknown.serializer()
             }
         }

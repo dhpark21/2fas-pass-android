@@ -16,6 +16,7 @@ import com.twofasapp.core.common.crypto.AndroidKeyStore
 import com.twofasapp.core.common.crypto.SignatureVerifier
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeHex
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.BrowserRequestData
 import com.twofasapp.data.main.domain.ConnectData
@@ -34,7 +35,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.time.temporal.ChronoUnit
 
 internal class BrowserExtensionRepositoryImpl(
@@ -139,18 +139,18 @@ internal class BrowserExtensionRepositoryImpl(
                 )
 
                 if (verified.not()) {
-                    Timber.d("Browser request has invalid signature (sessionId=${requestData.sessionId.encodeHex()})")
+                    Flog.d("Browser request has invalid signature (sessionId=${requestData.sessionId.encodeHex()})")
                 }
 
                 val expired = requestData.isExpired(timeProvider.currentTimeUtcInstant())
 
                 if (expired) {
-                    Timber.d("Browser request has expired")
+                    Flog.d("Browser request has expired")
                 }
 
                 verified && expired.not()
             } catch (e: Exception) {
-                Timber.d("Browser request could not be validated: ${e.message}")
+                Flog.d("Browser request could not be validated: ${e.message}")
                 e.printStackTrace()
                 false
             }

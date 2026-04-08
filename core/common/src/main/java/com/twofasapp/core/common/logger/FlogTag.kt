@@ -11,6 +11,8 @@ package com.twofasapp.core.common.logger
 class FlogTag internal constructor(
     private val tag: String,
 ) {
+    fun v(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Verbose, tag, message, persist = persist)
+
     fun d(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Debug, tag, message, persist = persist)
 
     fun i(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Info, tag, message, persist = persist)

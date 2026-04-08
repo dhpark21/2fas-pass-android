@@ -12,6 +12,7 @@ import android.annotation.SuppressLint
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.Device
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.cloud.services.webdav.model.WebDavIndexJson
@@ -39,7 +40,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 import java.security.cert.X509Certificate
 import java.time.Duration
 import javax.net.ssl.SSLContext
@@ -258,7 +258,7 @@ internal class WebDavClient(
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Timber.tag("KtorWebDav").v(message)
+                        Flog.tag("KtorWebDav").v(message)
                     }
                 }
                 level = LogLevel.ALL

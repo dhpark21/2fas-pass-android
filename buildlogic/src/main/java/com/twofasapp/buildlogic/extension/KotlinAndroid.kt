@@ -78,7 +78,6 @@ internal fun Project.applyKotlinAndroid(
 
     dependencies {
         add("coreLibraryDesugaring", libs.findLibrary("desugar").get())
-        add("implementation", libs.findLibrary("timber").get())
     }
 }
 

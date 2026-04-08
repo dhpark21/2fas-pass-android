@@ -17,6 +17,7 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.common.coroutines.Dispatchers
 import com.twofasapp.core.common.domain.ImportType
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.TagsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
@@ -38,7 +39,6 @@ import com.twofasapp.feature.externalimport.import.spec.OnePasswordImportSpec
 import com.twofasapp.feature.externalimport.import.spec.ProtonPassImportSpec
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 internal class ExternalImportViewModel(
     savedStateHandle: SavedStateHandle,
@@ -97,7 +97,7 @@ internal class ExternalImportViewModel(
             runSafely { uiState.value.importSpec.readContent(uri) }
                 .onSuccess { updateState(ImportState.ReadSuccess(it)) }
                 .onFailure {
-                    Timber.e(it)
+                    Flog.e(it)
                     updateState(ImportState.Error(it.message))
                 }
         }

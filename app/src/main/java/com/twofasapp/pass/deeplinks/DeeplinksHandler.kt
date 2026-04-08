@@ -13,10 +13,10 @@ import android.content.Intent
 import com.twofasapp.core.android.deeplinks.Deeplink
 import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.navigation.Screen
+import com.twofasapp.core.common.logger.Flog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import timber.log.Timber
 
 internal class DeeplinksHandler : Deeplinks {
 
@@ -64,7 +64,7 @@ internal class DeeplinksHandler : Deeplinks {
 
     private fun handleIncomingIntent(activity: Activity, intent: Intent) {
         val uri = intent.data
-        Timber.tag(Tag).d("Open: $uri")
+        Flog.tag(Tag).d("Open: $uri")
 
         if (uri == null) return
 

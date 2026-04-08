@@ -11,6 +11,7 @@ package com.twofasapp.feature.autofill.service.handlers
 import android.content.Context
 import android.service.autofill.FillCallback
 import android.service.autofill.FillRequest
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.VaultsRepository
@@ -21,7 +22,6 @@ import com.twofasapp.feature.autofill.service.domain.AutofillItemMatcher
 import com.twofasapp.feature.autofill.service.domain.FillRequestSpec
 import com.twofasapp.feature.autofill.service.parser.NodeParser
 import kotlinx.coroutines.flow.first
-import timber.log.Timber
 
 internal class FillRequestHandler(
     private val itemsRepository: ItemsRepository,
@@ -38,18 +38,18 @@ internal class FillRequestHandler(
             val nodeStructure = NodeParser().parse(fillRequest)
 
             if (nodeStructure.inputs.isEmpty()) {
-                Timber.tag(AutofillTag).d("❌ No autofill inputs found!")
+                Flog.tag(AutofillTag).d("❌ No autofill inputs found!")
                 fillCallback.onSuccess(null)
                 return
             }
 
             if (nodeStructure.packageName.orEmpty().startsWith("com.twofasapp.pass")) {
-                Timber.tag(AutofillTag).d("❌ Package name is the same as autofill service package name!")
+                Flog.tag(AutofillTag).d("❌ Package name is the same as autofill service package name!")
                 fillCallback.onSuccess(null)
                 return
             }
 
-            Timber.tag(AutofillTag).d("✅ Node structure parsed: \n$nodeStructure")
+            Flog.tag(AutofillTag).d("✅ Node structure parsed: \n$nodeStructure")
 
             val fillRequestSpec = getFillRequestSpec(fillRequest)
             val itemsToTake = if (fillRequestSpec.inlinePresentationEnabled) {
@@ -83,7 +83,7 @@ internal class FillRequestHandler(
 
             fillCallback.onSuccess(response)
         } catch (e: Exception) {
-            Timber.tag(AutofillTag).e(e)
+            Flog.tag(AutofillTag).e(e)
             fillCallback.onFailure("Exception when filling autofill - ${e.message}")
         }
     }

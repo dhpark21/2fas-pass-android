@@ -9,6 +9,7 @@
 package com.twofasapp.core.common.logger
 
 enum class FlogLevel {
+    Verbose,
     Debug,
     Info,
     Warn,

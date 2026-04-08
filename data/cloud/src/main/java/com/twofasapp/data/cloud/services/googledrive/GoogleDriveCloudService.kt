@@ -24,6 +24,7 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import com.google.api.services.drive.model.File
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.cloud.authenticate.CloudServiceType
 import com.twofasapp.data.cloud.authenticate.DefaultCloudServiceType
 import com.twofasapp.data.cloud.domain.CloudConfig
@@ -35,7 +36,6 @@ import com.twofasapp.data.cloud.exceptions.CloudError
 import com.twofasapp.data.cloud.exceptions.CloudException
 import com.twofasapp.data.cloud.services.CloudService
 import com.twofasapp.data.cloud.services.googledrive.GoogleDriveCloudService.BackupFileMetadata.Companion.UnknownDevice
-import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.time.Instant
@@ -116,7 +116,7 @@ internal class GoogleDriveCloudService(
 
             when {
                 backupFileMetadata == null -> {
-                    Timber.d("GetFile <- Backup not found!")
+                    Flog.d("GetFile <- Backup not found!")
                     when (val mergeResult = mergeVaultContent(null)) {
                         is VaultMergeResult.Success -> {
                             drive.createBackupFile(
@@ -139,12 +139,12 @@ internal class GoogleDriveCloudService(
                 }
 
                 backupFileMetadata.updatedAt == request.vaultUpdatedAt && (backupFileMetadata.deviceId == request.deviceId || backupFileMetadata.deviceName == UnknownDevice) -> {
-                    Timber.d("GetFile <- Backup is up-to-date!")
+                    Flog.d("GetFile <- Backup is up-to-date!")
                     CloudResult.Success
                 }
 
                 else -> {
-                    Timber.d("GetFile <- Backup found! (updatedAt = ${backupFileMetadata.updatedAt})")
+                    Flog.d("GetFile <- Backup found! (updatedAt = ${backupFileMetadata.updatedAt})")
 
                     val backupFileContent = drive.getBackupFileContent(backupFileMetadata.id)
                     when (val mergeResult = mergeVaultContent(backupFileContent)) {
@@ -193,11 +193,11 @@ internal class GoogleDriveCloudService(
 
     private fun Drive.findBackupFile(filename: String): BackupFileMetadata? {
         try {
-            Timber.d("GetFile <- Starting...")
+            Flog.d("GetFile <- Starting...")
 
             val allFiles = getAllFiles()
 
-            Timber.d("GetFile <- Looking for \"${filename}\"...")
+            Flog.d("GetFile <- Looking for \"${filename}\"...")
 
             return if (allFiles.isEmpty()) {
                 null
@@ -229,7 +229,7 @@ internal class GoogleDriveCloudService(
         schemaVersion: Int,
     ) {
         try {
-            Timber.d("CreateFile -> Starting...")
+            Flog.d("CreateFile -> Starting...")
 
             val metadata = File()
                 .setParents(listOf("appDataFolder"))
@@ -249,8 +249,8 @@ internal class GoogleDriveCloudService(
                 .create(metadata, ByteArrayContent.fromString("text/plain", content))
                 .execute()
 
-            Timber.d("CreateFile -> $content")
-            Timber.d("CreateFile -> \"${name}\" created successfully!")
+            Flog.d("CreateFile -> $content")
+            Flog.d("CreateFile -> \"${name}\" created successfully!")
         } catch (e: Exception) {
             throw CloudException(e.mapCommonExceptions() ?: CloudError.CreateFile(e))
         }
@@ -267,7 +267,7 @@ internal class GoogleDriveCloudService(
         schemaVersion: Int,
     ) {
         try {
-            Timber.d("UpdateFile -> Starting...")
+            Flog.d("UpdateFile -> Starting...")
 
             files()
                 .update(
@@ -287,8 +287,8 @@ internal class GoogleDriveCloudService(
                 )
                 .execute()
 
-            Timber.d("UpdateFile -> $content")
-            Timber.d("UpdateFile -> \"${name}\" updated successfully!")
+            Flog.d("UpdateFile -> $content")
+            Flog.d("UpdateFile -> \"${name}\" updated successfully!")
         } catch (e: Exception) {
             throw CloudException(e.mapCommonExceptions() ?: CloudError.UpdateFile(e))
         }
@@ -306,7 +306,7 @@ internal class GoogleDriveCloudService(
                     }
                 }
 
-            Timber.d("GetFile <- $content")
+            Flog.d("GetFile <- $content")
 
             return content
         } catch (e: Exception) {

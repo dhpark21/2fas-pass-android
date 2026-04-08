@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.firebaseCrashlytics)
     implementation(libs.playServicesCorutines)
     implementation(libs.workManager)
+    implementation(libs.timber)
 
     debugImplementation(libs.pluto)
     debugImplementation(libs.plutoRoom)

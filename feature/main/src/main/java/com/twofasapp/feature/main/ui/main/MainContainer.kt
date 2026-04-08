@@ -36,6 +36,7 @@ import com.twofasapp.core.android.ktx.navigateTopLevel
 import com.twofasapp.core.android.ktx.openSafely
 import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.android.navigation.ScreenType
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.dialog.InfoDialog
@@ -47,7 +48,6 @@ import com.twofasapp.feature.connect.ui.requestmodal.RequestModal
 import com.twofasapp.feature.purchases.PurchasesDialog
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @Composable
 internal fun MainContainer(
@@ -107,7 +107,7 @@ private fun Content(
                         is Deeplink.ToScreen -> {
                             scope.launch {
                                 deeplink.screens.forEach { screen ->
-                                    Timber.tag("NavController").d("[Deeplink.ToScreen] currentRoute=$currentScreenRoute, navigateTo=${screen.route}")
+                                    Flog.tag("NavController").d("[Deeplink.ToScreen] currentRoute=$currentScreenRoute, navigateTo=${screen.route}")
 
                                     when (screen.screenType) {
                                         ScreenType.Standard -> navController.navigate(screen)
@@ -119,7 +119,7 @@ private fun Content(
                         }
 
                         is Deeplink.ShareLink -> {
-                            Timber.tag("NavController").d("[Deeplink.ShareLink] $deeplink")
+                            Flog.tag("NavController").d("[Deeplink.ShareLink] $deeplink")
                             navController.navigate(
                                 Screen.ShareLinkHandler(
                                     shareId = deeplink.shareId,

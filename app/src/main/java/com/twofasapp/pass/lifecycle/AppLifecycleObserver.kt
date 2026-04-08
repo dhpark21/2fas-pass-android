@@ -13,13 +13,13 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.twofasapp.core.common.auth.AuthStatusTracker
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.data.settings.domain.AutofillLockTime
 import com.twofasapp.pass.work.ClearInMemoryKeysWork
 import com.twofasapp.pass.work.ClearPersistedKeysWork
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 internal class AppLifecycleObserver(
     private val context: Context,
@@ -28,7 +28,7 @@ internal class AppLifecycleObserver(
 ) : DefaultLifecycleObserver {
     override fun onStart(owner: LifecycleOwner) {
         super.onStart(owner)
-        Timber.tag("AppLifecycleObserver").i("onAppForeground")
+        Flog.tag("AppLifecycleObserver").i("onAppForeground")
 
         owner.lifecycleScope.launch {
             authTracker.onAppForeground()
@@ -40,7 +40,7 @@ internal class AppLifecycleObserver(
 
     override fun onStop(owner: LifecycleOwner) {
         super.onStop(owner)
-        Timber.tag("AppLifecycleObserver").i("onAppBackground")
+        Flog.tag("AppLifecycleObserver").i("onAppBackground")
 
         owner.lifecycleScope.launch {
             authTracker.onAppBackground()

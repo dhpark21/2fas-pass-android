@@ -29,6 +29,7 @@ class FlogSinkImpl(
 
     override fun log(level: FlogLevel, tag: String, message: String, throwable: Throwable?, persist: Boolean) {
         val priority = when (level) {
+            FlogLevel.Verbose -> Log.VERBOSE
             FlogLevel.Debug -> Log.DEBUG
             FlogLevel.Info -> Log.INFO
             FlogLevel.Warn -> Log.WARN

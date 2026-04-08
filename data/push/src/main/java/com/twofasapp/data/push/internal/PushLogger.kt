@@ -9,25 +9,25 @@
 package com.twofasapp.data.push.internal
 
 import com.google.firebase.messaging.RemoteMessage
-import timber.log.Timber
+import com.twofasapp.core.common.logger.Flog
 
 object PushLogger {
     private const val Tag = "PushMessagingService"
 
     fun logMessage(remoteMessage: RemoteMessage) {
         try {
-            Timber.tag(Tag)
+            Flog.tag(Tag)
                 .i("\uD83D\uDD14 Push Received <= data=${remoteMessage.data}, title=${remoteMessage.notification?.title}, body=${remoteMessage.notification?.body}")
         } catch (e: Exception) {
-            Timber.e(e)
+            Flog.e(e)
         }
     }
 
     fun logToken(token: String) {
-        Timber.tag(Tag).i("FcmToken: $token")
+        Flog.tag(Tag).i("FcmToken: $token")
     }
 
     fun log(message: String) {
-        Timber.tag(Tag).i(message)
+        Flog.tag(Tag).i(message)
     }
 }

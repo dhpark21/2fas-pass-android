@@ -11,7 +11,7 @@ package com.twofasapp.feature.main.ui.main
 import android.os.Bundle
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
-import timber.log.Timber
+import com.twofasapp.core.common.logger.Flog
 
 internal class MainNavListener : NavController.OnDestinationChangedListener {
     override fun onDestinationChanged(
@@ -32,6 +32,6 @@ internal class MainNavListener : NavController.OnDestinationChangedListener {
             }.toString()
         }
 
-        Timber.tag("NavController").d("route=${destination.route} $argumentsLog")
+        Flog.tag("NavController").d("route=${destination.route} $argumentsLog")
     }
 }

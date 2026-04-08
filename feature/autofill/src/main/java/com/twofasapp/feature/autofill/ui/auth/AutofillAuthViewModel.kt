@@ -14,12 +14,12 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.domain.SecretField
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.encodeHex
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.main.VaultKeysRepository
 import com.twofasapp.feature.autofill.service.domain.AutofillLogin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 internal class AutofillAuthViewModel(
     private val vaultKeysRepository: VaultKeysRepository,
@@ -58,7 +58,7 @@ internal class AutofillAuthViewModel(
                     onSuccess(autofillLogin.copy(encrypted = false))
                 }
                 .onFailure {
-                    Timber.e(it)
+                    Flog.e(it)
                 }
         }
     }

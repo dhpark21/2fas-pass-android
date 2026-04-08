@@ -22,6 +22,7 @@ import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.ktx.decodeUrlParam
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.readPdfAsBitmap
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.cloud.services.CloudServiceProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.CloudRepository
@@ -46,7 +47,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 import java.time.Instant
 import javax.crypto.AEADBadTagException
 
@@ -178,7 +178,7 @@ internal class DecryptVaultViewModel(
     }
 
     fun readDecryptionKitFromQr(text: String) {
-        Timber.d("Scanned: $text")
+        Flog.d("Scanned: $text")
         openState(ImportVaultState.ImportingFile)
 
         launchScoped {

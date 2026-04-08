@@ -14,10 +14,10 @@ import androidx.navigation.toRoute
 import com.twofasapp.core.android.ktx.launchScoped
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.android.navigation.Screen
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.share.ShareRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 internal class ShareLinkHandlerViewModel(
     savedStateHandle: SavedStateHandle,
@@ -58,7 +58,7 @@ internal class ShareLinkHandlerViewModel(
                 )
             }
                 .onSuccess { decryptedItem ->
-                    Timber.d("Decrypted share link: $decryptedItem")
+                    Flog.d("Decrypted share link: $decryptedItem")
                     shareRepository.cacheDecryptedShareItem(route.shareId, decryptedItem)
                     uiState.update {
                         it.copy(

@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.local
 
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.domain.VaultKeys
 import com.twofasapp.data.main.local.dao.VaultKeysDao
 import com.twofasapp.data.main.local.model.VaultKeysEntity
@@ -16,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 internal class VaultKeysLocalSource(
     private val dao: VaultKeysDao,
@@ -60,12 +60,12 @@ internal class VaultKeysLocalSource(
     }
 
     suspend fun clearInMemoryVaultKeys() {
-        Timber.tag("VaultKeys").i("clearInMemoryVaultKeys")
+        Flog.tag("VaultKeys").i("clearInMemoryVaultKeys")
         inMemory.emit(emptyMap())
     }
 
     suspend fun clearPersistedVaultKeys() {
-        Timber.tag("VaultKeys").i("clearPersistedVaultKeys")
+        Flog.tag("VaultKeys").i("clearPersistedVaultKeys")
         dao.deleteAll()
     }
 }

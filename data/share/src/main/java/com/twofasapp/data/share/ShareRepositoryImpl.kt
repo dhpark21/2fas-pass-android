@@ -11,6 +11,7 @@ import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeBase64UrlSafe
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64UrlSafe
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.network.ApiConfig
 import com.twofasapp.data.share.domain.ShareItem
 import com.twofasapp.data.share.domain.ShareLink
@@ -18,7 +19,6 @@ import com.twofasapp.data.share.mapper.ShareMapper
 import com.twofasapp.data.share.remote.ShareRemoteSource
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 
 internal class ShareRepositoryImpl(
     private val dispatchers: Dispatchers,
@@ -39,7 +39,7 @@ internal class ShareRepositoryImpl(
         return withContext(dispatchers.io) {
             val isPasswordProtected = !password?.trim().isNullOrEmpty()
             val shareContent = json.encodeToString(ShareItem.serializer(), shareMapper.map(item))
-            Timber.d("Sharing content: $shareContent")
+            Flog.d("Sharing content: $shareContent")
 
             val salt = RandomGenerator.generate(bytes = 16)
             val randomKey = RandomGenerator.generate(bytes = 32)
@@ -109,7 +109,7 @@ internal class ShareRepositoryImpl(
             val decryptedBytes = decrypt(key = decryptionKey, data = encrypted)
             val decryptedJson = decryptedBytes.toString(Charsets.UTF_8)
 
-            Timber.d("Decrypted share content: $decryptedJson")
+            Flog.d("Decrypted share content: $decryptedJson")
 
             val shareItem = json.decodeFromString(ShareItem.serializer(), decryptedJson)
             shareMapper.map(shareItem)

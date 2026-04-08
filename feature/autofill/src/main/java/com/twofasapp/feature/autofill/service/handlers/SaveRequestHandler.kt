@@ -14,6 +14,7 @@ import android.service.autofill.SaveCallback
 import android.service.autofill.SaveRequest
 import android.view.autofill.AutofillId
 import com.twofasapp.core.android.ktx.getSafelyParcelable
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.ItemsRepository
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
@@ -21,7 +22,6 @@ import com.twofasapp.feature.autofill.service.builders.IntentBuilders
 import com.twofasapp.feature.autofill.service.domain.SaveLoginData
 import com.twofasapp.feature.autofill.service.domain.SaveRequestSpec
 import com.twofasapp.feature.autofill.service.parser.AutofillInput
-import timber.log.Timber
 
 internal class SaveRequestHandler(
     private val itemsRepository: ItemsRepository,
@@ -33,7 +33,7 @@ internal class SaveRequestHandler(
         saveCallback: SaveCallback,
     ) {
         val saveRequestSpec = saveRequest.clientState.getSafelyParcelable<SaveRequestSpec>(SaveRequestSpec.BundleKey)
-        Timber.tag(AutofillTag).d("\uD83D\uDCBE $saveRequestSpec")
+        Flog.tag(AutofillTag).d("\uD83D\uDCBE $saveRequestSpec")
 
         if (saveRequestSpec == null) {
             saveCallback.onFailure("Save request has no payload")
@@ -86,7 +86,7 @@ internal class SaveRequestHandler(
                 password = password,
             )
 
-            Timber.tag(AutofillTag).d("\uD83D\uDCBE $saveLoginData")
+            Flog.tag(AutofillTag).d("\uD83D\uDCBE $saveLoginData")
 
             context.startActivity(
                 IntentBuilders.createSaveLoginIntent(

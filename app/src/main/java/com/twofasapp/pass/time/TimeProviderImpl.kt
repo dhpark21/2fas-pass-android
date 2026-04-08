@@ -10,11 +10,11 @@ package com.twofasapp.pass.time
 
 import android.os.SystemClock
 import com.instacart.truetime.time.TrueTime
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.storage.DataStoreOwner
 import com.twofasapp.core.common.storage.longPref
 import com.twofasapp.core.common.time.TimeProvider
 import kotlinx.coroutines.delay
-import timber.log.Timber
 import java.time.Duration
 import java.time.Instant
 
@@ -50,12 +50,12 @@ internal class TimeProviderImpl(
 
         deltaMillis = savedDeltaMillis.get()
 
-        Timber.d("TrueTime: sync started")
+        Flog.d("TrueTime: sync started")
 
         trueTime.sync()
 
         while (isSynced.not() && syncDuration <= retryTimeout) {
-            Timber.d("TrueTime: syncing...")
+            Flog.d("TrueTime: syncing...")
 
             if (trueTime.hasTheTime()) {
                 deltaMillis = trueTime.nowSafely().toInstant().toEpochMilli() - Instant.now().toEpochMilli()
@@ -68,9 +68,9 @@ internal class TimeProviderImpl(
         }
 
         if (isSynced) {
-            Timber.d("TrueTime: sync finished, delta=$deltaMillis")
+            Flog.d("TrueTime: sync finished, delta=$deltaMillis")
         } else {
-            Timber.d("TrueTime: sync failed")
+            Flog.d("TrueTime: sync failed")
         }
     }
 }

@@ -36,6 +36,7 @@ import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.sha256
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
@@ -67,7 +68,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
-import timber.log.Timber
 import java.util.concurrent.CancellationException
 
 internal class RequestWebSocketImpl(
@@ -105,7 +105,7 @@ internal class RequestWebSocketImpl(
     ): RequestWebSocketResult {
         try {
             withContext(dispatchers.io) {
-                Timber.d("Request: $requestData")
+                Flog.d("Request: $requestData")
 
                 version = requestData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
@@ -204,7 +204,7 @@ internal class RequestWebSocketImpl(
 
                                         val requestString = request.decodeString()
 
-                                        Timber.d("Request data: $requestString")
+                                        Flog.d("Request data: $requestString")
 
                                         val action =
                                             json.decodeFromString<BrowserRequestActionJson>(
@@ -224,7 +224,7 @@ internal class RequestWebSocketImpl(
                                             response = response,
                                         )
 
-                                        Timber.d(responseData)
+                                        Flog.d(responseData)
 
                                         val responseDataEnc = encrypt(
                                             key = dataKey,
@@ -350,7 +350,7 @@ internal class RequestWebSocketImpl(
         hkdfSalt: ByteArray,
         sessionKey: ByteArray,
     ): BrowserRequestAction {
-        Timber.d("Request action: $this")
+        Flog.d("Request action: $this")
 
         return when (this) {
             is BrowserRequestActionJson.PasswordRequest -> {

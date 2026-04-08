@@ -17,6 +17,7 @@ object Flog {
 
     fun tag(tag: String): FlogTag = FlogTag(tag)
 
+    fun v(message: String, persist: Boolean = false) = autoTag().v(message, persist)
     fun d(message: String, persist: Boolean = false) = autoTag().d(message, persist)
     fun i(message: String, persist: Boolean = false) = autoTag().i(message, persist)
     fun w(message: String, persist: Boolean = false) = autoTag().w(message, persist)

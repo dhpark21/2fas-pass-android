@@ -10,13 +10,13 @@ import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeUrlParam
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.readPdfAsBitmap
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.locale.Strings
 import com.twofasapp.data.main.SecurityRepository
 import com.twofasapp.data.security.crypto.MasterKey
 import com.twofasapp.feature.qrscan.ReadQrFromImage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 internal class ForgotPasswordViewModel(
     private val securityRepository: SecurityRepository,
@@ -72,7 +72,7 @@ internal class ForgotPasswordViewModel(
         onVerified: (ByteArray) -> Unit,
         onError: () -> Unit,
     ) {
-        Timber.d("Scanned: $text")
+        Flog.d("Scanned: $text")
 
         openState(ForgotPasswordState.Loading)
 
