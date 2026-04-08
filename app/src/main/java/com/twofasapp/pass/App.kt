@@ -24,6 +24,8 @@ import com.pluto.plugins.logger.PlutoLoggerPlugin
 import com.pluto.plugins.rooms.db.PlutoRoomsDatabasePlugin
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
+import com.twofasapp.core.common.logger.Flog
+import com.twofasapp.core.common.logger.FlogSink
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
@@ -41,11 +43,11 @@ import okhttp3.Response
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import timber.log.Timber
 import kotlin.time.ExperimentalTime
 
 class App : Application(), SingletonImageLoader.Factory {
 
+    private val flogSink: FlogSink by inject()
     private val appLifecycleObserver: AppLifecycleObserver by inject()
     private val appBuild: AppBuild by inject()
     private val timeProvider: TimeProvider by inject()
@@ -61,14 +63,11 @@ class App : Application(), SingletonImageLoader.Factory {
             modules(Modules.provide())
         }
 
-        when (appBuild.buildVariant) {
-            BuildVariant.Release -> Unit
-            BuildVariant.Internal -> Unit
-            BuildVariant.Debug -> {
-                Timber.plant(Timber.DebugTree())
-                System.setProperty("kotlinx.coroutines.debug", "on")
-            }
+        if (appBuild.buildVariant == BuildVariant.Debug) {
+            System.setProperty("kotlinx.coroutines.debug", "on")
         }
+
+        Flog.init(flogSink)
 
         CrashlyticsInstance.crashlytics = crashlyticsProvider
 

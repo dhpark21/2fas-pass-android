@@ -17,6 +17,7 @@ import com.twofasapp.core.common.build.AppUpdateExecutor
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.build.LocalConfig
 import com.twofasapp.core.common.coroutines.Dispatchers
+import com.twofasapp.core.common.logger.FlogSink
 import com.twofasapp.core.common.push.PushTokenProvider
 import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
@@ -33,6 +34,7 @@ import com.twofasapp.pass.build.LocalConfigImpl
 import com.twofasapp.pass.coroutines.AppDispatchers
 import com.twofasapp.pass.deeplinks.DeeplinksHandler
 import com.twofasapp.pass.lifecycle.AppLifecycleObserver
+import com.twofasapp.pass.logger.FlogSinkImpl
 import com.twofasapp.pass.network.ApiConfigImpl
 import com.twofasapp.pass.notifications.SystemNotificationsHandler
 import com.twofasapp.pass.notifications.browserrequest.BrowserRequestNotification
@@ -72,5 +74,6 @@ class AppModule : KoinModule {
         singleOf(::DeviceImpl) { bind<Device>() }
         singleOf(::BrowserRequestNotification)
         singleOf(::ApiConfigImpl) { bind<ApiConfig>() }
+        singleOf(::FlogSinkImpl) { bind<FlogSink>() }
     }
 }
