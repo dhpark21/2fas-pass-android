@@ -59,7 +59,7 @@ internal fun HomeListDropdownMenu(
             if (editVisible) {
                 DropdownMenuItem(
                     text = strings.homeListMenuEdit,
-                    icon = MdtIcons.Edit,
+                    leadingIcon = MdtIcons.Edit,
                     onClick = {
                         showDropdown = false
                         onEditListClick()
@@ -69,7 +69,7 @@ internal fun HomeListDropdownMenu(
 
             DropdownMenuItem(
                 text = strings.homeListMenuSort,
-                icon = MdtIcons.Sort,
+                leadingIcon = MdtIcons.Sort,
                 onClick = {
                     showDropdown = false
                     onSortClick()
@@ -78,7 +78,7 @@ internal fun HomeListDropdownMenu(
 
             DropdownMenuItem(
                 text = strings.homeListMenuFilter,
-                icon = MdtIcons.FilterAlt,
+                leadingIcon = MdtIcons.FilterAlt,
                 onClick = {
                     showDropdown = false
                     onFilterClick()
@@ -88,7 +88,7 @@ internal fun HomeListDropdownMenu(
             if (selectedTag != null) {
                 DropdownMenuItem(
                     text = strings.homeListMenuClearFilters,
-                    icon = MdtIcons.Close,
+                    leadingIcon = MdtIcons.Close,
                     contentColor = MdtTheme.color.error,
                     onClick = {
                         showDropdown = false

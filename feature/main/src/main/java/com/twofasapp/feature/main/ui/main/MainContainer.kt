@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.twofasapp.core.android.deeplinks.Deeplink
 import com.twofasapp.core.android.ktx.navigateTopLevel
 import com.twofasapp.core.android.ktx.openSafely
+import com.twofasapp.core.android.navigation.Screen
 import com.twofasapp.core.android.navigation.ScreenType
 import com.twofasapp.core.design.MdtIcons
 import com.twofasapp.core.design.MdtTheme
@@ -115,6 +116,18 @@ private fun Content(
                                     }
                                 }
                             }
+                        }
+
+                        is Deeplink.ShareLink -> {
+                            Timber.tag("NavController").d("[Deeplink.ShareLink] $deeplink")
+                            navController.navigate(
+                                Screen.ShareLinkHandler(
+                                    shareId = deeplink.shareId,
+                                    version = deeplink.version,
+                                    nonce = deeplink.nonce,
+                                    key = deeplink.key,
+                                ),
+                            )
                         }
                     }
                 }

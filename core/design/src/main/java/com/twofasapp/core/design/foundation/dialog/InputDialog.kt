@@ -8,6 +8,7 @@
 
 package com.twofasapp.core.design.foundation.dialog
 
+import android.view.View
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -26,13 +27,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
 import com.twofasapp.core.design.foundation.preview.PreviewTextLong
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
+import com.twofasapp.core.design.foundation.textfield.SecretField
+import com.twofasapp.core.design.foundation.textfield.SecretFieldTrailingIcon
 import com.twofasapp.core.design.foundation.textfield.TextField
 import com.twofasapp.core.design.theme.DialogPadding
 import com.twofasapp.core.locale.MdtLocale
@@ -46,6 +51,7 @@ sealed interface InputValidation {
 @Composable
 fun InputDialog(
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
     title: String? = null,
     body: String? = null,
     bodyAnnotated: AnnotatedString? = null,
@@ -66,7 +72,10 @@ fun InputDialog(
     actionsAlignment: ActionsAlignment = ActionsAlignment.Horizontal,
     properties: DialogProperties = DialogProperties(),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    isSecret: Boolean = false,
+    excludeFromAutofill: Boolean = true,
 ) {
+    var secretVisible by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     var textFieldValue by remember {
         mutableStateOf(
@@ -94,6 +103,7 @@ fun InputDialog(
 
     BaseDialog(
         onDismissRequest = onDismissRequest,
+        modifier = modifier,
         title = title,
         body = body,
         bodyAnnotated = bodyAnnotated,
@@ -112,6 +122,10 @@ fun InputDialog(
         properties = properties,
         actionsAlignment = actionsAlignment,
         content = {
+            if (excludeFromAutofill) {
+                LocalView.current.rootView.importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS
+            }
+
             Column(
                 modifier = Modifier.padding(horizontal = DialogPadding),
             ) {
@@ -131,6 +145,21 @@ fun InputDialog(
                     supportingText = (inputValidation as? InputValidation.Invalid)?.error.orEmpty(),
                     isError = startedTyping && inputValidation is InputValidation.Invalid,
                     keyboardOptions = keyboardOptions,
+                    visualTransformation = if (isSecret) {
+                        VisualTransformation.SecretField(secretVisible)
+                    } else {
+                        VisualTransformation.None
+                    },
+                    trailingIcon = if (isSecret) {
+                        {
+                            SecretFieldTrailingIcon(
+                                visible = secretVisible,
+                                onToggle = { secretVisible = !secretVisible },
+                            )
+                        }
+                    } else {
+                        null
+                    },
                     keyboardActions = if (inputValidation is InputValidation.Valid) {
                         KeyboardActions(
                             onDone = { onPositive(textFieldValue.text) },

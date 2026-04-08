@@ -73,6 +73,7 @@ import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
+import com.twofasapp.feature.share.ui.ShareItemModal
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.androidx.compose.koinViewModel
 
@@ -176,6 +177,7 @@ private fun Content(
     var showFilterModal by remember { mutableStateOf(false) }
     var showAddItemModal by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
+    var shareModalItem by remember { mutableStateOf<Item?>(null) }
     val deviceType = currentDeviceType()
     val itemsPerRow = when (deviceType) {
         DeviceType.Compact -> 1
@@ -308,6 +310,7 @@ private fun Content(
                                                 )
                                             },
                                             onDetailsClick = onDetailsClick,
+                                            onShareClick = { shareModalItem = item },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
                                             onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                             onEnabledEditMode = { onChangeEditMode(true) },
@@ -335,6 +338,7 @@ private fun Content(
                                         )
                                     },
                                     onDetailsClick = onDetailsClick,
+                                    onShareClick = { shareModalItem = item },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
                                     onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                     onEnabledEditMode = { onChangeEditMode(true) },
@@ -406,6 +410,13 @@ private fun Content(
             onDismissRequest = { showPaywall = false },
             title = MdtLocale.strings.paywallNoticeItemsLimitReachedTitle,
             body = MdtLocale.strings.paywallNoticeItemsLimitReachedMsg.format(uiState.maxItems),
+        )
+    }
+
+    shareModalItem?.let { item ->
+        ShareItemModal(
+            item = item,
+            onDismissRequest = { shareModalItem = null },
         )
     }
 }

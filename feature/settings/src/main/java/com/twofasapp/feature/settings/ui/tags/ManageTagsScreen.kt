@@ -114,7 +114,7 @@ private fun Content(
                                         content = {
                                             DropdownMenuItem(
                                                 text = MdtLocale.strings.commonEdit,
-                                                icon = MdtIcons.Edit,
+                                                leadingIcon = MdtIcons.Edit,
                                                 onClick = {
                                                     clickedTag = tag
                                                     showDropdown = false
@@ -124,7 +124,7 @@ private fun Content(
 
                                             DropdownMenuItem(
                                                 text = MdtLocale.strings.tagDeleteCta,
-                                                icon = MdtIcons.Delete,
+                                                leadingIcon = MdtIcons.Delete,
                                                 contentColor = MdtTheme.color.error,
                                                 onClick = {
                                                     clickedTag = tag

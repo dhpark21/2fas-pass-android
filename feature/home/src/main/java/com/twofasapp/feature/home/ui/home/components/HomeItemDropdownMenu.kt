@@ -24,6 +24,7 @@ internal fun HomeItemDropdownMenu(
     item: Item,
     onDetailsClick: () -> Unit = {},
     onEditClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
     onCopySecretFieldToClipboard: (SecretField?) -> Unit = {},
     onTrashClick: () -> Unit = {},
 ) {
@@ -44,7 +45,7 @@ internal fun HomeItemDropdownMenu(
         content = {
             DropdownMenuItem(
                 text = MdtLocale.strings.homeItemView,
-                icon = MdtIcons.Visibility,
+                leadingIcon = MdtIcons.Visibility,
                 onClick = {
                     showDropdown = false
                     onDetailsClick()
@@ -53,10 +54,19 @@ internal fun HomeItemDropdownMenu(
 
             DropdownMenuItem(
                 text = MdtLocale.strings.homeItemEdit,
-                icon = MdtIcons.Edit,
+                leadingIcon = MdtIcons.Edit,
                 onClick = {
                     showDropdown = false
                     onEditClick()
+                },
+            )
+
+            DropdownMenuItem(
+                text = MdtLocale.strings.commonShare,
+                leadingIcon = MdtIcons.Share,
+                onClick = {
+                    showDropdown = false
+                    onShareClick()
                 },
             )
 
@@ -67,7 +77,7 @@ internal fun HomeItemDropdownMenu(
                         content.username.takeIf { it.isNullOrEmpty().not() }?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.homeItemCopyUsername,
-                                icon = MdtIcons.User,
+                                leadingIcon = MdtIcons.User,
                                 onClick = {
                                     showDropdown = false
                                     context.copyToClipboard(content.username.orEmpty())
@@ -77,7 +87,7 @@ internal fun HomeItemDropdownMenu(
                         content.password?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.homeItemCopyPassword,
-                                icon = MdtIcons.Key,
+                                leadingIcon = MdtIcons.Key,
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.password)
@@ -89,7 +99,7 @@ internal fun HomeItemDropdownMenu(
                             ?.let { uri ->
                                 DropdownMenuItem(
                                     text = MdtLocale.strings.homeItemOpenUri,
-                                    icon = MdtIcons.Open,
+                                    leadingIcon = MdtIcons.Open,
                                     onClick = {
                                         showDropdown = false
                                         uriHandler.openSafely(uri, context)
@@ -102,7 +112,7 @@ internal fun HomeItemDropdownMenu(
                         content.text?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.secureNoteViewActionCopy,
-                                icon = MdtIcons.Document,
+                                leadingIcon = MdtIcons.Document,
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.text)
@@ -115,7 +125,7 @@ internal fun HomeItemDropdownMenu(
                         content.cardNumber?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.cardViewActionCopyCardNumber,
-                                icon = MdtIcons.PaymentCard,
+                                leadingIcon = MdtIcons.PaymentCard,
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.cardNumber)
@@ -126,7 +136,7 @@ internal fun HomeItemDropdownMenu(
                         content.expirationDate?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.cardViewActionCopyExpirationDate,
-                                icon = MdtIcons.PaymentCardDate,
+                                leadingIcon = MdtIcons.PaymentCardDate,
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.expirationDate)
@@ -137,7 +147,7 @@ internal fun HomeItemDropdownMenu(
                         content.securityCode?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.cardViewActionCopySecurityCode,
-                                icon = MdtIcons.PaymentCardCode,
+                                leadingIcon = MdtIcons.PaymentCardCode,
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.securityCode)
@@ -150,7 +160,7 @@ internal fun HomeItemDropdownMenu(
                         content.ssid.takeIf { it.isNullOrEmpty().not() }?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.wifiViewActionCopySsid,
-                                icon = MdtIcons.Wifi4Bar,
+                                leadingIcon = MdtIcons.Wifi4Bar,
                                 onClick = {
                                     showDropdown = false
                                     context.copyToClipboard(content.ssid.orEmpty())
@@ -160,7 +170,7 @@ internal fun HomeItemDropdownMenu(
                         content.password?.let {
                             DropdownMenuItem(
                                 text = MdtLocale.strings.wifiViewActionCopyPassword,
-                                icon = MdtIcons.Key,
+                                leadingIcon = MdtIcons.Key,
                                 onClick = {
                                     showDropdown = false
                                     onCopySecretFieldToClipboard(content.password)
@@ -173,7 +183,7 @@ internal fun HomeItemDropdownMenu(
 
             DropdownMenuItem(
                 text = MdtLocale.strings.homeItemDelete,
-                icon = MdtIcons.Delete,
+                leadingIcon = MdtIcons.Delete,
                 contentColor = MdtTheme.color.error,
                 onClick = {
                     showDropdown = false

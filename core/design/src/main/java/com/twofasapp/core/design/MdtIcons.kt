@@ -38,6 +38,7 @@ object MdtIcons {
     val Palette @Composable get() = painterResource(R.drawable.ic_palette)
     val User @Composable get() = painterResource(R.drawable.ic_user)
     val Login @Composable get() = painterResource(R.drawable.ic_user)
+    val Timer @Composable get() = painterResource(R.drawable.ic_timer)
     val Refresh @Composable get() = painterResource(R.drawable.ic_refresh)
     val Touch @Composable get() = painterResource(R.drawable.ic_touch)
     val Smartphone @Composable get() = painterResource(R.drawable.ic_smartphone)

@@ -54,6 +54,7 @@ dependencies {
     implementation(project(":data:push"))
     implementation(project(":data:cloud"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:share"))
 
     implementation(project(":feature:startup"))
     implementation(project(":feature:main"))
@@ -70,6 +71,7 @@ dependencies {
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))
     implementation(project(":feature:quicksetup"))
+    implementation(project(":feature:share"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
