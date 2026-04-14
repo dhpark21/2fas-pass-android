@@ -261,6 +261,15 @@ private fun Content(
                     text = strings.aboutSectionCrashReporting,
                 )
             }
+
+//            item {
+//                OptionEntry(
+//                    title = strings.aboutSendLogsCta,
+//                    icon = MdtIcons.Document,
+//                    onClick = { deeplinks.openScreen(Screen.Logs) },
+//                )
+//            }
+
             item {
                 OptionSwitch(
                     title = strings.aboutSendCrashReports,

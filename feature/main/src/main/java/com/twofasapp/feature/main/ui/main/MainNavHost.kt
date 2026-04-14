@@ -37,6 +37,7 @@ import com.twofasapp.feature.settings.navigation.CustomizationRoute
 import com.twofasapp.feature.settings.navigation.ImportExportRoute
 import com.twofasapp.feature.settings.navigation.KnownBrowsersRoute
 import com.twofasapp.feature.settings.navigation.LockoutSettingsRoute
+import com.twofasapp.feature.settings.navigation.LogsRoute
 import com.twofasapp.feature.settings.navigation.ManageSubscriptionRoute
 import com.twofasapp.feature.settings.navigation.ManageTagsRoute
 import com.twofasapp.feature.settings.navigation.OpenSourceLibrariesRoute
@@ -286,6 +287,10 @@ internal fun MainNavHost(
 
         composable<Screen.About> {
             AboutRoute()
+        }
+
+        composable<Screen.Logs> {
+            LogsRoute()
         }
 
         composable<Screen.OpenSourceLibraries> {

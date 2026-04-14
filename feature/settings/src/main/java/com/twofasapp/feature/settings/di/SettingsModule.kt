@@ -21,6 +21,7 @@ import com.twofasapp.feature.settings.ui.customization.CustomizationViewModel
 import com.twofasapp.feature.settings.ui.importexport.ImportExportViewModel
 import com.twofasapp.feature.settings.ui.knownbrowsers.KnownBrowsersViewModel
 import com.twofasapp.feature.settings.ui.lockoutsettings.LockoutSettingsViewModel
+import com.twofasapp.feature.settings.ui.logs.LogsViewModel
 import com.twofasapp.feature.settings.ui.pushnotifications.PushNotificationsViewModel
 import com.twofasapp.feature.settings.ui.savedecryptionkit.SaveDecryptionKitViewModel
 import com.twofasapp.feature.settings.ui.security.SecurityViewModel
@@ -43,6 +44,7 @@ class SettingsModule : KoinModule {
         viewModelOf(::CustomizationViewModel)
         viewModelOf(::AutofillViewModel)
         viewModelOf(::AboutViewModel)
+        viewModelOf(::LogsViewModel)
         viewModelOf(::CloudSyncViewModel)
         viewModelOf(::ImportExportViewModel)
         viewModelOf(::TransferViewModel)

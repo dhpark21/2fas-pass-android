@@ -18,6 +18,7 @@ import com.twofasapp.feature.settings.ui.customization.CustomizationScreen
 import com.twofasapp.feature.settings.ui.importexport.ImportExportScreen
 import com.twofasapp.feature.settings.ui.knownbrowsers.KnownBrowsersScreen
 import com.twofasapp.feature.settings.ui.lockoutsettings.LockoutSettingsScreen
+import com.twofasapp.feature.settings.ui.logs.LogsScreen
 import com.twofasapp.feature.settings.ui.opensource.OpenSourceLibrariesScreen
 import com.twofasapp.feature.settings.ui.pushnotifications.PushNotificationsScreen
 import com.twofasapp.feature.settings.ui.savedecryptionkit.SaveDecryptionKitScreen
@@ -121,6 +122,11 @@ fun TrashRoute() {
 @Composable
 fun AboutRoute() {
     AboutScreen()
+}
+
+@Composable
+fun LogsRoute() {
+    LogsScreen()
 }
 
 @Composable

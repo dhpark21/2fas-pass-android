@@ -367,6 +367,9 @@
     <string name="about_libraries_we_use">Acknowledgments</string>
     <string name="about_rate_us_app_store">Rate us on the App Store</string>
     <string name="about_send_logs_cta">Send logs</string>
+    <string name="logs_title">Logs</string>
+    <string name="logs_share_title">Share logs</string>
+    <string name="logs_empty">No logs available</string>
     <string name="about_version_ios__0025_0040">Version: **%s**</string>
     <string name="autofill_no_vault_message">Go to the app for Vault setup.</string>
     <string name="common_close">Close</string>

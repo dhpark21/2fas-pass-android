@@ -162,6 +162,9 @@ sealed class Screen(
     data object About : Screen()
 
     @Serializable
+    data object Logs : Screen()
+
+    @Serializable
     data object OpenSourceLibraries : Screen()
 
     @Serializable
