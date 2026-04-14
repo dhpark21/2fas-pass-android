@@ -19,7 +19,7 @@ internal class ShareRemoteSource(
         expirationTimeSeconds: Int,
         oneTimeAccess: Boolean,
     ): ShareLinkJson {
-        return httpClient.post("${apiConfig.shareApiUrl}/secret") {
+        return httpClient.post("${apiConfig.shareApiUrl}/api/secret") {
             setBody(
                 ShareItemJson(
                     data = data,
@@ -31,6 +31,6 @@ internal class ShareRemoteSource(
     }
 
     suspend fun getShareSecret(id: String): ShareSecretJson {
-        return httpClient.get("${apiConfig.shareApiUrl}/secret/$id").body()
+        return httpClient.get("${apiConfig.shareApiUrl}/api/secret/$id").body()
     }
 }
