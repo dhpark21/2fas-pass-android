@@ -11,15 +11,15 @@ package com.twofasapp.core.common.logger
 class FlogTag internal constructor(
     private val tag: String,
 ) {
-    fun v(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Verbose, tag, message, persist = persist)
+    fun v(message: String) = Flog.dispatch(FlogLevel.Verbose, tag, message)
 
-    fun d(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Debug, tag, message, persist = persist)
+    fun d(message: String) = Flog.dispatch(FlogLevel.Debug, tag, message)
 
-    fun i(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Info, tag, message, persist = persist)
+    fun i(message: String) = Flog.dispatch(FlogLevel.Info, tag, message)
 
-    fun w(message: String, persist: Boolean = false) = Flog.dispatch(FlogLevel.Warn, tag, message, persist = persist)
+    fun w(message: String) = Flog.dispatch(FlogLevel.Warn, tag, message)
 
-    fun e(message: String, throwable: Throwable? = null, persist: Boolean = false) = Flog.dispatch(FlogLevel.Error, tag, message, throwable, persist)
+    fun e(message: String, throwable: Throwable? = null) = Flog.dispatch(FlogLevel.Error, tag, message, throwable)
 
-    fun e(throwable: Throwable?, persist: Boolean = false) = Flog.dispatch(FlogLevel.Error, tag, throwable?.message ?: "", throwable, persist)
+    fun e(throwable: Throwable?) = Flog.dispatch(FlogLevel.Error, tag, throwable?.message ?: "", throwable)
 }

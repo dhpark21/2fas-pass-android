@@ -11,15 +11,15 @@ package com.twofasapp.data.logs.local.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.twofasapp.data.logs.local.model.LogEntity
+import com.twofasapp.data.logs.local.model.LogEntryEntity
 
 @Dao
 interface LogsDao {
     @Insert
-    suspend fun insert(log: LogEntity)
+    suspend fun insert(log: LogEntryEntity)
 
     @Query("SELECT * FROM logs ORDER BY timestamp DESC")
-    suspend fun getAll(): List<LogEntity>
+    suspend fun getAll(): List<LogEntryEntity>
 
     @Query("DELETE FROM logs")
     suspend fun deleteAll()

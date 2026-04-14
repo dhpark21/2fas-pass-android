@@ -13,12 +13,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "logs")
-data class LogEntity(
+data class LogEntryEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("id")
     val id: Long = 0,
-    @ColumnInfo("level")
-    val level: String,
+    @ColumnInfo("tag")
+    val tag: String,
     @ColumnInfo("timestamp")
     val timestamp: Long,
     @ColumnInfo("message")

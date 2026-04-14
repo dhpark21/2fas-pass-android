@@ -10,7 +10,7 @@ package com.twofasapp.data.logs.domain
 
 data class LogEntry(
     val id: Long,
-    val level: String,
+    val tag: String,
     val timestamp: Long,
     val message: String,
 )

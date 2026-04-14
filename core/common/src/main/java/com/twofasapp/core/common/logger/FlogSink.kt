@@ -9,13 +9,10 @@
 package com.twofasapp.core.common.logger
 
 interface FlogSink {
-    val debug: Boolean
-
     fun log(
         level: FlogLevel,
         tag: String,
         message: String,
         throwable: Throwable? = null,
-        persist: Boolean = false,
     )
 }

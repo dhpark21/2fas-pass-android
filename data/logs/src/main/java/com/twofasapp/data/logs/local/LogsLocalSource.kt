@@ -9,14 +9,14 @@
 package com.twofasapp.data.logs.local
 
 import com.twofasapp.data.logs.local.dao.LogsDao
-import com.twofasapp.data.logs.local.model.LogEntity
+import com.twofasapp.data.logs.local.model.LogEntryEntity
 
 internal class LogsLocalSource(
     private val dao: LogsDao,
 ) {
-    suspend fun insert(entity: LogEntity) = dao.insert(entity)
+    suspend fun insert(entity: LogEntryEntity) = dao.insert(entity)
 
-    suspend fun getAll(): List<LogEntity> = dao.getAll()
+    suspend fun getAll(): List<LogEntryEntity> = dao.getAll()
 
     suspend fun deleteAll() = dao.deleteAll()
 }

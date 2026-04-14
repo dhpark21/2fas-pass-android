@@ -25,7 +25,6 @@ import com.pluto.plugins.rooms.db.PlutoRoomsDatabasePlugin
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.logger.Flog
-import com.twofasapp.core.common.logger.FlogSink
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
@@ -33,6 +32,8 @@ import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.pass.di.Modules
 import com.twofasapp.pass.lifecycle.AppLifecycleObserver
+import com.twofasapp.pass.logger.FlogSinkLogcat
+import com.twofasapp.pass.logger.FlogSinkPersist
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
@@ -47,7 +48,9 @@ import kotlin.time.ExperimentalTime
 
 class App : Application(), SingletonImageLoader.Factory {
 
-    private val flogSink: FlogSink by inject()
+    private val flogSinkLogcat: FlogSinkLogcat by inject()
+    private val flogSinkPersist: FlogSinkPersist by inject()
+
     private val appLifecycleObserver: AppLifecycleObserver by inject()
     private val appBuild: AppBuild by inject()
     private val timeProvider: TimeProvider by inject()
@@ -67,7 +70,11 @@ class App : Application(), SingletonImageLoader.Factory {
             System.setProperty("kotlinx.coroutines.debug", "on")
         }
 
-        Flog.init(flogSink)
+        Flog.init(
+            debug = appBuild.buildVariant == BuildVariant.Debug,
+            sinkLogcat = flogSinkLogcat,
+            sinkPersist = flogSinkPersist,
+        )
 
         CrashlyticsInstance.crashlytics = crashlyticsProvider
 

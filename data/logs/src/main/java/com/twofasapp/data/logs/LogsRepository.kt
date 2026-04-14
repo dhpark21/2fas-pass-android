@@ -8,11 +8,10 @@
 
 package com.twofasapp.data.logs
 
-import com.twofasapp.core.common.logger.FlogLevel
 import com.twofasapp.data.logs.domain.LogEntry
 
 interface LogsRepository {
-    fun save(level: FlogLevel, message: String)
+    fun save(tag: String, message: String)
     suspend fun getAll(): List<LogEntry>
     suspend fun deleteAll()
 }

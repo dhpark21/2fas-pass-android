@@ -13,7 +13,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.twofasapp.data.logs.local.dao.LogsDao
-import com.twofasapp.data.logs.local.model.LogEntity
+import com.twofasapp.data.logs.local.model.LogEntryEntity
 import com.twofasapp.data.main.local.dao.ConnectedBrowsersDao
 import com.twofasapp.data.main.local.dao.DeletedItemsDao
 import com.twofasapp.data.main.local.dao.ItemsDao
@@ -32,7 +32,7 @@ import com.twofasapp.pass.storage.converters.StringListConverter
 
 @Database(
     entities = [
-        LogEntity::class,
+        LogEntryEntity::class,
         VaultEntity::class,
         VaultKeysEntity::class,
         ItemEntity::class,

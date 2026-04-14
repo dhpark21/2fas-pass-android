@@ -9,29 +9,43 @@
 package com.twofasapp.core.common.logger
 
 object Flog {
-    @Volatile private var sink: FlogSink? = null
+    @Volatile
+    private var sinkLogcat: FlogSink? = null
 
-    fun init(sink: FlogSink) {
-        Flog.sink = sink
+    @Volatile
+    private var sinkPersist: FlogSink? = null
+
+    @Volatile
+    private var debug: Boolean = false
+
+    fun init(debug: Boolean, sinkLogcat: FlogSink, sinkPersist: FlogSink) {
+        Flog.debug = debug
+        Flog.sinkLogcat = sinkLogcat
+        Flog.sinkPersist = sinkPersist
     }
 
     fun tag(tag: String): FlogTag = FlogTag(tag)
 
-    fun v(message: String, persist: Boolean = false) = autoTag().v(message, persist)
-    fun d(message: String, persist: Boolean = false) = autoTag().d(message, persist)
-    fun i(message: String, persist: Boolean = false) = autoTag().i(message, persist)
-    fun w(message: String, persist: Boolean = false) = autoTag().w(message, persist)
-    fun e(message: String, throwable: Throwable? = null, persist: Boolean = false) = autoTag().e(message, throwable, persist)
-    fun e(throwable: Throwable?, persist: Boolean = false) = autoTag().e(throwable, persist)
+    fun v(message: String) = autoTag().v(message)
+    fun d(message: String) = autoTag().d(message)
+    fun i(message: String) = autoTag().i(message)
+    fun w(message: String) = autoTag().w(message)
+    fun e(message: String, throwable: Throwable? = null) = autoTag().e(message, throwable)
+    fun e(throwable: Throwable?) = autoTag().e(throwable)
 
-    internal fun dispatch(level: FlogLevel, tag: String, message: String, throwable: Throwable? = null, persist: Boolean = false) {
-        sink?.log(level, tag, message, throwable, persist)
+    fun persist(message: String) = persist("Info", message)
+    fun persist(tag: String, message: String) = sinkPersist?.log(FlogLevel.Info, tag, message, null)
+    fun persist(throwable: Throwable?) = persist("Error", throwable)
+    fun persist(tag: String, throwable: Throwable?) = sinkPersist?.log(FlogLevel.Error, tag, "", throwable)
+
+    internal fun dispatch(level: FlogLevel, tag: String, message: String, throwable: Throwable? = null) {
+        sinkLogcat?.log(level, tag, message, throwable)
     }
 
     private fun autoTag(): FlogTag = FlogTag(callerTag())
 
     private fun callerTag(): String {
-        if (sink?.debug != true) return ""
+        if (!debug) return ""
         return Throwable().stackTrace
             .firstOrNull { it.className != Flog::class.java.name }
             ?.className

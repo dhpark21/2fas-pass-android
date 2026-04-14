@@ -8,10 +8,9 @@
 
 package com.twofasapp.data.logs
 
-import com.twofasapp.core.common.logger.FlogLevel
 import com.twofasapp.data.logs.domain.LogEntry
 import com.twofasapp.data.logs.local.LogsLocalSource
-import com.twofasapp.data.logs.local.model.LogEntity
+import com.twofasapp.data.logs.local.model.LogEntryEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,11 +22,11 @@ internal class LogsRepositoryImpl(
 
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    override fun save(level: FlogLevel, message: String) {
+    override fun save(tag: String, message: String) {
         scope.launch {
             localSource.insert(
-                LogEntity(
-                    level = level.name,
+                LogEntryEntity(
+                    tag = tag,
                     timestamp = System.currentTimeMillis(),
                     message = message,
                 ),
@@ -39,7 +38,7 @@ internal class LogsRepositoryImpl(
         return localSource.getAll().map { entity ->
             LogEntry(
                 id = entity.id,
-                level = entity.level,
+                tag = entity.tag,
                 timestamp = entity.timestamp,
                 message = entity.message,
             )

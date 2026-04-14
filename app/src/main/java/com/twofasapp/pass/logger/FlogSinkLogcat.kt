@@ -13,23 +13,19 @@ import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.logger.FlogLevel
 import com.twofasapp.core.common.logger.FlogSink
-import com.twofasapp.data.logs.LogsRepository
 import timber.log.Timber
 
-class FlogSinkImpl(
+class FlogSinkLogcat(
     appBuild: AppBuild,
-    private val logsRepository: LogsRepository,
 ) : FlogSink {
 
-    override val debug: Boolean = appBuild.buildVariant == BuildVariant.Debug
-
     init {
-        if (debug) {
+        if (appBuild.buildVariant == BuildVariant.Debug) {
             Timber.plant(Timber.DebugTree())
         }
     }
 
-    override fun log(level: FlogLevel, tag: String, message: String, throwable: Throwable?, persist: Boolean) {
+    override fun log(level: FlogLevel, tag: String, message: String, throwable: Throwable?) {
         val priority = when (level) {
             FlogLevel.Verbose -> Log.VERBOSE
             FlogLevel.Debug -> Log.DEBUG
@@ -39,9 +35,5 @@ class FlogSinkImpl(
         }
 
         Timber.tag(tag).log(priority, throwable, message)
-
-        if (persist) {
-            logsRepository.save(level, message)
-        }
     }
 }
