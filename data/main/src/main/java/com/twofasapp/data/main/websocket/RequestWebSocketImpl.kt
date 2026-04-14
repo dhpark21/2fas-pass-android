@@ -507,10 +507,18 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
                             name = (
-                                data.content.url.orEmpty().toUri().host
+                                data.content.name
+                                    ?: data.content.url.orEmpty().toUri().host
                                     ?: data.content.url
                                 ).orEmpty().removePrefix("www."),
-                            uris = listOf(ItemUri(text = data.content.url.orEmpty())),
+                            uris = listOf(ItemUri(text = data.content.url.orEmpty())).plus(
+                                data.content.uris.orEmpty().map { uri ->
+                                    ItemUri(
+                                        text = uri.text.orEmpty(),
+                                        matcher = uriMatcherMapper.mapToDomainFromJson(uri.matcher),
+                                    )
+                                },
+                            ).filter { it.text.isNotBlank() },
                             username = when (data.content.username?.action) {
                                 "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull()
                                     .orEmpty()
@@ -542,6 +550,7 @@ internal class RequestWebSocketImpl(
                                     }
                                 }
                             },
+                            notes = data.content.notes,
                         )
                     }
 
@@ -580,6 +589,7 @@ internal class RequestWebSocketImpl(
 
                         ItemContent.PaymentCard.Empty.copy(
                             name = data.content.name.orEmpty(),
+                            notes = data.content.notes,
                             cardHolder = data.content.cardHolder,
                             cardNumber = cardNumber,
                             cardNumberMask = cardNumber?.value?.replace(" ", "")?.takeLast(4),
@@ -628,7 +638,7 @@ internal class RequestWebSocketImpl(
                         },
                         securityType = WifiSecurityType.fromValue(data.content.securityType),
                         hidden = data.content.hidden ?: false,
-                        notes = null,
+                        notes = data.content.notes,
                     )
                 }
 

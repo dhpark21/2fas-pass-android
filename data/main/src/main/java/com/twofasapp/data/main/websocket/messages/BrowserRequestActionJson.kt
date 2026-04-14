@@ -178,7 +178,19 @@ internal sealed interface BrowserRequestActionJson {
             val hidden: Boolean?,
             @SerialName("additionalInfo")
             val additionalInfo: String?,
-        )
+            @SerialName("notes")
+            val notes: String?,
+            @SerialName("uris")
+            val uris: List<Uri>?,
+        ) {
+            @Serializable
+            data class Uri(
+                @SerialName("text")
+                val text: String?,
+                @SerialName("matcher")
+                val matcher: Int?,
+            )
+        }
     }
 
     @Serializable
