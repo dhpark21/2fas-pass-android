@@ -240,7 +240,7 @@ internal class TagsRepositoryImpl(
         return combine(
             selectedTag.map { it[vaultId] },
             itemsLocalSource.observe(vaultId).distinctUntilChanged(),
-            observeTags(vaultId).distinctUntilChanged()
+            observeTags(vaultId).distinctUntilChanged(),
         ) { tagId, items, tags ->
             val tag = tags.firstOrNull { tag -> tag.id == tagId }
             tag?.copy(

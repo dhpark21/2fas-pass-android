@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.remote
 
+import com.twofasapp.core.network.ApiConfig
 import com.twofasapp.data.main.remote.model.NotificationsJson
 import com.twofasapp.data.main.websocket.messages.IncomingMessageJson
 import io.ktor.client.HttpClient
@@ -22,6 +23,7 @@ import kotlinx.serialization.json.Json
 internal class BrowserRequestsRemoteSource(
     private val httpClient: HttpClient,
     private val json: Json,
+    private val apiConfig: ApiConfig,
 ) {
     suspend fun openWebSocket(
         sessionIdHex: String,
@@ -29,7 +31,7 @@ internal class BrowserRequestsRemoteSource(
         onMessageReceived: suspend WebSocketInterface.(IncomingMessageJson?) -> Unit = {},
     ) {
         httpClient.wss(
-            urlString = "wss://pass.2fas.com/proxy/mobile/$sessionIdHex",
+            urlString = "${apiConfig.wssUrl}/proxy/mobile/$sessionIdHex",
             request = { header("Sec-WebSocket-Protocol", "2FAS-Pass") },
         ) {
             val ws = WebSocketInterface(
@@ -45,10 +47,10 @@ internal class BrowserRequestsRemoteSource(
     }
 
     suspend fun fetchNotifications(deviceId: String): NotificationsJson {
-        return httpClient.get("https://pass.2fas.com/device/$deviceId/notifications").body()
+        return httpClient.get("${apiConfig.apiUrl}/device/$deviceId/notifications").body()
     }
 
     suspend fun deleteNotification(deviceId: String, notificationId: String) {
-        httpClient.delete("https://pass.2fas.com/device/$deviceId/notifications/$notificationId")
+        httpClient.delete("${apiConfig.apiUrl}/device/$deviceId/notifications/$notificationId")
     }
 }

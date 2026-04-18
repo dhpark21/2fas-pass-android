@@ -7,6 +7,7 @@ import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.VaultCipher
 import com.twofasapp.data.main.VaultCryptoScope
 import com.twofasapp.data.main.local.dao.ItemsDao
@@ -19,7 +20,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import timber.log.Timber
 
 /**
  * Migration from schema version 1 to 2.
@@ -51,7 +51,7 @@ class MigrateLoginsToItems(
     }
 
     suspend fun execute() {
-        Timber.tag(Tag).d("Migration started")
+        Flog.tag(Tag).d("Migration started")
 
         withContext(dispatchers.io) {
             val db = appDatabase.openHelper.writableDatabase
@@ -65,7 +65,7 @@ class MigrateLoginsToItems(
             try {
                 val logins = selectLogins(db)
 
-                Timber.tag(Tag).d("Found ${logins.size} legacy logins to migrate")
+                Flog.tag(Tag).d("Found ${logins.size} legacy logins to migrate")
 
                 if (logins.isEmpty()) {
                     db.setTransactionSuccessful()
@@ -86,19 +86,19 @@ class MigrateLoginsToItems(
 
                 val countItems = db.countRows(ItemsTableName)
 
-                Timber.tag(Tag).d("Saved $countItems items")
+                Flog.tag(Tag).d("Saved $countItems items")
 
                 if (countItems != logins.size) {
                     throw IllegalStateException("Item migration mismatch: inserted ${logins.size}, but only $countItems appear in table.")
                 }
 
-                Timber.tag(Tag).d("Migration completed")
+                Flog.tag(Tag).d("Migration completed")
                 db.setTransactionSuccessful()
                 db.endTransaction()
                 db.execSQL("DROP TABLE IF EXISTS $LoginsTableName")
             } catch (e: Exception) {
                 db.endTransaction()
-                Timber.tag(Tag).d("Migration failed ${e.message}")
+                Flog.tag(Tag).d("Migration failed ${e.message}")
                 throw e
             }
         }

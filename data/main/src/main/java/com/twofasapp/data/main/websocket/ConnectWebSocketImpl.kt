@@ -23,6 +23,7 @@ import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.sha256
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.push.PushTokenProvider
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.BackupRepository
@@ -40,7 +41,6 @@ import com.twofasapp.data.main.websocket.messages.WebSocketException
 import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.purchases.domain.SubscriptionPlan
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.concurrent.CancellationException
 
 internal class ConnectWebSocketImpl(
@@ -71,7 +71,7 @@ internal class ConnectWebSocketImpl(
     ): ConnectWebSocketResult {
         try {
             withContext(dispatchers.io) {
-                Timber.d("Connect: $connectData")
+                Flog.d("Connect: $connectData")
 
                 version = connectData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()

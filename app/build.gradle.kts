@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "com.twofasapp.pass"
-        versionName = "1.6.1"
-        versionCode = 35
+        versionName = "1.7.0"
+        versionCode = 36
     }
 
     applicationVariants.all {
@@ -49,11 +49,13 @@ dependencies {
     implementation(project(":core:locale"))
 
     implementation(project(":data:settings"))
+    implementation(project(":data:logs"))
     implementation(project(":data:main"))
     implementation(project(":data:security"))
     implementation(project(":data:push"))
     implementation(project(":data:cloud"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:share"))
 
     implementation(project(":feature:startup"))
     implementation(project(":feature:main"))
@@ -70,6 +72,7 @@ dependencies {
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))
     implementation(project(":feature:quicksetup"))
+    implementation(project(":feature:share"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)
@@ -92,6 +95,7 @@ dependencies {
     implementation(libs.firebaseCrashlytics)
     implementation(libs.playServicesCorutines)
     implementation(libs.workManager)
+    implementation(libs.timber)
 
     debugImplementation(libs.pluto)
     debugImplementation(libs.plutoRoom)

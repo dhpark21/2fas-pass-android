@@ -17,6 +17,7 @@ import com.twofasapp.core.android.ktx.enqueueUniqueIfNotScheduled
 import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.build.Device
 import com.twofasapp.core.common.ktx.decodeBase64
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.cloud.domain.CloudResult
@@ -40,7 +41,6 @@ import com.twofasapp.data.main.domain.VaultBackup
 import com.twofasapp.data.purchases.PurchasesRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
 
 internal class CloudSyncWork(
     context: Context,
@@ -213,7 +213,7 @@ internal class CloudSyncWork(
     private suspend fun publishError(
         type: CloudError,
     ) {
-        Timber.e(type.cause)
+        Flog.e(type.cause)
 
         CrashlyticsInstance.logException(type.cause)
 

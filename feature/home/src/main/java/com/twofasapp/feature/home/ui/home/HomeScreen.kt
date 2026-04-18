@@ -73,6 +73,7 @@ import com.twofasapp.feature.home.ui.home.modal.AddItemModal
 import com.twofasapp.feature.home.ui.home.modal.FilterModal
 import com.twofasapp.feature.home.ui.home.modal.SortModal
 import com.twofasapp.feature.purchases.PurchasesDialog
+import com.twofasapp.feature.share.ui.ShareItemModal
 import kotlinx.collections.immutable.toPersistentList
 import org.koin.androidx.compose.koinViewModel
 
@@ -81,6 +82,7 @@ internal fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel(),
     openAddItem: (vaultId: String, itemContentType: ItemContentType) -> Unit,
     openEditItem: (itemId: String, vaultId: String, itemContentType: ItemContentType) -> Unit,
+    openItemDetails: (itemId: String, vaultId: String) -> Unit,
     openManageTags: () -> Unit,
     openQuickSetup: () -> Unit,
     openDeveloper: () -> Unit,
@@ -105,6 +107,7 @@ internal fun HomeScreen(
         onEventConsumed = { viewModel.consumeEvent(it) },
         onAddItemClick = openAddItem,
         onEditItemClick = openEditItem,
+        onDetailsClick = openItemDetails,
         onCopySecretFieldToClipboard = { item, secretField ->
             viewModel.decryptSecretField(
                 item = item,
@@ -143,6 +146,7 @@ private fun Content(
     onEventConsumed: (HomeUiEvent) -> Unit = {},
     onAddItemClick: (vaultId: String, ItemContentType) -> Unit = { _, _ -> },
     onEditItemClick: (String, String, itemContentType: ItemContentType) -> Unit = { _, _, _ -> },
+    onDetailsClick: (itemId: String, vaultId: String) -> Unit = { _, _ -> },
     onCopySecretFieldToClipboard: (Item, SecretField?) -> Unit = { _, _ -> },
     onOpenQuickSetupClick: () -> Unit = {},
     onTrashConfirmed: (String) -> Unit = {},
@@ -173,6 +177,7 @@ private fun Content(
     var showFilterModal by remember { mutableStateOf(false) }
     var showAddItemModal by remember { mutableStateOf(false) }
     var showPaywall by remember { mutableStateOf(false) }
+    var shareModalItem by remember { mutableStateOf<Item?>(null) }
     val deviceType = currentDeviceType()
     val itemsPerRow = when (deviceType) {
         DeviceType.Compact -> 1
@@ -292,7 +297,6 @@ private fun Content(
                                     items.forEach { item ->
                                         HomeItem(
                                             item = item,
-                                            tags = uiState.tags,
                                             itemClickAction = uiState.itemClickAction,
                                             query = uiState.searchQuery,
                                             editMode = uiState.editMode,
@@ -305,6 +309,8 @@ private fun Content(
                                                     item.contentType,
                                                 )
                                             },
+                                            onDetailsClick = onDetailsClick,
+                                            onShareClick = { shareModalItem = item },
                                             onTrashConfirmed = { onTrashConfirmed(item.id) },
                                             onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                             onEnabledEditMode = { onChangeEditMode(true) },
@@ -319,7 +325,6 @@ private fun Content(
                             listItem(HomeListItem.HomeItem(id = item.id)) {
                                 HomeItem(
                                     item = item,
-                                    tags = uiState.tags,
                                     itemClickAction = uiState.itemClickAction,
                                     query = uiState.searchQuery,
                                     editMode = uiState.editMode,
@@ -332,6 +337,8 @@ private fun Content(
                                             item.contentType,
                                         )
                                     },
+                                    onDetailsClick = onDetailsClick,
+                                    onShareClick = { shareModalItem = item },
                                     onTrashConfirmed = { onTrashConfirmed(item.id) },
                                     onCopySecretFieldToClipboard = onCopySecretFieldToClipboard,
                                     onEnabledEditMode = { onChangeEditMode(true) },
@@ -403,6 +410,13 @@ private fun Content(
             onDismissRequest = { showPaywall = false },
             title = MdtLocale.strings.paywallNoticeItemsLimitReachedTitle,
             body = MdtLocale.strings.paywallNoticeItemsLimitReachedMsg.format(uiState.maxItems),
+        )
+    }
+
+    shareModalItem?.let { item ->
+        ShareItemModal(
+            item = item,
+            onDismissRequest = { shareModalItem = null },
         )
     }
 }

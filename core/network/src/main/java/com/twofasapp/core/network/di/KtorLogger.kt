@@ -8,9 +8,9 @@
 
 package com.twofasapp.core.network.di
 
+import com.twofasapp.core.common.logger.Flog
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import timber.log.Timber
 
 internal class KtorLogger {
     companion object {
@@ -23,7 +23,7 @@ internal class KtorLogger {
         method: HttpMethod,
         body: String?,
     ) {
-        Timber.tag(Tag).v(
+        Flog.tag(Tag).v(
             buildString {
                 append("┌─ ➡️ REQUEST: ${method.value} $url")
                 body?.let { append(it.splitIntoMultiLines()) }
@@ -41,7 +41,7 @@ internal class KtorLogger {
     ) {
         val icon = if (status.value in 100..299) "🟢" else "🔴"
 
-        Timber.tag(Tag).v(
+        Flog.tag(Tag).v(
             buildString {
                 append("┌─ $icon RESPONSE: ${method.value} ${status.value} $url ($elapsedMs ms)")
                 body?.let { append(it.splitIntoMultiLines()) }

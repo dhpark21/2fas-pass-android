@@ -10,6 +10,7 @@ package com.twofasapp.pass.auth
 
 import com.twofasapp.core.common.auth.AuthStatusTracker
 import com.twofasapp.core.common.domain.AuthStatus
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.VaultKeysRepository
 import com.twofasapp.data.settings.SettingsRepository
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 internal class AuthStatusTrackerImpl(
     private val settingsRepository: SettingsRepository,
@@ -46,7 +46,7 @@ internal class AuthStatusTrackerImpl(
 
     override fun observeAuthStatus(): Flow<AuthStatus> {
         return authStatusFlow
-            .onEach { Timber.tag("AuthStatusTracker").i(it.toString()) }
+            .onEach { Flog.tag("AuthStatusTracker").i(it.toString()) }
     }
 
     override fun observeIsAuthenticated(): Flow<Boolean> {
@@ -83,7 +83,7 @@ internal class AuthStatusTrackerImpl(
             return AuthStatus.Invalid.NotAuthenticated
         }
 
-        Timber.tag("AuthStatusTracker").i(
+        Flog.tag("AuthStatusTracker").i(
             buildString {
                 append("diff=${lastForegroundTime - lastBackgroundTime} | getAppLockTimeout=${getAppLockTimeout()}")
                 append(" (lastForegroundTime=$lastForegroundTime, lastBackgroundTime=$lastBackgroundTime)")

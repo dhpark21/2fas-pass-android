@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.cloud.services.webdav
 
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.cloud.domain.CloudConfig
 import com.twofasapp.data.cloud.domain.CloudFileInfo
 import com.twofasapp.data.cloud.domain.CloudResult
@@ -18,7 +19,6 @@ import com.twofasapp.data.cloud.exceptions.CloudException
 import com.twofasapp.data.cloud.services.CloudService
 import com.twofasapp.data.cloud.services.webdav.model.WebDavIndexBackupJson
 import com.twofasapp.data.cloud.services.webdav.model.WebDavIndexJson
-import timber.log.Timber
 import java.net.UnknownServiceException
 import java.time.Instant
 
@@ -109,7 +109,7 @@ internal class WebDavCloudService(
 
             when {
                 backupFileMetadata == null -> {
-                    Timber.d("GetFile <- Metadata NOT found in \"index.2faspass\"!")
+                    Flog.d("GetFile <- Metadata NOT found in \"index.2faspass\"!")
                     when (val mergeResult = mergeVaultContent(null)) {
                         is VaultMergeResult.Success -> {
                             putBackupFile(
@@ -128,12 +128,12 @@ internal class WebDavCloudService(
                 }
 
                 backupFileMetadata.updatedAt == request.vaultUpdatedAt && backupFileMetadata.deviceId == request.deviceId -> {
-                    Timber.d("GetFile <- Backup is up-to-date!")
+                    Flog.d("GetFile <- Backup is up-to-date!")
                     CloudResult.Success
                 }
 
                 else -> {
-                    Timber.d("GetFile <- Metadata found in \"index.2faspass\"!")
+                    Flog.d("GetFile <- Metadata found in \"index.2faspass\"!")
 
                     val backupFileContent = getBackupFileContent(
                         config = config,
@@ -172,8 +172,8 @@ internal class WebDavCloudService(
     ): Pair<WebDavIndexJson, BackupFileMetadata?> {
         val filename = generateFilename(request)
 
-        Timber.d("GetFile <- Starting...")
-        Timber.d("GetFile <- Looking for \"${filename}\" metadata in \"index.2faspass\"")
+        Flog.d("GetFile <- Starting...")
+        Flog.d("GetFile <- Looking for \"${filename}\" metadata in \"index.2faspass\"")
 
         val index = webDavClient.getIndex(config)
 
@@ -196,7 +196,7 @@ internal class WebDavCloudService(
         config: CloudConfig.WebDav,
         request: VaultSyncRequest,
     ): String? {
-        Timber.d("GetFile <- Get backup content...")
+        Flog.d("GetFile <- Get backup content...")
 
         return webDavClient.getFile(
             config = config,
@@ -210,19 +210,19 @@ internal class WebDavCloudService(
         request: VaultSyncRequest,
         mergeResult: VaultMergeResult.Success,
     ) {
-        Timber.d("UpdateFile -> Starting...")
-        Timber.d("UpdateFile -> Obtaining lock...")
+        Flog.d("UpdateFile -> Starting...")
+        Flog.d("UpdateFile -> Obtaining lock...")
 
         if (webDavClient.obtainLock(config).not()) {
-            Timber.d("UpdateFile -> Index is locked!")
+            Flog.d("UpdateFile -> Index is locked!")
             throw CloudException(CloudError.FileIsLocked())
         }
 
-        Timber.d("UpdateFile -> Lock obtained!")
+        Flog.d("UpdateFile -> Lock obtained!")
 
         // Upload backup to tmp file
-        Timber.d("UpdateFile -> Put .tmp file")
-        Timber.d("UpdateFile -> ${mergeResult.backupContent}")
+        Flog.d("UpdateFile -> Put .tmp file")
+        Flog.d("UpdateFile -> ${mergeResult.backupContent}")
 
         webDavClient.putFile(
             config = config,
@@ -231,7 +231,7 @@ internal class WebDavCloudService(
         )
 
         // Move from tmp to final destination
-        Timber.d("UpdateFile -> Move .tmp file to final destination")
+        Flog.d("UpdateFile -> Move .tmp file to final destination")
         webDavClient.moveFile(
             config = config,
             source = "${generateFilename(request)}.tmp",
@@ -239,7 +239,7 @@ internal class WebDavCloudService(
         )
 
         // Update index
-        Timber.d("UpdateFile -> Update index")
+        Flog.d("UpdateFile -> Update index")
 
         webDavClient.putIndex(
             config = config,
@@ -260,10 +260,10 @@ internal class WebDavCloudService(
             ),
         )
 
-        Timber.d("UpdateFile -> Release lock")
+        Flog.d("UpdateFile -> Release lock")
         webDavClient.releaseLock(config)
 
-        Timber.d("UpdateFile -> \"${generateFilename(request)}\" updated successfully!")
+        Flog.d("UpdateFile -> \"${generateFilename(request)}\" updated successfully!")
     }
 
     override suspend fun disconnect() = Unit

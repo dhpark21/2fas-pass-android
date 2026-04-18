@@ -24,6 +24,7 @@ import com.pluto.plugins.logger.PlutoLoggerPlugin
 import com.pluto.plugins.rooms.db.PlutoRoomsDatabasePlugin
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.services.CrashlyticsInstance
 import com.twofasapp.core.common.services.CrashlyticsProvider
 import com.twofasapp.core.common.time.TimeProvider
@@ -31,6 +32,8 @@ import com.twofasapp.data.purchases.PurchasesRepository
 import com.twofasapp.data.settings.SettingsRepository
 import com.twofasapp.pass.di.Modules
 import com.twofasapp.pass.lifecycle.AppLifecycleObserver
+import com.twofasapp.pass.logger.FlogSinkLogcat
+import com.twofasapp.pass.logger.FlogSinkPersist
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.first
@@ -41,10 +44,12 @@ import okhttp3.Response
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import timber.log.Timber
 import kotlin.time.ExperimentalTime
 
 class App : Application(), SingletonImageLoader.Factory {
+
+    private val flogSinkLogcat: FlogSinkLogcat by inject()
+    private val flogSinkPersist: FlogSinkPersist by inject()
 
     private val appLifecycleObserver: AppLifecycleObserver by inject()
     private val appBuild: AppBuild by inject()
@@ -61,14 +66,15 @@ class App : Application(), SingletonImageLoader.Factory {
             modules(Modules.provide())
         }
 
-        when (appBuild.buildVariant) {
-            BuildVariant.Release -> Unit
-            BuildVariant.Internal -> Unit
-            BuildVariant.Debug -> {
-                Timber.plant(Timber.DebugTree())
-                System.setProperty("kotlinx.coroutines.debug", "on")
-            }
+        if (appBuild.buildVariant == BuildVariant.Debug) {
+            System.setProperty("kotlinx.coroutines.debug", "on")
         }
+
+        Flog.init(
+            debug = appBuild.buildVariant == BuildVariant.Debug,
+            sinkLogcat = flogSinkLogcat,
+            sinkPersist = flogSinkPersist,
+        )
 
         CrashlyticsInstance.crashlytics = crashlyticsProvider
 

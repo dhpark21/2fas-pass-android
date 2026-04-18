@@ -11,8 +11,8 @@ package com.twofasapp.feature.autofill.service.parser
 import android.app.assist.AssistStructure
 import android.app.assist.AssistStructure.ViewNode
 import android.service.autofill.FillRequest
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.feature.autofill.service.PassAutofillService.Companion.AutofillTag
-import timber.log.Timber
 
 internal class NodeParser {
     private var packageName: String? = null
@@ -68,7 +68,7 @@ internal class NodeParser {
             siblingsKeywords = siblingsKeywords,
             parentsKeywords = parentsKeywords,
         )?.let { autofillNode ->
-            Timber.tag(AutofillTag).d(autofillNode.log())
+            Flog.tag(AutofillTag).d(autofillNode.log())
 
             inputs.addAll(
                 findAutofillInputs(autofillNode),

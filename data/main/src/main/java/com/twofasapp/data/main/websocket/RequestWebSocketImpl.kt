@@ -36,6 +36,7 @@ import com.twofasapp.core.common.ktx.encodeBase64
 import com.twofasapp.core.common.ktx.encodeByteArray
 import com.twofasapp.core.common.ktx.encodeHex
 import com.twofasapp.core.common.ktx.sha256
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.BackupRepository
 import com.twofasapp.data.main.ConnectedBrowsersRepository
@@ -67,7 +68,6 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
-import timber.log.Timber
 import java.util.concurrent.CancellationException
 
 internal class RequestWebSocketImpl(
@@ -105,7 +105,7 @@ internal class RequestWebSocketImpl(
     ): RequestWebSocketResult {
         try {
             withContext(dispatchers.io) {
-                Timber.d("Request: $requestData")
+                Flog.d("Request: $requestData")
 
                 version = requestData.version
                 val epheMa = androidKeyStore.generateConnectEphemeralEcKey()
@@ -204,7 +204,7 @@ internal class RequestWebSocketImpl(
 
                                         val requestString = request.decodeString()
 
-                                        Timber.d("Request data: $requestString")
+                                        Flog.d("Request data: $requestString")
 
                                         val action =
                                             json.decodeFromString<BrowserRequestActionJson>(
@@ -224,7 +224,7 @@ internal class RequestWebSocketImpl(
                                             response = response,
                                         )
 
-                                        Timber.d(responseData)
+                                        Flog.d(responseData)
 
                                         val responseDataEnc = encrypt(
                                             key = dataKey,
@@ -331,7 +331,7 @@ internal class RequestWebSocketImpl(
                 RequestWebSocketResult.Failure(
                     errorCode = (error as? WebSocketException)?.errorCode ?: 1000,
                     errorMessage = (error as? WebSocketException)?.errorMessage ?: error!!.message
-                    ?: "Unknown error.",
+                        ?: "Unknown error.",
                 )
             } else {
                 RequestWebSocketResult.Success
@@ -350,7 +350,7 @@ internal class RequestWebSocketImpl(
         hkdfSalt: ByteArray,
         sessionKey: ByteArray,
     ): BrowserRequestAction {
-        Timber.d("Request action: $this")
+        Flog.d("Request action: $this")
 
         return when (this) {
             is BrowserRequestActionJson.PasswordRequest -> {
@@ -507,10 +507,18 @@ internal class RequestWebSocketImpl(
                     is ItemContentType.Login -> {
                         ItemContent.Login.Empty.copy(
                             name = (
-                                    data.content.url.orEmpty().toUri().host
-                                        ?: data.content.url
-                                    ).orEmpty().removePrefix("www."),
-                            uris = listOf(ItemUri(text = data.content.url.orEmpty())),
+                                data.content.name
+                                    ?: data.content.url.orEmpty().toUri().host
+                                    ?: data.content.url
+                                ).orEmpty().removePrefix("www."),
+                            uris = listOf(ItemUri(text = data.content.url.orEmpty())).plus(
+                                data.content.uris.orEmpty().map { uri ->
+                                    ItemUri(
+                                        text = uri.text.orEmpty(),
+                                        matcher = uriMatcherMapper.mapToDomainFromJson(uri.matcher),
+                                    )
+                                },
+                            ).filter { it.text.isNotBlank() },
                             username = when (data.content.username?.action) {
                                 "generate" -> itemsRepository.getMostCommonUsernames().firstOrNull()
                                     .orEmpty()
@@ -542,6 +550,7 @@ internal class RequestWebSocketImpl(
                                     }
                                 }
                             },
+                            notes = data.content.notes,
                         )
                     }
 
@@ -560,7 +569,7 @@ internal class RequestWebSocketImpl(
                                     SecretField.ClearText(text.decodeString())
                                 }
                             },
-                            additionalInfo = data.content.additionalInfo
+                            additionalInfo = data.content.additionalInfo,
                         )
                     }
 
@@ -580,6 +589,7 @@ internal class RequestWebSocketImpl(
 
                         ItemContent.PaymentCard.Empty.copy(
                             name = data.content.name.orEmpty(),
+                            notes = data.content.notes,
                             cardHolder = data.content.cardHolder,
                             cardNumber = cardNumber,
                             cardNumberMask = cardNumber?.value?.replace(" ", "")?.takeLast(4),
@@ -628,7 +638,7 @@ internal class RequestWebSocketImpl(
                         },
                         securityType = WifiSecurityType.fromValue(data.content.securityType),
                         hidden = data.content.hidden ?: false,
-                        notes = null,
+                        notes = data.content.notes,
                     )
                 }
 
@@ -727,7 +737,7 @@ internal class RequestWebSocketImpl(
                                 }
                             } ?: existingContent.text,
                             additionalInfo = data.content.additionalInfo
-                                ?: existingContent.additionalInfo
+                                ?: existingContent.additionalInfo,
                         )
                     }
 
@@ -906,7 +916,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val loginData = createLoginAcceptData(
                                 item = response.item,
                                 deviceId = deviceId,
@@ -923,7 +933,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val loginData = createLoginAcceptData(
                                 item = response.item,
                                 deviceId = deviceId,
@@ -1016,7 +1026,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = true,
@@ -1039,7 +1049,7 @@ internal class RequestWebSocketImpl(
                         SecurityType.Tier1 -> Unit
                         SecurityType.Tier2,
                         SecurityType.Tier3,
-                            -> {
+                        -> {
                             val itemData = createItemAcceptData(
                                 item = response.item,
                                 includeSecretFields = response.sifFetched,

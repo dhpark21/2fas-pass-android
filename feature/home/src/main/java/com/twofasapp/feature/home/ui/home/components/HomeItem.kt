@@ -26,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.common.domain.SecretField
-import com.twofasapp.core.common.domain.Tag
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.design.AppTheme
@@ -41,26 +40,23 @@ import com.twofasapp.core.design.foundation.preview.PreviewColumn
 import com.twofasapp.core.design.theme.RoundedShape12
 import com.twofasapp.core.locale.MdtLocale
 import com.twofasapp.data.settings.domain.ItemClickAction
-import com.twofasapp.feature.home.ui.itemdetails.ItemDetailsModal
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun HomeItem(
     modifier: Modifier = Modifier,
     item: Item,
-    tags: ImmutableList<Tag>,
     itemClickAction: ItemClickAction,
     query: String = "",
     editMode: Boolean = false,
     selected: Boolean = false,
     onEditClick: (itemId: String, vaultId: String) -> Unit = { _, _ -> },
+    onDetailsClick: (itemId: String, vaultId: String) -> Unit = { _, _ -> },
+    onShareClick: (itemId: String) -> Unit = {},
     onTrashConfirmed: (itemId: String) -> Unit = {},
     onCopySecretFieldToClipboard: (Item, SecretField?) -> Unit = { _, _ -> },
     onEnabledEditMode: () -> Unit = {},
     onToggleSelection: (itemId: String) -> Unit = {},
 ) {
-    var showDetailsModal by remember { mutableStateOf(false) }
     var showTrashDialog by remember { mutableStateOf(false) }
 
     Row(
@@ -78,7 +74,7 @@ internal fun HomeItem(
                     if (editMode.not()) {
                         when (itemClickAction) {
                             ItemClickAction.View -> {
-                                showDetailsModal = true
+                                onDetailsClick(item.id, item.vaultId)
                             }
 
                             ItemClickAction.Edit -> {
@@ -150,8 +146,9 @@ internal fun HomeItem(
         } else {
             HomeItemDropdownMenu(
                 item = item,
-                onDetailsClick = { showDetailsModal = true },
+                onDetailsClick = { onDetailsClick(item.id, item.vaultId) },
                 onEditClick = { onEditClick(item.id, item.vaultId) },
+                onShareClick = { onShareClick(item.id) },
                 onCopySecretFieldToClipboard = { secretField ->
                     onCopySecretFieldToClipboard(
                         item,
@@ -163,20 +160,6 @@ internal fun HomeItem(
         }
 
         Space(4.dp)
-    }
-
-    if (showDetailsModal) {
-        ItemDetailsModal(
-            item = item,
-            tags = tags,
-            onDismissRequest = {
-                showDetailsModal = false
-            },
-            onEditClick = {
-                showDetailsModal = false
-                onEditClick(item.id, item.vaultId)
-            },
-        )
     }
 
     if (showTrashDialog) {
@@ -202,7 +185,6 @@ private fun PreviewDark() {
             HomeItem(
                 modifier = Modifier.fillMaxWidth(),
                 item = item,
-                tags = persistentListOf(),
                 itemClickAction = ItemClickAction.View,
                 editMode = index == 1,
                 selected = index == 1,
@@ -223,7 +205,6 @@ private fun PreviewLight() {
             HomeItem(
                 modifier = Modifier.fillMaxWidth(),
                 item = item,
-                tags = persistentListOf(),
                 itemClickAction = ItemClickAction.View,
                 editMode = index == 1,
                 selected = index == 1,

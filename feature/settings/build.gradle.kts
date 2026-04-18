@@ -28,6 +28,7 @@ dependencies {
     implementation(project(":data:cloud"))
     implementation(project(":data:security"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:logs"))
 
     implementation(project(":feature:lock"))
     implementation(project(":feature:decryptionkit"))
@@ -42,4 +43,10 @@ dependencies {
     implementation(libs.bundles.viewModel)
     implementation(libs.bundles.coil)
     implementation(libs.bundles.aboutLibraries)
+    implementation(libs.opencsv){
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        exclude(group = "junit")
+        exclude(group = "org.junit.platform")
+        exclude(group = "org.apiguardian")
+    }
 }

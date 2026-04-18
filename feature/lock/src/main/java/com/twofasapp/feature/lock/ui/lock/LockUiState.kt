@@ -25,4 +25,5 @@ internal data class LockUiState(
     val appUpdateError: Throwable? = null,
     val failedAppUnlocks: FailedAppUnlocks? = null,
     val locked: Boolean = true,
+    val autoOpenKeyboard: Boolean = true,
 )

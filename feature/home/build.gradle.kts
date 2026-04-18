@@ -27,10 +27,11 @@ dependencies {
     implementation(project(":data:settings"))
     implementation(project(":data:cloud"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:share"))
     implementation(project(":feature:itemform"))
-
     implementation(project(":feature:developer"))
     implementation(project(":feature:purchases"))
+    implementation(project(":feature:share"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

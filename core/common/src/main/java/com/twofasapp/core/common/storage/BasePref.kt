@@ -22,13 +22,13 @@ import com.twofasapp.core.common.domain.crypto.EncryptedBytes
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.decodeString
 import com.twofasapp.core.common.ktx.encodeBase64
+import com.twofasapp.core.common.logger.Flog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 
 abstract class BasePref<PrefType, ValueType>(
     protected val owner: DataStoreOwner,
@@ -37,7 +37,7 @@ abstract class BasePref<PrefType, ValueType>(
     private val encrypted: Boolean,
 ) {
     suspend fun delete() {
-        Timber.tag(Tag).d("[DELETE] $keyName")
+        Flog.tag(Tag).d("[DELETE] $keyName")
         owner.dataStore.edit { preferences -> preferences.remove(keyType.asPreferencesKey()) }
     }
 
@@ -85,7 +85,7 @@ abstract class BasePref<PrefType, ValueType>(
         owner.dataStore.edit { preferences ->
             if (value == null) {
                 preferences.remove(keyType.asPreferencesKey()).also {
-                    Timber.tag(Tag).d("[SET] $keyName = null")
+                    Flog.tag(Tag).d("[SET] $keyName = null")
                 }
                 return@edit
             }
@@ -96,10 +96,10 @@ abstract class BasePref<PrefType, ValueType>(
                         key = owner.androidKeyStore.appKey,
                         data = value.toString().toByteArray(),
                     ).encodeBase64().also {
-                        Timber.tag(Tag).d("[SET] $keyName = $value (encrypted = $it)")
+                        Flog.tag(Tag).d("[SET] $keyName = $value (encrypted = $it)")
                     }
             } else {
-                Timber.tag(Tag).d("[SET] $keyName = $value")
+                Flog.tag(Tag).d("[SET] $keyName = $value")
 
                 when (keyType) {
                     KeyType.Int -> preferences[intPreferencesKey(keyName)] = value as Int

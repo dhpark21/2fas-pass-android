@@ -23,9 +23,12 @@ dependencies {
     implementation(project(":core:di"))
     implementation(project(":core:locale"))
 
+    implementation(project(":core:network"))
+
     implementation(project(":data:main"))
     implementation(project(":data:security"))
     implementation(project(":data:purchases"))
+    implementation(project(":data:settings"))
 
     implementation(platform(libs.composeBom))
     implementation(libs.bundles.compose)

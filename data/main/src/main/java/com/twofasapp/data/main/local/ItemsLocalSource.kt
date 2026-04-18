@@ -20,6 +20,10 @@ internal class ItemsLocalSource(
         return itemsDao.observe(vaultId)
     }
 
+    fun observeById(id: String): Flow<ItemEntity?> {
+        return itemsDao.observeById(id)
+    }
+
     fun observeDeleted(): Flow<List<ItemEntity>> {
         return itemsDao.observeDeleted()
     }

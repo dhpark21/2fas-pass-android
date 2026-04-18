@@ -17,9 +17,9 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.ktx.decodeBase64
 import com.twofasapp.core.common.ktx.removeWhitespace
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.design.R
 import com.twofasapp.core.design.foundation.preview.PreviewTextMedium
-import timber.log.Timber
 import java.time.Instant
 
 internal abstract class ImportSpec() {
@@ -112,7 +112,7 @@ internal abstract class ImportSpec() {
         return try {
             Instant.ofEpochSecond(seconds).toEpochMilli()
         } catch (t: Throwable) {
-            Timber.e(t)
+            Flog.e(t)
             null
         }
     }
@@ -124,7 +124,7 @@ internal abstract class ImportSpec() {
         return try {
             Instant.parse(date).toEpochMilli()
         } catch (t: Throwable) {
-            Timber.e(t)
+            Flog.e(t)
             null
         }
     }
@@ -147,7 +147,7 @@ internal abstract class ImportSpec() {
             val secondsFromYear1970 = secondsFromYearOne - secondsBetweenYearOneAnd1970
             Instant.ofEpochSecond(secondsFromYear1970).toEpochMilli()
         } catch (t: Throwable) {
-            Timber.e(t)
+            Flog.e(t)
             null
         }
     }

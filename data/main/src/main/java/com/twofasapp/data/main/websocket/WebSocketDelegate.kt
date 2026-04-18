@@ -48,6 +48,7 @@ internal interface WebSocketDelegate {
                         "items.secureNote",
                         "items.paymentCard",
                         "items.wifi",
+                        "shareLink",
                     ),
                 ),
             ),

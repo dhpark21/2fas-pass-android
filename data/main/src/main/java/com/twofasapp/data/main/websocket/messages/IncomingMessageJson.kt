@@ -8,13 +8,13 @@
 
 package com.twofasapp.data.main.websocket.messages
 
+import com.twofasapp.core.common.logger.Flog
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import timber.log.Timber
 
 @Serializable(with = IncomingMessageJson.Serializer::class)
 internal sealed interface IncomingMessageJson {
@@ -154,7 +154,7 @@ internal sealed interface IncomingMessageJson {
                     else -> Unknown.serializer()
                 }
             } catch (e: Exception) {
-                Timber.e(e)
+                Flog.e(e)
                 Unknown.serializer()
             }
         }

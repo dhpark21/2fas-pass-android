@@ -8,6 +8,7 @@
 
 package com.twofasapp.data.main.remote
 
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.websocket.messages.IncomingMessageJson
 import com.twofasapp.data.main.websocket.messages.OutgoingMessageJson
 import io.ktor.websocket.Frame
@@ -15,7 +16,6 @@ import io.ktor.websocket.WebSocketSession
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
 import kotlinx.serialization.json.Json
-import timber.log.Timber
 
 internal class WebSocketInterface(
     private val session: WebSocketSession,
@@ -26,7 +26,7 @@ internal class WebSocketInterface(
     }
 
     init {
-        Timber.tag(Tag).v("Socket opened!")
+        Flog.tag(Tag).v("Socket opened!")
     }
 
     suspend fun sendMessage(outgoing: OutgoingMessageJson) {
@@ -50,13 +50,13 @@ internal class WebSocketInterface(
     }
 
     private suspend fun WebSocketSession.sendTextMessage(message: String) {
-        Timber.tag(Tag).v("Outgoing -> $message")
+        Flog.tag(Tag).v("Outgoing -> $message")
         send(Frame.Text(message))
     }
 
     private fun Frame.readTextMessage(): String? {
         return (this as? Frame.Text)?.readText()?.let { msg ->
-            Timber.tag(Tag).v("Incoming <- $msg")
+            Flog.tag(Tag).v("Incoming <- $msg")
             msg
         }
     }

@@ -14,12 +14,12 @@ import com.twofasapp.core.android.ktx.runSafely
 import com.twofasapp.core.common.build.AppBuild
 import com.twofasapp.core.common.build.BuildVariant
 import com.twofasapp.core.common.ktx.decodeBase64ToString
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.BrowserExtensionRepository
 import com.twofasapp.data.main.domain.ConnectData
 import com.twofasapp.data.settings.SessionRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import timber.log.Timber
 
 internal class ConnectViewModel(
     private val appBuild: AppBuild,
@@ -65,7 +65,7 @@ internal class ConnectViewModel(
 
         enableScanner(false)
 
-        Timber.d("Scanned: $text")
+        Flog.d("Scanned: $text")
 
         launchScoped {
             runSafely {
@@ -80,7 +80,7 @@ internal class ConnectViewModel(
                 }
             }
                 .onSuccess { connectData ->
-                    Timber.d("Scanned data: $connectData")
+                    Flog.d("Scanned data: $connectData")
 
                     browserExtensionRepository.publishConnect(connectData)
                     onCompleted()

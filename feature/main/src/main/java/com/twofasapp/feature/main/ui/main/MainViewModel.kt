@@ -29,6 +29,8 @@ import com.twofasapp.data.settings.SessionRepository
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 
 internal class MainViewModel(
@@ -51,10 +53,14 @@ internal class MainViewModel(
 
     init {
         launchScoped {
-            deeplinks.observePendingDeeplink().collect {
-                publishEvent(MainUiEvent.OpenDeeplink(it))
-                deeplinks.clearPendingDeeplink()
-            }
+            authStatusTracker.observeIsAuthenticated()
+                .flatMapLatest { isAuthenticated ->
+                    if (isAuthenticated) deeplinks.observePendingDeeplink() else emptyFlow()
+                }
+                .collect { deeplink ->
+                    publishEvent(MainUiEvent.OpenDeeplink(deeplink))
+                    deeplinks.clearPendingDeeplink()
+                }
         }
 
         launchScoped {

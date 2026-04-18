@@ -13,11 +13,16 @@ import android.content.Intent
 import com.twofasapp.core.android.deeplinks.Deeplink
 import com.twofasapp.core.android.deeplinks.Deeplinks
 import com.twofasapp.core.android.navigation.Screen
+import com.twofasapp.core.common.logger.Flog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 
 internal class DeeplinksHandler : Deeplinks {
+
+    companion object {
+        val Tag = "DeeplinksHandler"
+    }
 
     private val pendingDeeplinkFlow = MutableStateFlow<Deeplink?>(null)
 
@@ -57,5 +62,28 @@ internal class DeeplinksHandler : Deeplinks {
         pendingDeeplinkFlow.tryEmit(deeplink)
     }
 
-    private fun handleIncomingIntent(activity: Activity, intent: Intent) = Unit
+    private fun handleIncomingIntent(activity: Activity, intent: Intent) {
+        val uri = intent.data
+        Flog.tag(Tag).d("Open: $uri")
+
+        if (uri == null) return
+
+        if (uri.scheme == "twofaspass" && uri.host == "share") {
+            val segments = uri.pathSegments
+            val (shareId, version, nonce, key) = segments
+
+            if (version != "v1k" && version != "v1p") {
+                return
+            }
+
+            publishDeeplink(
+                Deeplink.ShareLink(
+                    shareId = shareId,
+                    version = version,
+                    nonce = nonce,
+                    key = key,
+                ),
+            )
+        }
+    }
 }

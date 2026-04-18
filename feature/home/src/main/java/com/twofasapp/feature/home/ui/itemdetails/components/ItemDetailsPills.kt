@@ -73,7 +73,7 @@ private fun Pill(
         style = MdtTheme.typo.labelSmall,
         modifier = modifier
             .clip(CircleShape)
-            .background(MdtTheme.color.surfaceContainerHighest)
+            .background(MdtTheme.color.surfaceContainer)
             .padding(horizontal = 8.dp, vertical = 4.dp),
     )
 }

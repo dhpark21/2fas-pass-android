@@ -13,7 +13,7 @@ import com.twofasapp.core.common.domain.items.Item
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-internal data class ItemDetailsModalUiState(
+internal data class ItemDetailsUiState(
     val item: Item = Item.Empty,
     val tags: ImmutableList<Tag> = persistentListOf(),
     val decryptedFields: Map<SecretFieldType, String> = emptyMap(),

@@ -63,6 +63,7 @@ fun AuthenticationForm(
     biometricsEnabled: Boolean? = null,
     masterKeyEncryptedWithBiometrics: EncryptedBytes? = null,
     passwordError: String? = null,
+    autoOpenKeyboard: Boolean = true,
     showBiometricsOnStart: Boolean = true,
     containerColor: Color = MdtTheme.color.background,
     onUnlockClick: (String) -> Unit = {},
@@ -92,7 +93,7 @@ fun AuthenticationForm(
     }
 
     LaunchedEffect(Unit) {
-        if (biometricsEnabled.not() || showBiometricsOnStart.not()) {
+        if (autoOpenKeyboard && (biometricsEnabled.not() || showBiometricsOnStart.not())) {
             focusRequester.requestFocus()
         }
     }

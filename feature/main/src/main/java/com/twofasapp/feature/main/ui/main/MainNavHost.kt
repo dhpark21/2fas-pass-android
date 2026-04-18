@@ -28,6 +28,7 @@ import com.twofasapp.feature.developer.navigation.DeveloperRoute
 import com.twofasapp.feature.externalimport.navigation.ExternalImportRoute
 import com.twofasapp.feature.home.navigation.EditItemRoute
 import com.twofasapp.feature.home.navigation.HomeRoute
+import com.twofasapp.feature.home.navigation.ItemDetailsRoute
 import com.twofasapp.feature.quicksetup.ui.QuickSetupRoute
 import com.twofasapp.feature.settings.navigation.AboutRoute
 import com.twofasapp.feature.settings.navigation.AutofillRoute
@@ -36,6 +37,7 @@ import com.twofasapp.feature.settings.navigation.CustomizationRoute
 import com.twofasapp.feature.settings.navigation.ImportExportRoute
 import com.twofasapp.feature.settings.navigation.KnownBrowsersRoute
 import com.twofasapp.feature.settings.navigation.LockoutSettingsRoute
+import com.twofasapp.feature.settings.navigation.LogsRoute
 import com.twofasapp.feature.settings.navigation.ManageSubscriptionRoute
 import com.twofasapp.feature.settings.navigation.ManageTagsRoute
 import com.twofasapp.feature.settings.navigation.OpenSourceLibrariesRoute
@@ -48,6 +50,7 @@ import com.twofasapp.feature.settings.navigation.SetNewPasswordRoute
 import com.twofasapp.feature.settings.navigation.SettingsRoute
 import com.twofasapp.feature.settings.navigation.TransferFromOtherAppsRoute
 import com.twofasapp.feature.settings.navigation.TrashRoute
+import com.twofasapp.feature.share.navigation.ShareLinkHandlerRoute
 
 @Composable
 internal fun MainNavHost(
@@ -82,6 +85,9 @@ internal fun MainNavHost(
                             itemContentTypeKey = itemContentType.key,
                         ),
                     )
+                },
+                openItemDetails = { itemId, vaultId ->
+                    navController.navigate(Screen.ItemDetails(itemId = itemId, vaultId = vaultId))
                 },
                 openManageTags = {
                     navController.navigateTopLevel(Screen.ManageTags)
@@ -131,6 +137,39 @@ internal fun MainNavHost(
 
         composable<Screen.EditItem> {
             EditItemRoute(
+                close = { navController.popBackStack() },
+            )
+        }
+
+        composable<Screen.ShareLinkHandler> {
+            ShareLinkHandlerRoute(
+                onDecrypted = { shareId, itemContentTypeKey ->
+                    navController.navigate(
+                        Screen.EditItem(
+                            vaultId = "",
+                            itemId = "",
+                            itemContentTypeKey = itemContentTypeKey,
+                            shareId = shareId,
+                        ),
+                    ) {
+                        popUpTo<Screen.ShareLinkHandler> { inclusive = true }
+                    }
+                },
+                close = { navController.popBackStack() },
+            )
+        }
+
+        composable<Screen.ItemDetails> {
+            ItemDetailsRoute(
+                openEditItem = { itemId, vaultId, itemContentType ->
+                    navController.navigate(
+                        Screen.EditItem(
+                            itemId = itemId,
+                            vaultId = vaultId,
+                            itemContentTypeKey = itemContentType.key,
+                        ),
+                    )
+                },
                 close = { navController.popBackStack() },
             )
         }
@@ -248,6 +287,10 @@ internal fun MainNavHost(
 
         composable<Screen.About> {
             AboutRoute()
+        }
+
+        composable<Screen.Logs> {
+            LogsRoute()
         }
 
         composable<Screen.OpenSourceLibraries> {

@@ -10,12 +10,12 @@ import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemContentType
 import com.twofasapp.core.common.ktx.inputStream
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.data.main.VaultsRepository
 import com.twofasapp.feature.externalimport.import.ImportContent
 import com.twofasapp.feature.externalimport.import.ImportSpec
 import com.twofasapp.feature.externalimport.import.XmlParser
 import com.twofasapp.feature.externalimport.import.XmlParserEventType
-import timber.log.Timber
 
 internal abstract class AbstractKeepassImportSpec(
     private val vaultsRepository: VaultsRepository,
@@ -49,7 +49,7 @@ internal abstract class AbstractKeepassImportSpec(
         return try {
             parseXml(uri, vaultId)
         } catch (t: Throwable) {
-            Timber.e(t)
+            Flog.e(t)
             parseCsv(uri, vaultId)
         }
     }

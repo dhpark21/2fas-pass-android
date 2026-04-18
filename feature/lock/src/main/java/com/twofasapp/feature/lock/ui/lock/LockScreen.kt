@@ -91,6 +91,7 @@ internal fun LockScreen(
                 Content(
                     uiState = uiState,
                     biometricsHasBeenPrompted = biometricsHasBeenPrompted,
+                    autoOpenKeyboard = uiState.autoOpenKeyboard,
                     onMasterKeyDecrypted = { viewModel.unlockWithMasterKey(it) },
                     onBiometricsInvalidated = { viewModel.biometricsInvalidated() },
                     onUnlockClick = {
@@ -224,6 +225,7 @@ private fun Content(
     biometricsHasBeenPrompted: Boolean,
     onMasterKeyDecrypted: (ByteArray) -> Unit = {},
     onBiometricsInvalidated: () -> Unit = {},
+    autoOpenKeyboard: Boolean = true,
     onUnlockClick: (String) -> Unit = {},
     onForgotPasswordClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
@@ -258,6 +260,7 @@ private fun Content(
             title = strings.lockScreenUnlockTitle,
             description = strings.lockScreenUnlockDescription,
             cta = strings.lockScreenUnlockCta,
+            autoOpenKeyboard = autoOpenKeyboard,
             biometricsEnabled = uiState.biometricsEnabled?.let { it && biometricsHasBeenPrompted.not() },
             masterKeyEncryptedWithBiometrics = uiState.masterKeyEncryptedWithBiometrics,
             passwordError = uiState.passwordError,

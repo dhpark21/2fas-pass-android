@@ -12,7 +12,7 @@ import com.twofasapp.core.common.crypto.normalize
 import com.twofasapp.core.common.domain.crypto.KdfSpec
 import com.twofasapp.core.common.ktx.decodeHex
 import com.twofasapp.core.common.ktx.encodeHex
-import timber.log.Timber
+import com.twofasapp.core.common.logger.Flog
 
 class MasterKeyGenerator(
     private val kdfCalculator: KdfCalculator,
@@ -31,7 +31,7 @@ class MasterKeyGenerator(
             kdfSpec = kdfSpec,
         ).encodeHex()
 
-        Timber.i(
+        Flog.i(
             buildString {
                 appendLine("[GENERATE MASTER KEY]")
                 appendLine("seed+pass = $inputHex")

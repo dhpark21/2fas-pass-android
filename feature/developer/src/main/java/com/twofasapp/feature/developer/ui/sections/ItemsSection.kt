@@ -9,16 +9,25 @@
 package com.twofasapp.feature.developer.ui.sections
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.twofasapp.core.android.ktx.resetApp
 import com.twofasapp.core.common.domain.SecurityType
@@ -42,6 +51,7 @@ internal fun ItemsSection(
     onInsertRandomWifi: () -> Unit = {},
 ) {
     val context = LocalContext.current
+    var showGenerateItemsMenu by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -57,62 +67,83 @@ internal fun ItemsSection(
                 .fillMaxWidth(),
         )
 
+        Box(
+            contentAlignment = Alignment.TopEnd,
+        ) {
+            OptionEntry(
+                title = "Generate Items",
+                icon = MdtIcons.Refresh,
+                onClick = { showGenerateItemsMenu = true },
+            )
+
+            DropdownMenu(
+                expanded = showGenerateItemsMenu,
+                onDismissRequest = { showGenerateItemsMenu = false },
+                offset = DpOffset(x = (-16).dp, y = 0.dp),
+            ) {
+                DropdownMenuItem(
+                    text = { Text("100 items") },
+                    onClick = {
+                        showGenerateItemsMenu = false
+                        onGenerateMultipleItems(100)
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text("1000 items") },
+                    onClick = {
+                        showGenerateItemsMenu = false
+                        onGenerateMultipleItems(1000)
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text("10000 items") },
+                    onClick = {
+                        showGenerateItemsMenu = false
+                        onGenerateMultipleItems(10000)
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text("1000 domains with favicon") },
+                    onClick = {
+                        showGenerateItemsMenu = false
+                        onGenerateTopDomainItems()
+                    },
+                )
+            }
+        }
+
         OptionEntry(
-            title = "Generate Tier 1 item",
-            icon = MdtIcons.Refresh,
+            title = "Generate Login - Tier 1",
+            icon = MdtIcons.Login,
             onClick = { onGenerateItems(SecurityType.Tier1) },
         )
 
         OptionEntry(
-            title = "Generate Tier 2 item",
-            icon = MdtIcons.Refresh,
+            title = "Generate Login - Tier 2",
+            icon = MdtIcons.Login,
             onClick = { onGenerateItems(SecurityType.Tier2) },
         )
 
         OptionEntry(
-            title = "Generate Tier 3 item",
-            icon = MdtIcons.Refresh,
+            title = "Generate Login - Tier 3",
+            icon = MdtIcons.Login,
             onClick = { onGenerateItems(SecurityType.Tier3) },
         )
 
         OptionEntry(
-            title = "Generate 100 items",
-            icon = MdtIcons.Refresh,
-            onClick = { onGenerateMultipleItems(100) },
-        )
-
-        OptionEntry(
-            title = "Generate 1000 items",
-            icon = MdtIcons.Refresh,
-            onClick = { onGenerateMultipleItems(1000) },
-        )
-
-        OptionEntry(
-            title = "Generate 10000 items",
-            icon = MdtIcons.Refresh,
-            onClick = { onGenerateMultipleItems(10000) },
-        )
-
-        OptionEntry(
-            title = "Generate 1000 domains with favicon",
-            icon = MdtIcons.Refresh,
-            onClick = { onGenerateTopDomainItems() },
-        )
-
-        OptionEntry(
-            title = "Generate secure note",
+            title = "Generate Secure Note",
             icon = MdtIcons.SecureNote,
             onClick = { onInsertRandomSecureNote() },
         )
 
         OptionEntry(
-            title = "Generate credit card",
+            title = "Generate Credit Card",
             icon = MdtIcons.PaymentCard,
             onClick = { onInsertRandomCreditCard() },
         )
 
         OptionEntry(
-            title = "Generate wifi",
+            title = "Generate WiFi",
             icon = MdtIcons.Wifi4Bar,
             onClick = { onInsertRandomWifi() },
         )

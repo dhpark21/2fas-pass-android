@@ -14,6 +14,7 @@ import android.service.autofill.FillCallback
 import android.service.autofill.FillRequest
 import android.service.autofill.SaveCallback
 import android.service.autofill.SaveRequest
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.feature.autofill.service.handlers.FillRequestHandler
 import com.twofasapp.feature.autofill.service.handlers.SaveRequestHandler
 import kotlinx.coroutines.CoroutineScope
@@ -23,7 +24,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
 
 class PassAutofillService : AutofillService(), KoinComponent {
     private val fillRequestHandler: FillRequestHandler by inject()
@@ -37,7 +37,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
 
     override fun onConnected() {
         super.onConnected()
-        Timber.tag(AutofillTag).d(
+        Flog.tag(AutofillTag).d(
             """
             =================================================
             🚀 onConnected
@@ -50,7 +50,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
         cancellationSignal: CancellationSignal,
         fillCallback: FillCallback,
     ) {
-        Timber.tag(AutofillTag).d("\uD83D\uDD20 onFillRequest: ${fillRequest.id}")
+        Flog.tag(AutofillTag).d("\uD83D\uDD20 onFillRequest: ${fillRequest.id}")
 
         val fillRequestJob = scope.launch {
             fillRequestHandler.handleRequest(
@@ -61,7 +61,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
         }
 
         cancellationSignal.setOnCancelListener {
-            Timber.tag(AutofillTag).d("☠\uFE0F onCancelRequest: ${fillRequest.id}")
+            Flog.tag(AutofillTag).d("☠\uFE0F onCancelRequest: ${fillRequest.id}")
             fillRequestJob.cancel()
         }
     }
@@ -70,7 +70,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
         saveRequest: SaveRequest,
         saveCallback: SaveCallback,
     ) {
-        Timber.tag(AutofillTag).d("\uD83D\uDCBE onSaveRequest")
+        Flog.tag(AutofillTag).d("\uD83D\uDCBE onSaveRequest")
 
         scope.launch {
             saveRequestHandler.handleRequest(
@@ -82,7 +82,7 @@ class PassAutofillService : AutofillService(), KoinComponent {
     }
 
     override fun onDestroy() {
-        Timber.tag(AutofillTag).d(
+        Flog.tag(AutofillTag).d(
             """
             ☠️ onDestroy
             =================================================

@@ -54,7 +54,6 @@ class NetworkModule : KoinModule {
                 install(WebSockets)
 
                 install(DefaultRequest) {
-                    url("https://pass.2fas.com")
                     contentType(ContentType.Application.Json)
                 }
             }

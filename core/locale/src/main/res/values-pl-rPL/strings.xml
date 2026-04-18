@@ -4,7 +4,7 @@
  Project: 2FAS Pass App
  Locale: pl-PL, Polish
  Exported by: rafakob
- Exported at: Tue, 24 Feb 2026 14:48:23 -0800
+ Exported at: Mon, 06 Apr 2026 09:49:23 -0700
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">2FAS Pass</string>
@@ -370,7 +370,7 @@
     <string name="about_version_ios__0025_0040">Wersja: **%s**</string>
     <string name="autofill_no_vault_message">Przejdź do aplikacji, aby skonfigurować sejf.</string>
     <string name="common_close">Zamknij</string>
-    <string name="common_confirm">Przypisz</string>
+    <string name="common_confirm">Potwierdź</string>
     <string name="common_disabled">Wył.</string>
     <string name="common_enabled">Wł.</string>
     <string name="common_help">Pomoc</string>
@@ -814,7 +814,7 @@
     <string name="connect_modal_error_browser_extension_update_required_title">Wymagana aktualizacja rozszerzenia przeglądarki</string>
     <string name="connect_modal_error_browser_extension_update_required_subtitle">Zaktualizuj rozszerzenie przeglądarki</string>
     <string name="cloud_sync_invalid_schema_error_cta">Zaktualizuj aplikację</string>
-    <string name="cloud_sync_invalid_schema_error_msg">Synchronizacja z chmurą nie powiodła się. Sejf, który próbujesz zsynchronizować, został utworzony w nowszej wersji %d, i nie jest obsługiwany przez obecną wersję aplikacji. Zaktualizuj aplikację, aby móc go zsynchronizować.</string>
+    <string name="cloud_sync_invalid_schema_error_msg">Synchronizacja z chmurą nie powiodła się. Sejf, który próbujesz zsynchronizować, nie jest obsługiwany, ponieważ został stworzony w nowszej wersji aplikacji. Zaktualizuj aplikację, aby móc go zsynchronizować.</string>
     <string name="import_invalid_schema_error_msg">Kopia zapasowa, którą próbujesz zaimportować, została utworzona w nowszej wersji %d, i nie jest obsługiwana przez obecną wersję aplikacji. Zaktualizuj aplikację, aby móc ją zaimportować.</string>
     <string name="import_invalid_schema_error_cta">Zaktualizuj aplikację</string>
     <string name="connect_modal_error_app_update_required_cta_android">Zaktualizuj aplikację</string>
@@ -1114,4 +1114,37 @@
     <string name="block_screen_recording_title">Nagrywanie ekranu zablokowane</string>
     <string name="block_screen_recording_description">Nagrywanie ekranu jest zablokowane podczas korzystania z aplikacji. Możesz tymczasowo je włączyć w Ustawienia → Bezpieczeństwo.</string>
     <string name="wifi_connect_label">Połącz z siecią</string>
+    <string name="item_details_title">Szczegóły elementu</string>
+    <string name="share_link_item_title">2FAS Share</string>
+    <string name="share_link_item_link_generated">Link wygenerowany</string>
+    <string name="share_link_item_expiration_time">Czas wygaśnięcia linku</string>
+    <string name="share_link_item_one_time_access">Jednorazowy dostęp</string>
+    <string name="share_link_item_one_time_access_description">Link wygaśnie po jednym użyciu</string>
+    <string name="share_link_item_access_password">Ustaw hasło dostępu</string>
+    <string name="share_link_item_access_password_description">Dodatkowo zabezpiecz link</string>
+    <string name="share_link_item_share_settings">Ustawienia udostępniania</string>
+    <string name="share_link_item_set_password_title">Ustaw hasło linku</string>
+    <string name="share_link_item_set_password_subtitle">Zabezpiecz swój link 2FAS Share</string>
+    <string name="common_password">Hasło</string>
+    <string name="share_link_item_password_min_length__0025d">Hasło musi mieć co najmniej %d znaków</string>
+    <string name="common_share">Udostępnij</string>
+    <string name="item_view_action_share_link">Udostępnij link</string>
+    <string name="share_link_import_error_title">Nie udało się wczytać udostępnionego elementu</string>
+    <string name="share_link_import_password_title">Wprowadź hasło</string>
+    <string name="share_link_import_password_subtitle">Hasło do linku 2FAS Share</string>
+    <string name="share_link_import_unlock">Odblokuj</string>
+    <string name="share_link_import_network_error_description">Sprawdź połączenie z internetem i spróbuj ponownie.</string>
+    <string name="share_link_error_data_too_large">Ten element jest zbyt duży, aby udostępnić go przez link. Spróbuj zmniejszyć jego zawartość.</string>
+    <string name="share_link_item_expiration_5_min">5 min</string>
+    <string name="share_link_item_expiration_30_min">30 min</string>
+    <string name="share_link_item_expiration_1_hour">1 godzina</string>
+    <string name="share_link_item_expiration_1_day">1 dzień</string>
+    <string name="share_link_item_expiration_7_days">7 dni</string>
+    <string name="share_link_item_expiration_30_days">30 dni</string>
+    <string name="share_link_item_generating_link">Generowanie linku…</string>
+    <string name="share_link_item_expires_in">Wygasa za %s</string>
+    <string name="share_link_item_link_label">Link</string>
+    <string name="share_link_item_remove_password">Usuń hasło</string>
+    <string name="share_link_import_incorrect_password">Nieprawidłowe hasło</string>
+    <string name="share_link_import_error_description">Nie udało się odszyfrować linku. Mógł wygasnąć lub hasło jest nieprawidłowe.</string>
 </resources>

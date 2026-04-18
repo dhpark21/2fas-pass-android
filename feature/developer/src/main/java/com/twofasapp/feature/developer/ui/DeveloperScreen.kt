@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,12 +24,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.twofasapp.core.android.ktx.restartApp
 import com.twofasapp.core.android.ktx.toastShort
 import com.twofasapp.core.common.domain.SecurityType
 import com.twofasapp.core.design.MdtTheme
 import com.twofasapp.core.design.foundation.preview.PreviewTheme
 import com.twofasapp.core.design.foundation.topbar.TopAppBar
+import com.twofasapp.core.network.ApiEnvironment
+import com.twofasapp.feature.developer.ui.sections.EnvironmentSection
 import com.twofasapp.feature.developer.ui.sections.ItemsSection
 import com.twofasapp.feature.developer.ui.sections.OtherSection
 import com.twofasapp.feature.developer.ui.sections.SubscriptionSection
@@ -63,6 +67,12 @@ internal fun DeveloperScreen(
         onInsertRandomSecureNote = { viewModel.insertRandomSecureNote() },
         onInsertRandomCreditCard = { viewModel.insertRandomCreditCard() },
         onInsertRandomWifi = { viewModel.insertRandomWifi() },
+        onSelectEnvironment = { viewModel.selectEnvironment(it) },
+        onSaveAndRestart = {
+            viewModel.saveEnvironmentAndRestart {
+                context.restartApp()
+            }
+        },
     )
 }
 
@@ -80,9 +90,11 @@ private fun Content(
     onInsertRandomSecureNote: () -> Unit = {},
     onInsertRandomCreditCard: () -> Unit = {},
     onInsertRandomWifi: () -> Unit = {},
+    onSelectEnvironment: (ApiEnvironment) -> Unit = {},
+    onSaveAndRestart: () -> Unit = {},
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Items", "Subscription", "Other")
+    val tabs = listOf("Items", "Subscription", "Environment", "Other")
 
     Scaffold(
         topBar = { TopAppBar(title = "Developer") },
@@ -93,9 +105,10 @@ private fun Content(
                 .background(MdtTheme.color.background)
                 .padding(padding),
         ) {
-            TabRow(
+            ScrollableTabRow(
                 modifier = Modifier.background(MdtTheme.color.background),
                 selectedTabIndex = selectedTabIndex,
+                edgePadding = 0.dp,
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
@@ -133,7 +146,13 @@ private fun Content(
                     onSetSubscriptionOverride = onSetSubscriptionOverride,
                 )
 
-                2 -> OtherSection(
+                2 -> EnvironmentSection(
+                    uiState = uiState,
+                    onSelectEnvironment = onSelectEnvironment,
+                    onSaveAndRestart = onSaveAndRestart,
+                )
+
+                3 -> OtherSection(
                     uiState = uiState,
                 )
             }

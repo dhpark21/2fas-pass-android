@@ -80,10 +80,25 @@ sealed class Screen(
     data object Developer : Screen()
 
     @Serializable
+    data class ItemDetails(
+        val vaultId: String,
+        val itemId: String,
+    ) : Screen()
+
+    @Serializable
     data class EditItem(
         val vaultId: String,
         val itemId: String,
         val itemContentTypeKey: String,
+        val shareId: String? = null,
+    ) : Screen()
+
+    @Serializable
+    data class ShareLinkHandler(
+        val shareId: String,
+        val version: String,
+        val nonce: String,
+        val key: String,
     ) : Screen()
 
     @Serializable
@@ -145,6 +160,9 @@ sealed class Screen(
 
     @Serializable
     data object About : Screen()
+
+    @Serializable
+    data object Logs : Screen()
 
     @Serializable
     data object OpenSourceLibraries : Screen()

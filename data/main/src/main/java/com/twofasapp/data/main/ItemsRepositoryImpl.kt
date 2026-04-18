@@ -13,6 +13,7 @@ import com.twofasapp.core.common.crypto.Uuid
 import com.twofasapp.core.common.domain.items.Item
 import com.twofasapp.core.common.domain.items.ItemContent
 import com.twofasapp.core.common.domain.items.ItemEncrypted
+import com.twofasapp.core.common.logger.Flog
 import com.twofasapp.core.common.time.TimeProvider
 import com.twofasapp.data.main.domain.CloudMerge
 import com.twofasapp.data.main.local.ItemsLocalSource
@@ -28,13 +29,14 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 internal class ItemsRepositoryImpl(
     private val dispatchers: Dispatchers,
@@ -62,6 +64,19 @@ internal class ItemsRepositoryImpl(
             .map { (list, _) ->
                 list.map { itemMapper.mapToDomain(it) }
             }
+            .flowOn(dispatchers.io)
+    }
+
+    override fun observeItem(vaultId: String, itemId: String): Flow<ItemEncrypted> {
+        return combine(
+            itemsLocalSource.observeById(itemId),
+            lockObservability,
+            { a, b -> Pair(a, b) },
+        )
+            .filter { it.second.not() }
+            .map { (entity, _) -> entity?.let(itemMapper::mapToDomain) }
+            .filterNotNull()
+            .distinctUntilChanged()
             .flowOn(dispatchers.io)
     }
 
@@ -338,7 +353,7 @@ internal class ItemsRepositoryImpl(
 
     override suspend fun executeCloudMerge(cloudMerge: CloudMerge.Result<Item>) {
         withContext(dispatchers.io) {
-            Timber.d("Execute cloud merge: $cloudMerge")
+            Flog.d("Execute cloud merge: $cloudMerge")
 
             val vault = vaultsLocalSource.get().first().let(vaultMapper::mapToDomain)
 
